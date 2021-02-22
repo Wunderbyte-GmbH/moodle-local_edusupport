@@ -9,60 +9,62 @@ define(
         triggerSteps: 0,
         assignSupporter: function(discussionid /*, userid*/){
             var MAIN = this;
-            if (MAIN.debug > 0) console.log('local_edusupport/main:assignSupporter(discussionid, userid)', discussionid, userid);
-            // Show a selection of possible supporters.
-            AJAX.call([{
-                methodname: 'local_edusupport_get_potentialsupporters',
-                args: { discussionid: discussionid },
-                done: function(result) {
-                    try { result = JSON.parse(result); } catch(e) { }
-                    if (MAIN.debug > 0) console.log('local_edusupport_external:local_edusupport_get_potentialsupporters', result);
-                    var supportlevels = Object.keys(result.supporters);
-                    var body = '<input type="hidden" value="' + discussionid + '" />';
-                    body += '<select>';
-                    for (var a = 0; a < supportlevels.length; a++) {
-                        body += '<optgroup label="' + supportlevels[a] + '">';
-                        for (var b = 0; b < result.supporters[supportlevels[a]].length; b++) {
-                            var supporter = result.supporters[supportlevels[a]][b];
-                            body += '<option value="' + supporter.userid + '"' + ((supporter.selected)?' selected="selected"':'') + '>' + supporter.firstname + ' ' + supporter.lastname + '</option>';
+            //if (MAIN.debug > 0) //console.log('local_edusupport/main:assignSupporter(discussionid, userid)', discussionid, userid);
+                console.log('ajax call');
+                // Show a selection of possible supporters.
+                AJAX.call([{
+                    methodname: 'local_edusupport_get_potentialsupporters',
+                    args: { discussionid: discussionid },
+                    done: function(result) {
+                        try { result = JSON.parse(result); } catch(e) { }
+                        if (MAIN.debug > 0) console.log('local_edusupport_external:local_edusupport_get_potentialsupporters', result);
+                        var supportlevels = Object.keys(result.supporters);
+                        var body = '<input type="hidden" value="' + discussionid + '" />';
+                        body += '<select>';
+                        for (var a = 0; a < supportlevels.length; a++) {
+                            body += '<optgroup label="' + supportlevels[a] + '">';
+                            for (var b = 0; b < result.supporters[supportlevels[a]].length; b++) {
+                                var supporter = result.supporters[supportlevels[a]][b];
+                                body += '<option value="' + supporter.userid + '"' + ((supporter.selected)?' selected="selected"':'') + '>' + supporter.firstname + ' ' + supporter.lastname + '</option>';
+                            }
+                            body += '</optgroup>';
                         }
-                        body += '</optgroup>';
-                    }
-                    body += '</select>';
+                        body += '</select>';
 
-                    //console.log(result);
-                    ModalFactory.create({
-                        title: STR.get_string('select', 'core'),
-                        type: ModalFactory.types.SAVE_CANCEL,
-                        body: body,
-                        //footer: 'footer',
-                    }).done(function(modal) {
-                        console.log('Created modal');
-                        modal.show();
-                        modal.getRoot().on(ModalEvents.save, function(e) {
-                            e.preventDefault();
-                            var discussionid = $(this).find('.modal-body input').val();
-                            var supporterid = $(this).find('.modal-body select').val();
-                            var data = { 'discussionid': discussionid, 'supporterid': supporterid };
-                            //console.log('Store', this, e, data);
-                            AJAX.call([{
-                                methodname: 'local_edusupport_set_currentsupporter',
-                                args: data,
-                                done: function(result) {
-                                    console.log(result);
-                                    if (result == 1) {
-                                        top.location.reload();
-                                    } else {
-                                        alert('Error: ' + result);
-                                    }
-                                },
-                                fail: NOTIFICATION.exception
-                            }]);
+                        //console.log(result);
+                        ModalFactory.create({
+                            title: STR.get_string('select', 'core'),
+                            type: ModalFactory.types.SAVE_CANCEL,
+                            body: body,
+                            //footer: 'footer',
+                        }).done(function(modal) {
+                            console.log('Created modal');
+                            modal.show();
+                            modal.getRoot().on(ModalEvents.save, function(e) {
+                                e.preventDefault();
+                                var discussionid = $(this).find('.modal-body input').val();
+                                var supporterid = $(this).find('.modal-body select').val();
+                                var data = { 'discussionid': discussionid, 'supporterid': supporterid };
+                                //console.log('Store', this, e, data);
+                                AJAX.call([{
+                                    methodname: 'local_edusupport_set_currentsupporter',
+                                    args: data,
+                                    done: function(result) {
+                                        console.log(result);
+                                        if (result == 1) {
+                                            top.location.reload();
+                                        } else {
+                                            alert('Error: ' + result);
+                                        }
+                                    },
+                                    fail: NOTIFICATION.exception
+                                }]);
+                            });
                         });
-                    });
-                },
-                fail: NOTIFICATION.exception
-            }]);
+                    },
+                    fail: NOTIFICATION.exception
+                }]);
+
         },
         /**
          * Checks if a particular support form has a screenshot. If not, it hides the modal and creates one.
@@ -100,11 +102,17 @@ define(
         /**
          * Inject a help button in the upper right menu.
          */
-        injectHelpButton: function(supportmenu) {
-            // OBSOLETE SINCE 2021083000
-            var MAIN = this;
-            if (MAIN.debug > 0) console.log('local_edusupport/main:injectHelpButton(supportmenu)');
-            $(supportmenu).insertBefore($('.nav .usermenu'));
+        injectHelpButton: function() {
+            console.log('local_edusupport/main:injectHelpButton()');
+            AJAX.call([{
+                methodname: 'local_edusupport_get_extralinks',
+                args: {},
+                done: function(result) {
+                    $(result).insertBefore($('.nav .nav-item:last-child'));
+                },
+                fail: NOTIFICATION.exception
+            }]);
+            this.colorize();
         },
         /**
          * Scans the page for all discussion posts and adds a reply-button.
@@ -150,39 +158,48 @@ define(
                 fail: NOTIFICATION.exception
             }]);
         },
-        faqtoogle: function() {
-            if ($('input#id_faqread:not(.autochecked)').length) {
-                $('#create_issue_input').toggle();
-                $('#local_edusupport_create_form .fdescription.required').toggle();
-                $('input#id_faqread').click(function() {
-                    $('#create_issue_input').toggle();
-                    $('#local_edusupport_create_form .fdescription.required').toggle();
-                });
-            }
+        /**
+         * Colorize shown discussions.
+        **/
+        colorize: function() {
+            var discussionids = [];
+            $('table.forumheaderlist tr.discussion td.starter a').each(function(){ var d = $(this).attr('href').split('?d='); discussionids[discussionids.length] = d[1]; });
+            var data = { discussionids: discussionids };
+            console.log('local_edusupport_colorize', data);
+            AJAX.call([{
+                methodname: 'local_edusupport_colorize',
+                args: data,
+                done: function(result) {
+                    try { result = JSON.parse(result); } catch(e) {}
+                    console.log(result);
+                    if (typeof result.styles !== 'undefined') {
+                        var discussionids = Object.keys(result.styles);
+                        for (var a = 0; a < discussionids.length; a++) {
+                            var discussionid = discussionids[a];
+                            var style = result.styles[discussionid];
+                            $('table.forumheaderlist tr.discussion td.starter a[href$="d=' + discussionid + '"]').closest('tr').attr('style', style);
+                        }
+                    }
+                },
+                fail: NOTIFICATION.exception
+            }]);
         },
         /**
          * Let's inject a button to call the 2nd level support.
          * @param discussionid.
          * @param isissue determines if this issue is already at higher support levels.
-         * @param sitename the full sitename
          */
-        injectForwardButton: function(discussionid, isissue, sitename) {
+        injectForwardButton: function(discussionid, isissue) {
             if (this.debug) console.log('local_edusupport/main:injectForwardButton(discussionid, isissue)', discussionid, isissue);
             if (typeof discussionid === 'undefined') return;
             STR.get_strings([
-                    {
-                        key : (typeof isissue !== 'undefined' && isissue) ? 'issue_revoke' : 'issue_assign_nextlevel',
-                        component: 'local_edusupport',
-                        param: {
-                            sitename: sitename,
-                        }
-                    },
+                    {'key' : (typeof isissue !== 'undefined' && isissue) ? 'issue_revoke' : 'issue_assign_nextlevel', component: 'local_edusupport' },
                 ]).done(function(s) {
                     $('#page-content div[role="main"] .discussionname').parent().prepend(
                         $('<a href="#">')
-                                    .attr('onclick', "require(['local_edusupport/main'], function(MAIN) { MAIN.injectForwardModal(" + discussionid + ", " + isissue + ", '" + sitename + "'); }); return false;")
+                                    .attr('onclick', "require(['local_edusupport/main'], function(MAIN) { MAIN.injectForwardModal(" + discussionid + ", " + isissue + "); }); return false;")
                                     .attr('style', 'float: right')
-                                    .addClass("btn btn-primary")
+                                    .addClass("btn btn-secondary")
                                     .html(s[0])
                     );
                 }
@@ -199,19 +216,10 @@ define(
 
 
         },
-        injectForwardModal: function(discussionid, revoke, sitename) {
+        injectForwardModal: function(discussionid, revoke) {
             STR.get_strings([
-                    {
-                        key : 'confirm',
-                        component: 'core'
-                    },
-                    {
-                        key : (typeof revoke !== 'undefined' && revoke) ? 'issue_revoke' : 'issue_assign_nextlevel',
-                        component: 'local_edusupport',
-                        param: {
-                            sitename: sitename,
-                        }
-                    },
+                    {'key' : 'confirm', component: 'core' },
+                    {'key' : (typeof revoke !== 'undefined' && revoke) ? 'issue_revoke' : 'issue_assign_nextlevel', component: 'local_edusupport' },
                 ]).done(function(s) {
                     ModalFactory.create({
                         type: ModalFactory.types.SAVE_CANCEL,
@@ -248,7 +256,7 @@ define(
             /*var priority = $('#local_edusupport_create_form #id_prioritylvl').val();
             subject = priority + " " + subject;
             console.log.subject; */
-            var url = window.location.href;
+            var url = top.location.href;
 
             if (faqread  == 0) {
                 var editaPresent = STR.get_string('faqread', 'local_edusupport', {});
@@ -268,7 +276,7 @@ define(
             MAIN.is_sending = true;
 
             var imagedataurl = (post_screenshot && typeof screenshot !== 'undefined' ) ? screenshot : '';
-            if (MAIN.debug > 0) console.log('local_edusupport_create_issue', { subject: subject, description: description, forum_group: forum_group, postto2ndlevel: postto2ndlevel, image: imagedataurl, url: url });
+            if (MAIN.debug > 0) console.log('local_edusupport_create_issue', { subject: subject, description: description, forum_group: forum_group, postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname, url: url, contactphone: contactphone });
             AJAX.call([{
                 methodname: 'local_edusupport_create_issue',
                 args: { subject: subject, description: description, forum_group: forum_group, postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname, url: url, contactphone: contactphone },
@@ -278,9 +286,8 @@ define(
                     modal.hide();
 
                     var responsibles = '';
-                    /*
                     if (typeof result.responsibles !== 'undefined') {
-                        responsibles += '<ul>';
+                        responsibles += '<ul class="edusupport_responsible">';
                         for (var i = 0; i < result.responsibles.length; i++) {
                             var r = result.responsibles[i];
                             if (typeof r.userid !== 'undefined' && r.userid > 0) {
@@ -292,11 +299,6 @@ define(
                             }
                         }
                         responsibles += '</ul>';
-                    }
-                    */
-                    if (typeof result.discussionid !== 'undefined' && (parseInt(result.discussionid) == -999 || parseInt(result.discussionid) > 0)) {
-                        $('#id_subject, #id_contactphone, #id_description, #edusupport_screenshot>input').val('');
-                        $('#edusupport_screenshot>.alert').css('display', 'none');
                     }
                     if (typeof result.discussionid !== 'undefined' && parseInt(result.discussionid) == -999) {
                         // confirmation, was sent by mail.
@@ -326,7 +328,7 @@ define(
                                 if (responsibles != '') {
                                     desc = s[2] + responsibles;
                                 }
-                                NOTIFICATION.confirm(s[0], desc, s[3], s[4], function(){ location.href = URL.fileUrl('/mod/forum', 'discuss.php?d=' + result.discussionid); });
+                                NOTIFICATION.confirm(s[0], desc, s[3], s[4], function(){ top.location.href = URL.fileUrl('/mod/forum', 'discuss.php?d=' + result.discussionid); });
                             }
                         ).fail(NOTIFICATION.exception);
                     } else {
@@ -359,7 +361,7 @@ define(
                 e.preventDefault();
                 // Do your form validation here.
             });
-            var editaPresent = STR.get_string('send', 'local_edusupport', {});
+            var editaPresent = STR.get_string('create_issue', 'local_edusupport', {});
             $.when(editaPresent).done(function(localizedEditString) {
                 MAIN.modal.setSaveButtonText(localizedEditString);
             });
@@ -397,7 +399,7 @@ define(
                 MAIN.triggerSpinner(1);
                 AJAX.call([{
                     methodname: 'local_edusupport_create_form',
-                    args: { url: window.location.href, image: '', forumid: forumid },
+                    args: { url: top.location.href, image: '', forumid: forumid },
                     done: function(result) {
                         console.log('Got modal');
                         MAIN.triggerSpinner(-1);
@@ -415,7 +417,6 @@ define(
                             MAIN.modal = modal;
 
                             MAIN.prepareBox();
-                            MAIN.faqtoogle();
                         });
                     },
                     fail: NOTIFICATION.exception
