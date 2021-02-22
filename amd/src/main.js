@@ -106,7 +106,7 @@ define(
                 methodname: 'local_edusupport_get_extralinks',
                 args: {},
                 done: function(result) {
-                    $(result).insertBefore($('.nav .usermenu'));
+                    $(result).insertBefore($('.nav .nav-item:last-child'));
                 },
                 fail: NOTIFICATION.exception
             }]);
