@@ -108,7 +108,7 @@ define(
                 methodname: 'local_edusupport_get_extralinks',
                 args: {},
                 done: function(result) {
-                    $(result).insertBefore($('nav[aria-label="Site navigation"] .nav .nav-item:last-child'));
+                    $(result).insertBefore($('nav.fixed-top .nav .nav-item:last-child'));
                 },
                 fail: NOTIFICATION.exception
             }]);
