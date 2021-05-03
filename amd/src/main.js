@@ -295,7 +295,7 @@ define(
 
                     var responsibles = '';
                     if (typeof result.responsibles !== 'undefined') {
-                        responsibles += '<ul>';
+                        responsibles += '<ul class="supportusers">';
                         for (var i = 0; i < result.responsibles.length; i++) {
                             var r = result.responsibles[i];
                             if (typeof r.userid !== 'undefined' && r.userid > 0) {
