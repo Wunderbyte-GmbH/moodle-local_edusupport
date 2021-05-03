@@ -321,7 +321,10 @@ class lib {
         foreach ($_groups AS $k => $group) {
             $ismember = $DB->get_record('groups_members', array('groupid' => $group->id, 'userid' => $USER->id));
             if (!empty($ismember->id)) {
-                $groups[$k] = $group;
+                //only allow the group generated for the user
+                if ($group->name == fullname($USER) . ' (' . $USER->id . ')') {
+                    $groups[$k] = $group;
+                }
             }
         }
 
