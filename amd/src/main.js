@@ -106,11 +106,10 @@ define(
                 methodname: 'local_edusupport_get_extralinks',
                 args: {},
                 done: function(result) {
-                    $(result).insertBefore($('.nav .usermenu'));
+                    $(result).insertBefore($('nav.fixed-top .nav .nav-item:last-child'));
                 },
                 fail: NOTIFICATION.exception
             }]);
-            this.colorize();
         },
         /**
          * Scans the page for all discussion posts and adds a reply-button.
@@ -183,7 +182,7 @@ define(
             }]);
         },
         faqtoogle: function() {
-            if ($('input#id_faqread').length) {
+            if ($('input#id_faqread:not(.autochecked)').length) {
                 $('#create_issue_input').toggle();
                 $('#local_edusupport_create_form .fdescription.required').toggle();
                 $('input#id_faqread').click(function() {
@@ -295,7 +294,7 @@ define(
 
                     var responsibles = '';
                     if (typeof result.responsibles !== 'undefined') {
-                        responsibles += '<ul>';
+                        responsibles += '<ul class="supportusers">';
                         for (var i = 0; i < result.responsibles.length; i++) {
                             var r = result.responsibles[i];
                             if (typeof r.userid !== 'undefined' && r.userid > 0) {
