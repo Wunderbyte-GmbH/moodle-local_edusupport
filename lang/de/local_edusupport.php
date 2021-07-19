@@ -74,6 +74,7 @@ $string['issue:countcurrent'] = 'offene Tickets';
 $string['issue:countassigned'] = 'verfolgte Tickets';
 $string['issue:countother'] = 'andere Tickets';
 $string['issue:countclosed'] = 'geschlossene Tickets';
+$string['issue:assigned'] = 'Sie wurden folgendem Ticket zugewiesen:';
 $string['issue_assign'] = 'Zuordnen';
 $string['issue_assign_3rdlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat dieses Ticket an <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> weitergeleitet.';
 $string['issue_assign_3rdlevel:postself'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat die Verantwortung für dieses Ticket übernommen.';
@@ -98,7 +99,9 @@ $string['issue_revoke'] = 'Ticket vom höheren Supportlevel zurücknehmen';
 $string['issue_revoke:error'] = 'Entschuldigung, dieses Ticket konnte vom höheren Supportlevel nicht zurückgeholt werden!';
 $string['issue_revoke:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat dieses Ticket vom höheren Supportlevel zurückgenommen';
 $string['issue_revoke:subject'] = 'Ticket storniert';
-
+$string['issue_close'] = 'Anfrage schließen';
+$string['issue_closed:subject'] = 'Anfrage wurde geschlossen';
+$string['issue_closed:post'] = 'Dieses Ticket wurde von <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> geschlossen. Falls Sie weitere Unterstützung benötigen, fordern Sie bitte wieder das Plattform Support Team an!';
 $string['issues'] = 'Anfragen';
 $string['issues:assigned'] = 'Abonniert';
 $string['issues:assigned:none'] = 'Es sind keine weiteren Anfragen abonniert worden.';

@@ -263,6 +263,8 @@ class lib {
                 'forumtype' => $forum->type,
             ),
         );
+
+      
         $event = \mod_forum\event\post_created::create($eventparams);
         $event->add_record_snapshot('forum_posts', $post);
         $event->trigger();
@@ -643,6 +645,25 @@ class lib {
             ),
             get_string('issue_assigned:subject', 'local_edusupport')
         );
+
+
+        $posthtml  = get_string('issue_assigned:subject', 'local_edusupport')." ".$discussion->name;
+        $postsubject = $discussion->name;
+        $eventdata = new \core\message\message();
+        $touser = $DB->get_record('user', array('id' => $userid));
+        $eventdata->userfrom = $USER;
+        $eventdata->userto = $touser;
+        $eventdata->subject = $postsubject;
+        $eventdata->fullmessage = $posttext;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml = $posthtml;
+        $eventdata->smallmessage = $postsubject;
+        $eventdata->contexturl = (new \moodle_url('/local/edusupport/issue.php?d='.$discussion->id))->out(false); // A relevant URL for the notification
+        $eventdata->contexturlname = 'Issue'; // Link title explaining where users get to for the contexturl
+        $eventdata->name = 'edusupport_issue';
+        $eventdata->component = 'local_edusupport';
+        $eventdata->notification = 1;
+        message_send($eventdata);
 
         return true;
     }

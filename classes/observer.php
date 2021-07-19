@@ -31,7 +31,7 @@ class observer {
 
         //error_log("OBSERVER EVENT: " . print_r($event, 1));
         $entry = (object)$event->get_data();
-
+       
         if ($entry->eventname == '\mod_forum\event\discussion_deleted') {
             $discussionid = $entry->objectid;
             return \local_edusupport\lib::delete_issue($discussionid);
@@ -39,14 +39,18 @@ class observer {
             if (substr($entry->eventname, 0, strlen("\\mod_forum\\event\\post_")) == "\\mod_forum\\event\\post_") {
                 $post = $DB->get_record("forum_posts", array("id" => $entry->objectid));
                 $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion));
+               
+
             } else {
                 $discussion = $DB->get_record("forum_discussions", array("id" => $entry->objectid));
                 $post = $DB->get_record("forum_posts", array("discussion" => $discussion->id, "parent" => 0));
             }
+
             $forum = $DB->get_record("forum", array("id" => $discussion->forum));
             $course = $DB->get_record("course", array("id" => $forum->course));
             $issue = $DB->get_record('local_edusupport_issues', array('discussionid' => $discussion->id));
             if (empty($issue->id)) return;
+            \local_edusupport\lib::reopen_issue($discussion->id); 
             $author = $DB->get_record('user', array('id' => $post->userid));
             // enhance post data.
             $post->wwwroot = $CFG->wwwroot;

@@ -79,6 +79,27 @@ class local_edusupport_external extends external_api {
             $forumid = $tmp[0];
             $groupid = $tmp[1];
         }
+        
+        /* Message dummy for issue created 
+        $posthtml  ="test";
+        $postsubject = "asd";
+        $posttext = "asdsa";
+        $eventdata = new \core\message\message();
+        $userto = core_user::get_user(7);
+        $eventdata->userfrom = $USER;
+        $eventdata->userto = $userto;
+        $eventdata->subject = $postsubject;
+        $eventdata->fullmessage = $posttext;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml = $posthtml;
+        $eventdata->smallmessage = $postsubject;
+        $eventdata->contexturl = (new \moodle_url('/course/'))->out(false); // A relevant URL for the notification
+        $eventdata->contexturlname = 'Course list'; // Link title explaining where users get to for the contexturl
+        $eventdata->name = 'edusupport_issue';
+        $eventdata->component = 'local_edusupport';
+        $eventdata->notification = 1;
+        message_send($eventdata);
+        */
 
         $PAGE->set_context(\context_system::instance());
 
