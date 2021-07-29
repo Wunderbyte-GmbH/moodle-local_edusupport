@@ -288,6 +288,10 @@ class local_edusupport_external extends external_api {
                             get_string('issue_responsibles:subject', 'local_edusupport')
                         );
                     }
+                    else if (get_config('local_edusupport', 'auto2ndlvl')) {
+                        \local_edusupport\lib::set_2nd_level($discussion->id);
+                    }
+
                     $reply['discussionid'] = $discussionid;
                     return $reply;
                 } else {

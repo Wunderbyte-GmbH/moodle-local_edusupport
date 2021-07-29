@@ -107,6 +107,15 @@ if ($hassiteconfig) {
             4 * WEEKSECS)
     );
 
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'local_edusupport/auto2ndlvl',
+            get_string('auto2ndlvl', 'local_edusupport'),
+            get_string('auto2ndlvl:description', 'local_edusupport'),
+            0
+        )
+    );
+
 
 
     // @TODO a feature from the future.

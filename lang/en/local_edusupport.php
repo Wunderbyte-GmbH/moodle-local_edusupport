@@ -27,6 +27,8 @@ $string['edusupport:myaddinstance'] = 'Add eduSupport block';
 
 $string['archive'] = 'Archive';
 $string['assigned'] = 'Assigned';
+$string['auto2ndlvl'] = 'Auto forward 2nd';
+$string['auto2ndlvl:description'] = 'Automatically forward all tickets to 2nd level support';
 $string['autocreate_orggroup'] = 'Automatically create groups for eduvidual-Organizations';
 $string['autocreate_usergroup'] = 'Automatically create a private group for user';
 $string['be_more_accurate'] = 'Please be more accurate when describing your problem!';
