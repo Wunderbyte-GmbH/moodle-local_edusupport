@@ -79,8 +79,8 @@ class local_edusupport_external extends external_api {
             $forumid = $tmp[0];
             $groupid = $tmp[1];
         }
-        
-        /* Message dummy for issue created 
+
+        /* Message dummy for issue created
         $posthtml  ="test";
         $postsubject = "asd";
         $posttext = "asdsa";
@@ -269,7 +269,11 @@ class local_edusupport_external extends external_api {
 
                     if ($canpostto2ndlevel && !empty($postto2ndlevel)) {
                         \local_edusupport\lib::set_2nd_level($discussion->id);
-                    } else {
+                    }
+                    else if (get_config('local_edusupport', 'auto2ndlvl')) {
+                        \local_edusupport\lib::set_2nd_level($discussion->id);
+                    }
+                    else {
                         // Post answer containing the reponsibles.
                         $managers = array_values(\local_edusupport\lib::get_course_supporters($forum));
                         $resposibles = array();
@@ -287,9 +291,6 @@ class local_edusupport_external extends external_api {
                             ),
                             get_string('issue_responsibles:subject', 'local_edusupport')
                         );
-                    }
-                    else if (get_config('local_edusupport', 'auto2ndlvl')) {
-                        \local_edusupport\lib::set_2nd_level($discussion->id);
                     }
 
                     $reply['discussionid'] = $discussionid;

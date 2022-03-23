@@ -264,7 +264,7 @@ class lib {
             ),
         );
 
-      
+
         $event = \mod_forum\event\post_created::create($eventparams);
         $event->add_record_snapshot('forum_posts', $post);
         $event->trigger();
@@ -542,7 +542,7 @@ class lib {
      * @return true or false.
      */
     public static function set_2nd_level($discussionid) {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $PAGE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         $issue = self::get_issue($discussionid, true);
@@ -595,14 +595,18 @@ class lib {
             get_string('issue_assigned:subject', 'local_edusupport')
         );
 
-        $posthtml  = get_string('issue:assigned', 'local_edusupport')." ".$discussion->name;
+        if (!isset($PAGE->context)) {
+            $PAGE->set_context(\context_system::instance());
+        }
+        
+        $posthtml  = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name;
         $postsubject = $discussion->name;
         $msg = new \core\message\message();
         $touser = $DB->get_record('user', array('id' => $dedicated->userid));
         $msg->userfrom = $USER;
         $msg->userto = $touser;
         $msg->subject = $postsubject;
-        $msg->fullmessage = $posttext;
+        $msg->fullmessage = $posthtml;
         $msg->fullmessageformat = FORMAT_PLAIN;
         $msg->fullmessagehtml = $posthtml;
         $msg->smallmessage = $postsubject;
@@ -623,7 +627,7 @@ class lib {
      * @return true on success.
      */
     public static function set_current_supporter($discussionid, $userid) {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $PAGE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         $issue = self::get_issue($discussionid);
@@ -664,15 +668,18 @@ class lib {
             get_string('issue_assigned:subject', 'local_edusupport')
         );
 
+        if (!isset($PAGE->context)) {
+            $PAGE->set_context(\context_system::instance());
+        }
 
-        $posthtml  = get_string('issue:assigned', 'local_edusupport')." ".$discussion->name;
+        $posthtml  = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name;
         $postsubject = $discussion->name;
         $msg = new \core\message\message();
         $touser = $DB->get_record('user', array('id' => $userid));
         $msg->userfrom = $USER;
         $msg->userto = $touser;
         $msg->subject = $postsubject;
-        $msg->fullmessage = $posttext;
+        $msg->fullmessage = $posthtml;
         $msg->fullmessageformat = FORMAT_PLAIN;
         $msg->fullmessagehtml = $posthtml;
         $msg->smallmessage = $postsubject;
