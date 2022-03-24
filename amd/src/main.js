@@ -17,7 +17,7 @@ define(
                     args: { discussionid: discussionid },
                     done: function(result) {
                         try { result = JSON.parse(result); } catch(e) { }
-                        if (MAIN.debug > 0) console.log('local_edusupport_external:local_edusupport_get_potentialsupporters', result);
+                        if (MAIN.debug > 0) {console.log('local_edusupport_external:local_edusupport_get_potentialsupporters', result);}
                         var supportlevels = Object.keys(result.supporters);
                         var body = '<input type="hidden" value="' + discussionid + '" />';
                         body += '<select>';
@@ -259,6 +259,13 @@ define(
 
             if (faqread  == 0) {
                 var editaPresent = STR.get_string('faqread', 'local_edusupport', {});
+                $.when(editaPresent).done(function(localizedEditString) {
+                    NOTIFICATION.alert('', localizedEditString);
+                });
+                return;
+            }
+            if (subject.length == 0) {
+                var editaPresent = STR.get_string('select_subject', 'local_edusupport', {});
                 $.when(editaPresent).done(function(localizedEditString) {
                     NOTIFICATION.alert('', localizedEditString);
                 });

@@ -116,6 +116,16 @@ if ($hassiteconfig) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configtextarea(
+            'local_edusupport/predefined_subjects',
+            get_string('predefined_subjects', 'local_edusupport'),
+            get_string('predefined_subjects:description', 'local_edusupport'),
+            '',
+            PARAM_TEXT
+        )
+    );
+
 
 
     // @TODO a feature from the future.

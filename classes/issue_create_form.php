@@ -68,7 +68,6 @@ class issue_create_form extends moodleform {
             $mform->addElement('html', '<input type="checkbox" id="id_faqread" class="autochecked" style="display: none;" checked="checked" />');
         }
 
-
         $mform->addElement('html','<div id="create_issue_input">');
 
         require_once($CFG->dirroot . '/local/edusupport/classes/lib.php');
@@ -145,9 +144,18 @@ class issue_create_form extends moodleform {
 
         $mform->addElement('html', implode("\n", $managerslabel));
 
-        $mform->addElement('text', 'subject', get_string('subject', 'local_edusupport'), array('style' => 'width: 100%;', 'type' => 'tel'));
-        $mform->setType('subject', PARAM_TEXT);
-        $mform->addRule('subject', get_string('subject_missing', 'local_edusupport'), 'required', null, 'server');
+        if (!empty($usesubjects = get_config('local_edusupport', 'predefined_subjects'))) {
+            $options = ['' => ''];
+            $options += explode(PHP_EOL, $usesubjects);
+            $options = array_combine($options, $options);
+            $mform->addElement('select', 'subject', get_string('subject', 'local_edusupport'), $options, array('style' => 'width: 100%;'));
+            $mform->setType('subject', PARAM_TEXT);
+            $mform->addRule('subject', get_string('subject_missing', 'local_edusupport'), 'required', null, 'server');
+        } else {
+            $mform->addElement('text', 'subject', get_string('subject', 'local_edusupport'), array('style' => 'width: 100%;', 'type' => 'tel'));
+            $mform->setType('subject', PARAM_TEXT);
+            $mform->addRule('subject', get_string('subject_missing', 'local_edusupport'), 'required', null, 'server');
+        }
 
         if(!$disablephonefield) {
             $mform->addElement('text', 'contactphone', get_string('contactphone', 'local_edusupport'), array('style' => 'width: 100%;'));

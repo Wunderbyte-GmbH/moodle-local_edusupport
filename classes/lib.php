@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 
-
 class lib {
     const SYSTEM_COURSE_ID = 1;
     /**
@@ -66,18 +65,28 @@ class lib {
             }
         }
     }
-    public static function can_config_course($courseid){
+
+    /**
+     * @param int $courseid
+     * @return bool
+     */
+    public static function can_config_course($courseid): bool{
         global $USER;
         if (self::can_config_global()) return true;
         $context = context_course::instance($courseid);
         return is_enrolled($context, $USER, 'moodle/course:activityvisibility');
     }
-    public static function can_config_global(){
+
+    /**
+     * @return bool
+     */
+    public static function can_config_global(): bool{
         return self::is_admin();
     }
+
     /**
      * Close an issue.
-     * @param discussionid.
+     * @param int discussionid.
     **/
     public static function close_issue($discussionid) {
         global $CFG, $DB, $USER;
@@ -499,7 +508,7 @@ class lib {
      * Similar to close_issue, but can be done by a trainer in the supportforum.
      * @param discussionid.
     **/
-    public static function revoke_issue($discussionid) {
+    public static function revoke_issue($discussionid): bool {
         global $CFG, $DB, $USER;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
@@ -541,7 +550,7 @@ class lib {
      * @param discussionid.
      * @return true or false.
      */
-    public static function set_2nd_level($discussionid) {
+    public static function set_2nd_level($discussionid): bool {
         global $CFG, $DB, $USER, $PAGE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
@@ -598,7 +607,7 @@ class lib {
         if (!isset($PAGE->context)) {
             $PAGE->set_context(\context_system::instance());
         }
-        
+
         $posthtml  = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name;
         $postsubject = $discussion->name;
         $msg = new \core\message\message();
@@ -626,7 +635,7 @@ class lib {
      * @param userid.
      * @return true on success.
      */
-    public static function set_current_supporter($discussionid, $userid) {
+    public static function set_current_supporter($discussionid, $userid): bool {
         global $CFG, $DB, $USER, $PAGE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
@@ -693,7 +702,13 @@ class lib {
         return true;
     }
 
-    public static function set_prioritylvl($discussionid,$priority) {
+    /**
+     * @param $discussionid
+     * @param $priority
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function set_prioritylvl($discussionid,$priority): bool {
         global $DB;
 
         $issue = self::get_issue($discussionid);
@@ -702,14 +717,13 @@ class lib {
 
         $DB->update_record('local_edusupport_issues', $issue);
         return true;
-
     }
-
 
     /**
      * Add support user to the list of assigned users.
-     * @param int dicussionid
-     * @param int userid
+     * @param int $discussionid
+     * @param int $userid
+     * @return bool|int
      */
     public static function subscription_add($discussionid, $userid = 0) {
         global $DB, $USER;
