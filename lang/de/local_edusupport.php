@@ -80,7 +80,7 @@ $string['issue:assigned'] = 'Sie wurden folgendem Ticket zugewiesen:';
 $string['issue_assign'] = 'Zuordnen';
 $string['issue_assign_3rdlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat dieses Ticket an <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> weitergeleitet.';
 $string['issue_assign_3rdlevel:postself'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat die Verantwortung für dieses Ticket übernommen.';
-$string['issue_assign_nextlevel'] = 'Dieses Ticket dem {$a->sitename}-Support zuweisen';
+$string['issue_assign_nextlevel'] = 'Dieses Ticket dem Plattform-Support zuweisen';
 $string['issue_assign_nextlevel:error'] = 'Entschuldigung, das Ticket konnte nicht dem Plattform Support Team zugewiesen werden.';
 $string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat dieses Ticket dem nächsthöheren Supportlevel zugewiesen!';
 $string['issue_assigned:subject'] = 'Supportanfrage zugeordnet';

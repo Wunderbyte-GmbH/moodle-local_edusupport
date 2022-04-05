@@ -84,7 +84,7 @@ $string['issue:assigned'] = 'You have been assigned to this issue:';
 $string['issue_assign'] = 'Assign issue';
 $string['issue_assign_3rdlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> has assigned this issue to <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a>.';
 $string['issue_assign_3rdlevel:postself'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> has taken responsibility for this issue.';
-$string['issue_assign_nextlevel'] = 'Forward to the {$a->sitename}-support team';
+$string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
 $string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team';
 $string['issue_assigned:subject'] = 'Supportissue assigned';
