@@ -123,8 +123,11 @@ class lib {
 
         // 4.) remove issue-link from database
         $DB->update_record('local_edusupport_issues', $issue);
-        // Mark post as closed
-        $discussion->name = "[Closed] " . ltrim($discussion->name, "[Closed] ");
+        // Mark post as closed.
+        $prefix = "[Closed] ";
+        if (substr($discussion->name, 0, strlen($prefix)) == $prefix) {
+            $discussion->name =  "[Closed] " . substr($discussion->name, strlen($prefix));
+        }
         $discussion->modified = time();
         $DB->update_record('forum_discussions', $discussion);
 
@@ -189,8 +192,11 @@ class lib {
 
         // 4.) remove issue-link from database
         $DB->update_record('local_edusupport_issues', $issue);
-        // Mark post as closed
-        $discussion->name = ltrim($discussion->name, "[Closed] ");
+        // Mark post as closed.
+        $prefix = "[Closed] ";
+        if (substr($discussion->name, 0, strlen($prefix)) == $prefix) {
+            $discussion->name = substr($discussion->name, strlen($prefix));
+        }
         $discussion->modified = time();
         $DB->update_record('forum_discussions', $discussion);
 

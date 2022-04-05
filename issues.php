@@ -68,6 +68,8 @@ if (!\local_edusupport\lib::is_supportteam()) {
     $params['count']['other'] = 0;
     $params['userlinks'] = get_config('local_edusupport','userlinks');
     $params['hasprio'] = $hasprio;
+    // Detect closed issues by adding prefix.
+    $prefix = "[Closed] ";
     foreach (array_reverse($issues) AS $issue) {
         // Collect certain data about this issue.
         $discussion = $DB->get_record('forum_discussions', array('id' => $issue->discussionid));
@@ -108,18 +110,21 @@ if (!\local_edusupport\lib::is_supportteam()) {
         if (!empty($reopen) && $reopen == $issue->discussionid) {
             \local_edusupport\lib::reopen_issue($issue->discussionid);
             $issue->opened = "1";
-            $issue->name = ltrim($issue->name, "[Closed] ");
+            if (substr($issue->name, 0, strlen($prefix)) == $prefix) {
+                $issue->name = substr($issue->name, strlen($prefix));
+            }
         }
-       if (!empty($close) && $close == $issue->discussionid) {
+        if (!empty($close) && $close == $issue->discussionid) {
             \local_edusupport\lib::close_issue($issue->discussionid);
             $issue->opened = "0";
             unset($assigned);
-            $issue->name = "[Closed] " . ltrim($discussion->name, "[Closed] ");
+            if (substr($issue->name, 0, strlen($prefix)) == $prefix) {
+                $issue->name = substr($issue->name, strlen($prefix));
+            }
         }
         if (!empty($prio) && $prio == $issue->discussionid && !empty($lvl)) {
             \local_edusupport\lib::set_prioritylvl($issue->discussionid,$lvl);
             $issue->opened = $lvl;
-            //$issue->name = "[Closed] " . ltrim($discussion->name, "[Closed] ");
         }
 
         // Now get the current supporter
