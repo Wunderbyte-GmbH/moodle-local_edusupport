@@ -937,9 +937,12 @@ class lib {
 
             if ($issupportforum) {
                 // Assign all current supportteam users.
-                $sql = "SELECT *
-                            FROM {local_edusupport_supporters}
-                            WHERE courseid=? OR courseid=?";
+                $sql = "SELECT les.*
+                        FROM {local_edusupport_supporters} les
+                        JOIN {user} u
+                        ON u.id = les.userid
+                        WHERE (les.courseid=? OR les.courseid=?)
+                        AND u.deleted != 1";
                 $params = array(self::SYSTEM_COURSE_ID, $forum->course);
                 $members = $DB->get_records_sql($sql, $params);
                 foreach ($members AS $member) {

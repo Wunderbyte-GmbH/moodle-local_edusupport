@@ -28,6 +28,7 @@ $events = array(
     "\\mod_forum\\event\\discussion_created",
     "\\mod_forum\\event\\discussion_deleted",
     "\\mod_forum\\event\\post_created",
+    "\\core\\event\\user_deleted",
 );
 foreach ($events AS $event) {
     $observers[] = array(
