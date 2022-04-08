@@ -37,7 +37,7 @@ $courseid = optional_param('courseid', \local_edusupport\lib::SYSTEM_COURSE_ID, 
 $context = \context_system::instance();
 $PAGE->set_context($context);
 require_login();
-$PAGE->set_url(new \moodle_url('/local/edusupport/choosesupporters.php', array('id' => $id, 'userid' => $userid, 'supportlevel' => $supportlevel, 'remove' => $remove)));
+$PAGE->set_url(new \moodle_url('/local/edusupport/choosesupporters.php', array('id' => $id, 'userid' => $userid)));
 
 $title = get_string('supporters', 'local_edusupport');
 $PAGE->set_title($title);
@@ -80,7 +80,7 @@ if (!is_siteadmin()) {
                     'supportlevel' => $supportlevel,
                 ));
             }
-        } else {
+        } else if (!$DB->record_exists('local_edusupport_supporters', array('courseid' => $courseid, 'userid' => $userid))) {
             $success = $DB->insert_record('local_edusupport_supporters', array(
                 'courseid' => $courseid,
                 'userid' => $userid,
@@ -114,7 +114,8 @@ if (!is_siteadmin()) {
 
     $sql = "SELECT bes.*,u.firstname,u.lastname
                 FROM {local_edusupport_supporters} bes, {user} u
-                WHERE u.id=bes.userid
+                WHERE u.id = bes.userid
+                AND u.deleted != 1
                 ORDER BY u.lastname ASC, u.firstname ASC, bes.supportlevel ASC";
     $supporters = array_values($DB->get_records_sql($sql, array()));
     echo $OUTPUT->render_from_template('local_edusupport/choosesupporters', array('supporters' => $supporters, 'wwwroot' => $CFG->wwwroot));
