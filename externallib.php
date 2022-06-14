@@ -29,7 +29,6 @@ require_once($CFG->libdir . "/externallib.php");
 require_once($CFG->dirroot . '/local/edusupport/classes/lib.php');
 
 
-
 class local_edusupport_external extends external_api {
     public static function close_issue_parameters() {
         return new external_function_parameters(array(
@@ -69,6 +68,8 @@ class local_edusupport_external extends external_api {
     public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone, $guestmail) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
 
+        $protecttime = get_config('local_edusupport','spamprotectionthreshold');
+        $protectamount = get_config('local_edusupport','spamprotectionlimit');
 
         $subjectprefixenabled = get_config('local_edusupport', 'predefined_subjects_prefix');
         $guestmodeenabled = false;
@@ -79,8 +80,10 @@ class local_edusupport_external extends external_api {
         } else {
             $user = $USER;
         }
-        //$user = user_get_users_by_id($guestuser);
-        $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone, 'guestmail' => $guestmail));
+        $log[] = time();
+        $cache->set('log', $log);
+
+        $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone));
         $reply = array(
             'discussionid' => 0,
             'responsibles' => array(),
@@ -610,6 +613,7 @@ class local_edusupport_external extends external_api {
             'issueid' => new external_value(PARAM_INT, 'issueid'),
         ));
     }
+
     public static function set_status($status, $issueid) {
         global $USER;
         require_login();
