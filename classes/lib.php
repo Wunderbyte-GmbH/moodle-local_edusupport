@@ -66,6 +66,9 @@ class lib {
         }
     }
 
+
+
+
     /**
      * @param int $courseid
      * @return bool
@@ -171,9 +174,9 @@ class lib {
                 $extralinks[] = $extralink;
             }
         }
-
+        $prepageenabled = get_config('local_edusupport', 'enableprepage');
         global $OUTPUT;
-        $nav = $OUTPUT->render_from_template('local_edusupport/injectbutton', array('extralinks' => $extralinks, 'hasextralinks' => count($extralinks) > 0));
+        $nav = $OUTPUT->render_from_template('local_edusupport/helpbutton', array('extralinks' => $extralinks, 'hasextralinks' => count($extralinks) > 0, 'prepageenabled' => $prepageenabled));
         $cache->set('rendered', $nav);
         return $nav;
     }
@@ -595,6 +598,7 @@ class lib {
             $keys = array_keys($supporters);
             $dedicated = $supporters[$keys[array_rand($keys)]];
         }
+
         $DB->set_field('local_edusupport_issues', 'currentsupporter', $dedicated->userid, array('discussionid' => $discussion->id));
         self::subscription_add($discussionid, $dedicated->userid);
 
@@ -966,5 +970,37 @@ class lib {
             $DB->set_field('local_edusupport', 'dedicatedsupporter', $userid, array('forumid' => $forumid));
         }
         return true;
+    }
+
+    /**
+     * Find a support user that has the same customfieldvalue as a user (can be enabled in settings)
+     * @return array supportuserid|false
+     **/
+    public static function get_support_user_by_matching_customfield($courseid, $cfn) {
+        global $DB, $USER;
+        $userid = $USER->id;
+        $customfieldname = get_config('local_edusupport', 'customfieldname');
+        $sql = "SELECT uid.data, uif.id FROM {user_info_data} uid
+        LEFT JOIN {user_info_field} uif
+        on uid.fieldid = uif.id
+        WHERE uif.name = :customfieldname AND uid.userid = :userid";
+        $params = array('courseid' => $courseid, 'customfieldname' => $customfieldname, 'userid' => $userid);
+        $customfielddata = $DB->get_record_sql($sql, $params);
+        $role = get_config('local_edusupport', 'rolename');
+        $params = array('courseid' => $courseid, 'fieldid' => $customfielddata->id, 'customfieldvalue' => $customfielddata->data, 'role' => $role);
+        $sql = "SELECT  uid.userid, u.firstname, u.lastname,  uid.data,  r.shortname from {course} ic
+                        JOIN {context} con ON con.instanceid = ic.id
+                        JOIN {role_assignments} ra ON con.id = ra.contextid AND con.contextlevel = 50
+                        JOIN {role} r ON ra.roleid = r.id
+                        JOIN {user} u ON u.id = ra.userid
+                        LEFT JOIN {groups_members} gm ON u.id = gm.userid
+                        LEFT JOIN {user_info_data} uid on u.id = uid.userid
+                        WHERE ic.id = :courseid AND u.id > 0 AND uid.fieldid = :fieldid And uid.data = :customfieldvalue And r.shortname = :role";
+        $supportusers = $DB->get_records_sql($sql, $params);
+        if ($supportusers) {
+            return $supportusers;
+        } else {
+            return false;
+        }
     }
 }

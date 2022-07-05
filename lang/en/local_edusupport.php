@@ -38,6 +38,7 @@ $string['changes_saved_successfully'] = 'Changes saved successfully.';
 $string['changes_saved_fail'] = 'Changes could not be saved.';
 $string['contactphone'] = 'Telephone';
 $string['contactphone_missing'] = 'Please enter your telephone number';
+$string['continue'] = 'continue';
 $string['coursecategorydeletion'] = 'You are trying to remove a category, that contains supportforums. Please ensure, that you disable the support forums first!';
 $string['courseconfig'] = 'Course config';
 $string['create_issue'] = 'Contact support';
@@ -64,12 +65,19 @@ $string['goto_tutorials'] = 'Documents & Tutorials';
 $string['goto_targetforum'] = 'Supportforum';
 $string['edusupport:manage'] = 'Manage';
 $string['email_to_xyz'] = 'Send mail to {$a->email}';
+$string['enableprepage'] = "enable Prepage";
+$string['enableprepage:description'] = "enables a site before form";
+$string['prepage'] = "prepage content";
+$string['prepage:description'] = "content displayed before form e.g. faq";
 $string['extralinks'] = 'Extralinks';
 $string['extralinks:description'] = 'If you enter links here, the "help"-Button will be a menu instead of button. It will include the "help"-Button as first element, and all extra links as additional links. Enter links line by line in the following form: linkname|url|faicon|target';
 $string['faqlink'] = 'FAQ-link';
 $string['faqlink:description'] =  'link to FAQ';
 $string['faqread'] = 'faq read toggle';
 $string['faqread:description'] =  'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
+
+
+
 $string['header'] = 'Request for help in <i>{$a}</i>';
 $string['holidaymode'] = 'Holidaymode';
 $string['holidaymode_is_on'] = 'Holidaymode is on';
@@ -175,6 +183,15 @@ $string['userlinks:description'] =  'show userlinks in issues list';
 $string['your_issues'] = 'Your issues';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';
+
+$string['back'] = 'back';
+$string['continue'] = 'continue';
+$string['firstlvlgroupmode'] = '1st level support group modus';
+$string['firstlvlgroupmode:description'] = 'Enables group mode so that non teachers (other roles) get connected based on a customfield and can answer in the courseforum (make sure to give the role "canforward2ndlevel" right. Also enable group mode in course and set forum to seperate groups.';
+$string['customfieldname'] = 'customfieldname for group mode';
+$string['customfieldname:description'] = 'customfieldname for group mode';
+$string['rolename'] = 'rolename';
+$string['rolename:description'] = 'rolename for the supporters (e.g. teacher instead of editingtecher or customrole)';
 
 /* PrivaCY API */
 $string['privacy:metadata:edusupport:subscr'] = 'All subscribed issues';

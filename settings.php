@@ -126,7 +126,53 @@ if ($hassiteconfig) {
         )
     );
 
+    // Prepage before form
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'local_edusupport/enableprepage',
+            get_string('enableprepage', 'local_edusupport'),
+            get_string('enableprepage:description', 'local_edusupport'),
+            0
+        )
+    );
 
+    $settings->add(
+        new admin_setting_configtextarea(
+            'local_edusupport/prepage',
+            get_string('prepage', 'local_edusupport'),
+            get_string('prepage:description', 'local_edusupport'),
+            '',
+            PARAM_RAW
+        )
+    );
+
+    // Prepage before form
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'local_edusupport/firstlvlgroupmode',
+            get_string('firstlvlgroupmode', 'local_edusupport'),
+            get_string('firstlvlgroupmode:description', 'local_edusupport'),
+            0
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'local_edusupport/customfieldname',
+            get_string('customfieldname', 'local_edusupport'),
+            get_string('customfieldname:description', 'local_edusupport'),
+            ''
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'local_edusupport/rolename',
+            get_string('rolename', 'local_edusupport'),
+            get_string('rolename:description', 'local_edusupport'),
+            ''
+        )
+    );
 
     // @TODO a feature from the future.
     // $settings->add(new admin_setting_configcheckbox('local_edusupport/sendreminders', get_string('cron:reminder:title', 'local_edusupport'), '', '', PARAM_INT));

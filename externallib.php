@@ -169,6 +169,38 @@ class local_edusupport_external extends external_api {
                     'attachmentsid' => null
                 );
 
+                // create group for user id firstlvlgroupmode is active
+                if (get_config('local_edusupport', 'firstlvlgroupmode') && $cfn = get_config('local_edusupport', 'customfieldname')) {
+                    require_once("$CFG->dirroot/group/lib.php");
+                    $groupname = fullname($USER) . ' (' . $USER->id . '-coursesupport)';
+                    $group = $DB->get_record('groups', array('courseid' => $forum->course, 'name' => $groupname));
+                    if (empty($group->id)) {
+                        // create a group for this user.
+                        $group = (object) array(
+                            'courseid' => $forum->course,
+                            'name' => $groupname,
+                            'description' => '',
+                            'descriptionformat' => 1,
+                            'timecreated' => time(),
+                            'timemodified' => time(),
+                        );
+                        $group->id = groups_create_group($group, false);
+                    }
+                    if (!empty($group->id)) {
+                        // find supporters
+                        $groupusers = \local_edusupport\lib::get_support_user_by_matching_customfield($forum->course, $cfn);
+                        groups_add_member($group, $USER);
+                        if ($groupusers) {
+                            $responsibles = array();
+                            foreach ($groupusers as $user) {
+                                groups_add_member($group, $user->userid);
+                                $responsibles[] = "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$user->userid}\" target=\"_blank\">{$user->firstname} {$user->lastname}</a>";
+                            }
+                        } else {
+                            $postto2ndlevel = true;
+                        }
+                    }
+                }
                 // Normalize group.
                 if (!groups_get_activity_groupmode($cm)) {
                     // Groups not supported, force to -1.
@@ -212,6 +244,7 @@ class local_edusupport_external extends external_api {
                 } else {
                     $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
                 }
+
 
                 if ($discussionid = forum_add_discussion($discussion)) {
                     $discussion->id = $discussionid;
@@ -266,8 +299,10 @@ class local_edusupport_external extends external_api {
                     $settings = new stdClass();
                     $settings->discussionsubscribe = $options['discussionsubscribe'];
                     forum_post_subscription($settings, $forum, $discussion);
-
-                    if ($canpostto2ndlevel && !empty($postto2ndlevel)) {
+                    if ($postto2ndlevel && get_config('local_edusupport', 'firstlvlgroupmode')) {
+                        \local_edusupport\lib::set_2nd_level($discussion->id);
+                    }
+                    else if ($canpostto2ndlevel && !empty($postto2ndlevel)) {
                         \local_edusupport\lib::set_2nd_level($discussion->id);
                     }
                     else if (get_config('local_edusupport', 'auto2ndlvl')) {
@@ -276,9 +311,13 @@ class local_edusupport_external extends external_api {
                     else {
                         // Post answer containing the reponsibles.
                         $managers = array_values(\local_edusupport\lib::get_course_supporters($forum));
-                        $resposibles = array();
-                        foreach ($managers as $manager) {
-                            $responsibles[] = "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$manager->id}\" target=\"_blank\">{$manager->firstname} {$manager->lastname}</a>";
+
+                        if (!get_config('local_edusupport', 'firstlvlgroupmode')) {
+
+                            $responsibles = array();
+                            foreach ($managers as $manager) {
+                                $responsibles[] = "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$manager->id}\" target=\"_blank\">{$manager->firstname} {$manager->lastname}</a>";
+                            }
                         }
                         \local_edusupport\lib::create_post($discussion->id,
                             get_string(
@@ -345,7 +384,7 @@ class local_edusupport_external extends external_api {
      * @return postid of created issue
      */
     public static function create_form($url, $image, $forumid) {
-        global $CFG, $PAGE, $USER;
+        global $CFG, $PAGE, $USER, $OUTPUT;
 
         $params = self::validate_parameters(self::create_form_parameters(), array('url' => $url, 'image' => $image, 'forumid' => $forumid));
 
@@ -357,7 +396,17 @@ class local_edusupport_external extends external_api {
         $params['contactphone'] = $USER->phone1;
         $form = new \issue_create_form(null, null, 'post', '_self', array('id' => 'local_edusupport_create_form'), true);
         $form->set_data((object) $params);
-        return $form->render();
+        $prepageenabled = get_config('local_edusupport', 'enableprepage');
+        $prepage = get_config('local_edusupport', 'prepage');
+        if ($prepageenabled && $prepage) {
+            $templatedata['prepage'] = $prepage;
+            $templatedata['form'] = $form->render();
+            $output = $OUTPUT->render_from_template('local_edusupport/prepageenabled', $templatedata);
+        } else {
+            $output = $form->render();
+        }
+
+        return $output;
     }
     /**
      * Return definition.

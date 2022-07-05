@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die;
 function local_edusupport_before_standard_html_head(){
     global $CFG, $DB, $OUTPUT, $PAGE, $SITE, $USER;
     if (isloggedin() && !isguestuser($USER)) {
-        echo \local_edusupport\lib::get_supportmenu();
+
     }
 
     if (strpos($_SERVER["SCRIPT_FILENAME"], '/mod/forum/discuss.php') > 0) {
@@ -268,4 +268,25 @@ function local_edusupport_pre_course_module_delete($cm) {
     if (!empty($forumtype->id) && !empty($cm->module) && $cm->module == $forumtype->id) {
         \local_edusupport\lib::supportforum_disable($cm->instance);
     }
+}
+
+/**
+ * Renders the popup.
+ *
+ * @param renderer_base $renderer
+ * @return string The HTML
+ */
+function local_edusupport_render_navbar_output(\renderer_base $renderer) {
+
+    // Early bail out conditions.
+    if (!isloggedin() || isguestuser()) {
+        return '';
+    }
+
+    $output = \local_edusupport\lib::get_supportmenu();
+    /*
+    '<a href="#" class="nav-link d-inline-block position-relative" onclick="require([\'local_edusupport/main\'], function(MAIN){ MAIN.showBox(); }); return false;" style="padding-right:0; padding-left:0;">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" style=" width: 40px; -ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M21 12.22C21 6.73 16.74 3 12 3c-4.69 0-9 3.65-9 9.28c-.6.34-1 .98-1 1.72v2c0 1.1.9 2 2 2h1v-6.1c0-3.87 3.13-7 7-7s7 3.13 7 7V19h-8v2h8c1.1 0 2-.9 2-2v-1.22c.59-.31 1-.92 1-1.64v-2.3c0-.7-.41-1.31-1-1.62z" fill="#2E3942" opacity="0.8"></path><circle cx="9" cy="13" r="1" fill="#2E3942" opacity="0.8"></circle><circle cx="15" cy="13" r="1" fill="#2E3942" opacity="0.8"></circle><path d="M18 11.03A6.04 6.04 0 0 0 12.05 6c-3.03 0-6.29 2.51-6.03 6.45a8.075 8.075 0 0 0 4.86-5.89c1.31 2.63 4 4.44 7.12 4.47z" fill="#2E3942" opacity="0.8"></path></svg>
+    </a>';*/
+    return $output;
 }

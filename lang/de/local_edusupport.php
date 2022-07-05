@@ -37,6 +37,7 @@ $string['changes_saved_successfully'] = 'Änderungen erfolgreich gespeichert.';
 $string['changes_saved_fail'] = 'Änderungen konnten nicht gespeichert werden.';
 $string['contactphone'] = 'Telefon';
 $string['contactphone_missing'] = 'Bitte geben Sie Ihre Telefonnummer für Rückfragen an!';
+$string['continue'] = 'Weiter';
 $string['coursecategorydeletion'] = 'Sie versuchen einen Kursbereich zu löschen, der Supportforen enthält. Bitte stellen Sie sicher, dass Sie zuvor die Supportforen deaktivieren!';
 $string['courseconfig'] = 'Kurskonfiguration';
 $string['create_issue'] = 'Support kontaktieren';
@@ -60,6 +61,10 @@ $string['goto_tutorials'] = 'Hilfe & Anleitungen';
 $string['goto_targetforum'] = 'Supportforum';
 $string['edusupport:manage'] = 'Verwalten';
 $string['email_to_xyz'] = 'Sende e-Mail an {$a->email}';
+$string['enableprepage'] = "enable Prepage";
+$string['enableprepage:description'] = "enables a site before form";
+$string['prepage'] = "prepage content";
+$string['prepage:description'] = "content displayed before form e.g. faq";
 $string['extralinks'] = 'Extralinks';
 $string['extralinks:description'] = 'Wenn Sie hier Links eintragen, dann wird der "Hilfe"-Button zu einem Menü. Dieses wird den "Hilfe"-Button als ersten Menüeintrag anzeigen, und alle hier eingetragenen Links als zusätzliche Hilfeanlaufstellen. Geben Sie die Links zeilenweise in folgendem Format an: Linkname|URL|faicon|Target';
 $string['faqlink'] = 'FAQ-Link';
@@ -171,6 +176,16 @@ $string['userlinks:description'] =  'zeige Userlinks in Taskliste';
 $string['your_issues'] = 'Ihre Anfragen';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';
+
+$string['back'] = 'zurück';
+$string['continue'] = 'weiter';
+$string['firstlvlgroupmode'] = '1st level Support Gruppen Modus';
+$string['firstlvlgroupmode:description'] = 'Aktiviert den Gruppenmodus, so dass Nicht-Lehrer (andere Rollen) auf der Grundlage eines benutzerdefinierten Feldes verbunden werden und im Kursforum antworten können (stellen Sie sicher, dass Sie der Rolle "canforward2ndlevel" das Recht geben. Aktivieren Sie auch den Gruppenmodus im Kurs und aktivieren Sie getrennte Gruppen.';
+$string['customfieldname'] = 'Profilfeldname für den Gruppenmodus';
+$string['customfieldname:description'] = 'Profilfeldname für den Gruppenmodus';
+$string['rolename'] = 'Rollenname';
+$string['rolename:description'] = 'Rollenname für den 1st Level Support (z.B. teacher statt editingtecher oder eine eigens erstellte Rolle)';
+
 
 /* Privacy API */
 $string['privacy:metadata:edusupport:subscr'] = 'Alle beobachteten Tickets';
