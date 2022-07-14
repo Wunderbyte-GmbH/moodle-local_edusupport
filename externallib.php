@@ -399,7 +399,7 @@ class local_edusupport_external extends external_api {
         $prepageenabled = get_config('local_edusupport', 'enableprepage');
         $prepage = get_config('local_edusupport', 'prepage');
         if ($prepageenabled && $prepage) {
-            $templatedata['prepage'] = $prepage;
+            $templatedata['prepage'] = format_text($prepage, FORMAT_HTML);
             $templatedata['form'] = $form->render();
             $output = $OUTPUT->render_from_template('local_edusupport/prepageenabled', $templatedata);
         } else {

@@ -564,14 +564,15 @@ class lib {
         if (!self::is_supportforum($discussion->forum)) {
             return false;
         }
-
+        // Check if holidaymode is enabled.
+        $holidaymode = get_config('local_edusupport', 'holidaymodeenabled') ? "AND holidaymode < ? " : " ";
         // @TODO Only subscribe 1 person and make it responsible!
         $supportforum = $DB->get_record('local_edusupport', array('forumid' => $discussion->forum));
         $sql = "SELECT *
                     FROM {local_edusupport_supporters}
-                    WHERE supportlevel = ''
-                        AND holidaymode < ?
-                        AND (
+                    WHERE supportlevel = ''"
+                        .$holidaymode.
+                        "AND (
                             courseid = ?
                             OR
                             courseid = ?

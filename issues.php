@@ -22,7 +22,7 @@
  */
 
 require_once('../../config.php');
-//require_once($CFG->dirroot . '/local/edusupport/classes/lib.php');
+
 
 $context = \context_system::instance();
 $PAGE->set_context($context);
@@ -172,26 +172,29 @@ if (!\local_edusupport\lib::is_supportteam()) {
     }
 
     $supporter = $DB->get_record('local_edusupport_supporters', array('userid' => $USER->id));
+    // Check if holidaymode is enabled.
+    $holidaymodeenabled = get_config('local_edusupport', 'holidaymodeenabled');
+    if ($holidaymodeenabled) {
+        $hm = optional_param('holidaymode', 0, PARAM_INT);
+        if ($hm == -1) {
+            // Disable holiday mode.
+            $supporter->holidaymode = 0;
+            $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, array('userid' => $supporter->userid));
+        } elseif (is_array($hm)) {
+            $supporter->holidaymode = mktime($hm['hour'], $hm['minute'], 0, $hm['month'], $hm['day'], $hm['year']);
+            $DB->set_field('local_edusupport_supporters', 'holidaymode', $supporter->holidaymode, array('userid' => $supporter->userid));
+        }
+        if ($supporter->holidaymode < time()) {
+            // Expired holidaymode - invalidate.
+            $supporter->holidaymode = 0;
+            $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, array('userid' => $supporter->userid));
+        }
 
-    $hm = optional_param('holidaymode', 0, PARAM_INT);
-    if ($hm == -1) {
-        // Disable holiday mode.
-        $supporter->holidaymode = 0;
-        $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, array('userid' => $supporter->userid));
-    } elseif (is_array($hm)) {
-        $supporter->holidaymode = mktime($hm['hour'], $hm['minute'], 0, $hm['month'], $hm['day'], $hm['year']);
-        $DB->set_field('local_edusupport_supporters', 'holidaymode', $supporter->holidaymode, array('userid' => $supporter->userid));
+        require_once($CFG->dirroot . '/local/edusupport/classes/holidaymode_form.php');
+        $mform = new \local_edusupport\holidaymode_form();
+        $supporter->holidayform = $mform->render();
+        echo $OUTPUT->render_from_template('local_edusupport/holidaymode', $supporter);
     }
-    if ($supporter->holidaymode < time()) {
-        // Expired holidaymode - invalidate.
-        $supporter->holidaymode = 0;
-        $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, array('userid' => $supporter->userid));
-    }
-
-    require_once($CFG->dirroot . '/local/edusupport/classes/holidaymode_form.php');
-    $mform = new \local_edusupport\holidaymode_form();
-    $supporter->holidayform = $mform->render();
-    echo $OUTPUT->render_from_template('local_edusupport/holidaymode', $supporter);
     echo $OUTPUT->render_from_template('local_edusupport/issues', $params);
 }
 
