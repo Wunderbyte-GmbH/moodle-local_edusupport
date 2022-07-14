@@ -79,6 +79,8 @@ $string['faqread:description'] =  'I confirm, that I have read the <a href="{$a}
 
 
 $string['header'] = 'Request for help in <i>{$a}</i>';
+$string['holidaymodeenabled'] = "Activate holidaymode";
+$string['holidaymodeenabled:description'] = "Holidaymode: Supportuser don't get tickets till a set date.";
 $string['holidaymode'] = 'Holidaymode';
 $string['holidaymode_is_on'] = 'Holidaymode is on';
 $string['holidaymode_is_on_descr'] = 'As long as you are on holidays, no new issues will be assigned to you.';

@@ -72,6 +72,8 @@ $string['faqlink:description'] =  'Addresse zum FAQ';
 $string['faqread'] = 'FAQ gelesen Toggler';
 $string['faqread:description'] =  'Ich bestätige hiermit die <a href="{$a}">FAQ</a> gelesen zu haben';
 $string['header'] = 'Hilfe in <i>{$a}</i> anfordern';
+$string['holidaymodeenabled'] = "Urlaubsmodus aktivieren";
+$string['holidaymodeenabled:description'] = "Urlaubsmodus: Supporter bekommen bis zu einem bestimmten Datum keine Tickets.";
 $string['holidaymode'] = 'Urlaubsmodus';
 $string['holidaymode_is_on'] = 'Urlaubsmodus ist an';
 $string['holidaymode_is_on_descr'] = 'Bei aktiviertem Urlaubsmodus werden Ihnen keine neuen Tickets zugewiesen.';
