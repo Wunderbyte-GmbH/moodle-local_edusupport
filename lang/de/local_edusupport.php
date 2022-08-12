@@ -189,6 +189,11 @@ $string['rolename'] = 'Rollenname';
 $string['rolename:description'] = 'Rollenname für den 1st Level Support (z.B. teacher statt editingtecher oder eine eigens erstellte Rolle)';
 
 
+/* Events */
+$string['supportadded'] = "Supportuser hinzugefgügt";
+$string['supportdeleted'] = "Supportuser gelöscht";
+$string['supportchanged'] = "Supportuser geändert";
+
 /* Privacy API */
 $string['privacy:metadata:edusupport:subscr'] = 'Alle beobachteten Tickets';
 $string['privacy:metadata:edusupport:issues'] = 'Tickets des Supporters';

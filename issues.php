@@ -23,7 +23,6 @@
 
 require_once('../../config.php');
 
-
 $context = \context_system::instance();
 $PAGE->set_context($context);
 require_login();
@@ -34,6 +33,27 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
+$event = \local_edusupport\event\supportuser_added::create(array('context' => $context, 'objectid' => 1, 'relateduserid'	=> 1, 'other' => array("useridfrom" => 1, 'supportuserid' => 1, 'supportlevel' => 1)));
+// ... code that may add some record snapshots
+$event->trigger();
+
+
+
+$event = \local_edusupport\event\supportuser_changed::create(
+    array(
+        'context' => $context,
+        'objectid' => 1,
+        'relateduserid' => 1,
+        'other' => array(
+            'useridfrom' => 1,
+            'oldsupportuserid' => 1,
+            'newsupportuserid' => 2,
+            'oldsupportlevel' => 1,
+            'newsupportlevel' => 2)
+        )
+);
+// ... code that may add some record snapshots
+$event->trigger();
 
 if (!\local_edusupport\lib::is_supportteam()) {
     $tocmurl = new moodle_url('/course/view.php', array('id' => $courseid));
@@ -49,8 +69,8 @@ if (!\local_edusupport\lib::is_supportteam()) {
     $give = optional_param('give', 0, PARAM_INT);
     $reopen = optional_param('reopen', 0, PARAM_INT);
     $close = optional_param('close', 0, PARAM_INT);
-    $prio= optional_param('prio', 0, PARAM_INT);
-    $lvl= optional_param('lvl', 0, PARAM_INT);
+    $prio = optional_param('prio', 0, PARAM_INT);
+    $lvl = optional_param('lvl', 0, PARAM_INT);
     $sql = "SELECT id,discussionid FROM {local_edusupport_issues}";
     $issues = $DB->get_records('local_edusupport_issues', array(), 'opened,id,discussionid');
 

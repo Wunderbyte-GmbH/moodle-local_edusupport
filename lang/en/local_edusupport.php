@@ -186,6 +186,9 @@ $string['your_issues'] = 'Your issues';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';
 
+$string['allowguesttickets'] = 'Allow tickets from guest user.';
+$string['allowguesttickets:description'] = 'Guest can post one ticket and gets updates via mail.';
+
 $string['back'] = 'back';
 $string['continue'] = 'continue';
 $string['firstlvlgroupmode'] = '1st level support group modus';
@@ -194,6 +197,11 @@ $string['customfieldname'] = 'customfieldname for group mode';
 $string['customfieldname:description'] = 'customfieldname for group mode';
 $string['rolename'] = 'rolename';
 $string['rolename:description'] = 'rolename for the supporters (e.g. teacher instead of editingtecher or customrole)';
+
+/* Events */
+$string['supportadded'] = "Supportuser added";
+$string['supportdeleted'] = "Supportuser deleted";
+$string['supportchanged'] = "Supportuser changed";
 
 /* PrivaCY API */
 $string['privacy:metadata:edusupport:subscr'] = 'All subscribed issues';

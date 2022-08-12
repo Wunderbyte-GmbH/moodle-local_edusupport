@@ -70,8 +70,19 @@ if (!is_siteadmin()) {
     if (!empty($userid)) {
         $success = false;
         if (!empty($id)) {
+            $record = $DB->get_record('local_edusupport_supporters', array('id' => $id));
             if (!empty($remove)) {
                 $success = $DB->delete_records('local_edusupport_supporters', array('id' => $id));
+                if ($success) {
+                    $event = \local_edusupport\event\supportuser_deleted::create(
+                        array(
+                            'context' => $context,
+                            'relateduserid' => $record->userid,
+                            'other' => array('supportuserid' => $record->userid, 'supportlevel' => $record->supportlevel)
+                        )
+                    );
+                    $event->trigger();
+                }
             } else {
                 $success = $DB->update_record('local_edusupport_supporters', array(
                     'id' => $id,
@@ -79,6 +90,22 @@ if (!is_siteadmin()) {
                     'userid' => $userid,
                     'supportlevel' => $supportlevel,
                 ));
+                if ($success) {
+                    $event = \local_edusupport\event\supportuser_changed::create(
+                        array(
+                            'context' => $context,
+                            'relateduserid' => $record->userid,
+                            'other' => array(
+                                'oldsupportuserid' => $record->userid,
+                                'newsupportuserid' => $userid,
+                                'oldsupportlevel' => $record->supportlevel,
+                                'newsupportlevel' => $supportlevel
+                            )
+                        )
+                    );
+                    $event->trigger();
+                }
+
             }
         } else if (!$DB->record_exists('local_edusupport_supporters', array('courseid' => $courseid, 'userid' => $userid))) {
             $success = $DB->insert_record('local_edusupport_supporters', array(
@@ -86,6 +113,14 @@ if (!is_siteadmin()) {
                 'userid' => $userid,
                 'supportlevel' => $supportlevel,
             ));
+            if ($success) {
+                $event = \local_edusupport\event\supportuser_added::create(
+                    array(
+                        'context' => $context,
+                        'relateduserid'	=> $userid,
+                        'other' => array('supportuserid' => $userid, 'supportlevel' => $supportlevel)));
+                $event->trigger();
+            }
         }
         if ($success) {
             \local_edusupport\lib::supportforum_rolecheck();
