@@ -182,6 +182,14 @@ if ($hassiteconfig) {
             0
         )
     );
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'local_edusupport/guestmodeenabled',
+            get_string('guestmodeenabled', 'local_edusupport'),
+            get_string('guestmodeenabled:description', 'local_edusupport'),
+            0
+        )
+    );
 
     // @TODO a feature from the future.
     // $settings->add(new admin_setting_configcheckbox('local_edusupport/sendreminders', get_string('cron:reminder:title', 'local_edusupport'), '', '', PARAM_INT));

@@ -278,11 +278,14 @@ function local_edusupport_pre_course_module_delete($cm) {
  */
 function local_edusupport_render_navbar_output(\renderer_base $renderer) {
 
+    $guestmode = get_config('local_edusupport', 'guestmodeenabled');
     // Early bail out conditions.
-    if (!isloggedin() || isguestuser()) {
+    if (!isloggedin()) {
         return '';
     }
-
+    if (isguestuser() && !$guestmode) {
+        return '';
+    }
     $output = \local_edusupport\lib::get_supportmenu();
     return $output;
 }

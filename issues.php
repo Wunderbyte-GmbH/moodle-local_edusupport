@@ -33,6 +33,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
+
 $event = \local_edusupport\event\supportuser_added::create(array('context' => $context, 'objectid' => 1, 'relateduserid'	=> 1, 'other' => array("useridfrom" => 1, 'supportuserid' => 1, 'supportlevel' => 1)));
 // ... code that may add some record snapshots
 $event->trigger();

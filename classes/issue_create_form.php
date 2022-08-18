@@ -39,6 +39,7 @@ class issue_create_form extends moodleform {
         $faqlink = get_config('local_edusupport','faqlink');
         $prioritylvl = get_config('local_edusupport','prioritylvl');
         $disablephonefield = get_config('local_edusupport','phonefield');
+        $guestuserallowed = true;//get_config('local_edusupport', 'guestuserallowed');
 
 
         $editoroptions = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0,
@@ -71,6 +72,7 @@ class issue_create_form extends moodleform {
         $mform->addElement('html','<div id="create_issue_input">');
 
         require_once($CFG->dirroot . '/local/edusupport/classes/lib.php');
+
         $potentialtargets = \local_edusupport\lib::get_potentialtargets();
 
         $hideifs = array('mail');
@@ -164,6 +166,11 @@ class issue_create_form extends moodleform {
         else {
             $mform->addElement('hidden', 'contactphone', '');
             $mform->setType('contactphone', PARAM_TEXT);
+        }
+        if (isguestuser() && $guestuserallowed) {
+            $mform->addElement('text', 'mail', get_string('mail', 'local_edusupport'), array('style' => 'width: 100%;'));
+            $mform->setType('mail', PARAM_EMAIL);
+            $mform->addRule('mail', get_string('mail_missing', 'local_edusupport'), 'required', null, 'server');
         }
         $mform->addElement('textarea', 'description', get_string('description', 'local_edusupport'), array('style' => 'width: 100%;', 'rows' => 10));
         $mform->setType('description', PARAM_RAW);

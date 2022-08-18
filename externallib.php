@@ -21,10 +21,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_edusupport\guestuser;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . "/externallib.php");
 require_once($CFG->dirroot . '/local/edusupport/classes/lib.php');
+
+
 
 class local_edusupport_external extends external_api {
     public static function close_issue_parameters() {
@@ -63,6 +67,15 @@ class local_edusupport_external extends external_api {
      */
     public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
+
+        $guestmail = true;
+        $guestmode = get_config('local_edusupport', 'guestmodeenabled');
+        if ($guestmode && isset($guestmail) && isguestuser()) {
+            $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+        } else {
+            $user = $USER;
+        }
+        //$user = user_get_users_by_id($guestuser);
         $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone));
         $reply = array(
             'discussionid' => 0,
@@ -106,7 +119,7 @@ class local_edusupport_external extends external_api {
         if ($forum_group == 'mail' || empty($forumid)) {
             // fallback and send by mail!
             $subject = $params['subject'];
-            $params['includeemail'] = $USER->email;
+            $params['includeemail'] = $user->email;
             $messagehtml = $OUTPUT->render_from_template("local_edusupport/issue_template", $params);
             $messagetext = html_to_text($messagehtml);
 
@@ -117,13 +130,13 @@ class local_edusupport_external extends external_api {
                 'name' => \fullname($supportuser),
                 'email' => $supportuser->email,
             );
-            $fromuser = $USER;
+            $fromuser = $user;
 
             if (!empty($params['image'])) {
                 $filename = $params['screenshotname'];
                 // Write image to a temporary file
                 $x = explode(",", $params['image']);
-                $filepath = $CFG->tempdir . '/edusupport-' . md5($USER->id . date("Y-m-d H:i:s"));
+                $filepath = $CFG->tempdir . '/edusupport-' . md5($user->id . date("Y-m-d H:i:s"));
                 file_put_contents($filepath, base64_decode($x[1]));
                 \core\antivirus\manager::scan_file($filepath, $filename, true);
 
@@ -172,7 +185,7 @@ class local_edusupport_external extends external_api {
                 // create group for user id firstlvlgroupmode is active
                 if (get_config('local_edusupport', 'firstlvlgroupmode') && $cfn = get_config('local_edusupport', 'customfieldname')) {
                     require_once("$CFG->dirroot/group/lib.php");
-                    $groupname = fullname($USER) . ' (' . $USER->id . '-coursesupport)';
+                    $groupname = fullname($user) . ' (' . $user->id . '-coursesupport)';
                     $group = $DB->get_record('groups', array('courseid' => $forum->course, 'name' => $groupname));
                     if (empty($group->id)) {
                         // create a group for this user.
@@ -189,7 +202,7 @@ class local_edusupport_external extends external_api {
                     if (!empty($group->id)) {
                         // find supporters
                         $groupusers = \local_edusupport\lib::get_support_user_by_matching_customfield($forum->course, $cfn);
-                        groups_add_member($group, $USER);
+                        groups_add_member($group, $user);
                         if ($groupusers) {
                             $responsibles = array();
                             foreach ($groupusers as $user) {
@@ -213,9 +226,9 @@ class local_edusupport_external extends external_api {
                     }
                 }
 
-                if (!forum_user_can_post_discussion($forum, $groupid, -1, $cm, $context)) {
+                /* if (!forum_user_can_post_discussion($forum, $groupid, -1, $cm, $context)) {
                     throw new moodle_exception('cannotcreatediscussion', 'forum');
-                }
+                }*/
 
                 $thresholdwarning = forum_check_throttling($forum, $cm);
                 forum_check_blocking_threshold($thresholdwarning);
@@ -246,7 +259,7 @@ class local_edusupport_external extends external_api {
                 }
 
 
-                if ($discussionid = forum_add_discussion($discussion)) {
+                if ($discussionid = forum_add_discussion($discussion ,null, null, $user->id)) {
                     $discussion->id = $discussionid;
 
                     if (!empty($params['image'])) {
@@ -254,7 +267,7 @@ class local_edusupport_external extends external_api {
 
                         $x = explode(",", $params['image']);
                         // Write the file to a temp target.
-                        $filepath = $CFG->tempdir . '/edusupport-' . md5($USER->id . date("Y-m-d H:i:s"));
+                        $filepath = $CFG->tempdir . '/edusupport-' . md5($user->id . date("Y-m-d H:i:s"));
                         file_put_contents($filepath, base64_decode($x[1]));
 
                         $fs = get_file_storage();
@@ -264,13 +277,13 @@ class local_edusupport_external extends external_api {
                         $fr = new stdClass;
                         $fr->component = 'mod_forum';
                         $fr->contextid = $context->id;
-                        $fr->userid    = $USER->id;
+                        $fr->userid    = $user->id;
                         $fr->filearea  = 'attachment';
                         $fr->filename  = $filename;
                         $fr->filepath  = '/';
                         $fr->itemid    = $discussion->firstpost;
                         $fr->license   = $CFG->sitedefaultlicense;
-                        $fr->author    = fullname($USER);
+                        $fr->author    = fullname($user);
                         $fr->source    = serialize((object)array('source' => $filename));
 
                         $fs->create_file_from_pathname($fr, $filepath);

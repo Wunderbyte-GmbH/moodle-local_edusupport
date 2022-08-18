@@ -35,17 +35,24 @@ class lib {
      */
     public static function before_popup() {
         global $CFG, $DB, $USER;
+        $user = $USER;
+        $guestmode = get_config('local_edusupport', 'guestmodeenabled');
+        if ($guestmode && isguestuser()) {
+            $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+        } else {
+            $user = $USER;
+        }
         $centralforum = get_config('local_edusupport', 'centralforum');
         if (!empty($centralforum) && self::is_supportforum($centralforum)) {
             $forum = $DB->get_record('forum', array('id' => $centralforum));
             $coursectx = \context_course::instance($forum->course);
             if (!empty($coursectx->id)) {
-                if (!is_enrolled($coursectx, $USER, '', true)) {
+                if (!is_enrolled($coursectx, $user, '', true)) {
                     // Enrol as student.
-                    self::course_manual_enrolments(array($forum->course), array($USER->id), 5);
+                    self::course_manual_enrolments(array($forum->course), array($user->id), 5);
                 }
                 require_once("$CFG->dirroot/group/lib.php");
-                $groupname = fullname($USER) . ' (' . $USER->id . ')';
+                $groupname = fullname($user) . ' (' . $user->id . ')';
                 $group = $DB->get_record('groups', array('courseid' => $forum->course, 'name' => $groupname));
                 if (empty($group->id)) {
                     // create a group for this user.
@@ -60,7 +67,7 @@ class lib {
                     $group->id = groups_create_group($group, false);
                 }
                 if (!empty($group->id)) {
-                    groups_add_member($group, $USER);
+                    groups_add_member($group, $user);
                 }
             }
         }
@@ -252,12 +259,19 @@ class lib {
      */
     public static function create_post($discussionid, $text, $subject = "") {
         global $DB, $USER;
+
+        $guestmode = get_config('local_edusupport', 'guestmodeenabled');
+        if ($guestmode && isguestuser()) {
+            $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+        } else {
+            $user = $USER;
+        }
         if (empty($subject)) $subject = substr($text, 0, 30);
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         $post = $DB->get_record('forum_posts', array('discussion' => $discussionid, 'parent' => 0));
         $post->parent = $post->id;
         unset($post->id);
-        $post->userid = $USER->id;
+        $post->userid = $user->id;
         $post->created = time();
         $post->modified = time();
         $post->mailed = 0;
@@ -374,12 +388,19 @@ class lib {
      */
     public static function get_potentialtargets($userid = 0) {
         global $DB, $USER;
-        if (empty($userid)) $userid = $USER->id;
+        $guestmode = get_config('local_edusupport', 'guestmodeenabled');
+        if (empty($userid)) {
+            if ($guestmode && isguestuser()) {
+                $userid = (get_config('local_edusupport', 'guestuserid'));
+            } else {
+                $userid = $USER->id;
+            }
+        }
 
         $forums = array();
         $courseids = implode(',', array_keys(enrol_get_all_users_courses($userid)));
         if (strlen($courseids) > 0) {
-            $sql = "SELECT f.id,f.name,f.course
+            $sql = " SELECT f.id,f.name,f.course
                         FROM {local_edusupport} be, {forum} f, {course} c
                         WHERE f.course=c.id
                             AND be.forumid=f.id
@@ -397,9 +418,9 @@ class lib {
                 $modinfo = get_fast_modinfo($course);
                 $cm = $modinfo->get_cm($fcm->id);
 
-                if ($cm->uservisible && has_capability('mod/forum:startdiscussion', $fctx)) {
+                if ($cm->uservisible && has_capability('mod/forum:startdiscussion', $fctx, $userid)) {
                     $forum->name = $course->fullname . $delimiter . $forum->name;
-                    $forum->postto2ndlevel = has_capability('local/edusupport:canforward2ndlevel', $coursecontext);
+                    $forum->postto2ndlevel = has_capability('local/edusupport:canforward2ndlevel', $coursecontext, $userid);
                     $forum->potentialgroups = self::get_groups_for_user($forum->id);
                     $forums[$forum->id] = $forum;
                 }
