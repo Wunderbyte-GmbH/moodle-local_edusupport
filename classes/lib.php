@@ -83,7 +83,7 @@ class lib {
     public static function can_config_course($courseid): bool{
         global $USER;
         if (self::can_config_global()) return true;
-        $context = context_course::instance($courseid);
+        $context = \context_course::instance($courseid);
         return is_enrolled($context, $USER, 'moodle/course:activityvisibility');
     }
 
@@ -260,13 +260,17 @@ class lib {
     public static function create_post($discussionid, $text, $subject = "") {
         global $DB, $USER;
 
+        $guestmodeenabled = false;
+
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
         if ($guestmode && isguestuser()) {
             $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+            $guestmodeenabled = true;
         } else {
             $user = $USER;
         }
         if (empty($subject)) $subject = substr($text, 0, 30);
+        if ($guestmodeenabled) $subject = "[Guestmode: test@mail.at]" . $subject; 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         $post = $DB->get_record('forum_posts', array('discussion' => $discussionid, 'parent' => 0));
         $post->parent = $post->id;
@@ -329,7 +333,7 @@ class lib {
         // Store rating if we are permitted to.
         global $CFG, $DB, $USER;
 
-        if (empty($USER->id) || isguestuser($USER)) return;
+        if (empty($USER->id) || isguestuser()) return;
 
         $forum = $DB->get_record('forum', array('id' => $forumid));
         $course = $DB->get_record('course', array('id' => $forum->course));

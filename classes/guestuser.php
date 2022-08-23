@@ -26,6 +26,7 @@
 namespace local_edusupport;
 
 use core_user;
+use mod_bigbluebuttonbn\local\config;
 use moodle_exception;
 use stdClass;
 
@@ -47,36 +48,24 @@ class guestuser {
      *
      */
     public function __construct(string $mail = null) {
-        global $DB;
-        if ($DB->record_exists('user', ['email' => $mail])) {
-            throw new moodle_exception('you have already an account');
-        }
-        $this->userid = $this->create_temp_user($mail);
+       
     }
 
     /**
      *
-     * This is to create a new entity in the database
-     *
+     * This is to change mail before issue mail is sent 
      * @param string $mail
      *
      */
-    public function create_temp_user(string $mail) {
-        strtolower($mail);
-        $user = new stdClass;
-        $string = str_replace(' ', '-', $mail);
-        $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string);
-        $user->username = 'support'.time().$string;
-        $user->firstname = "Support";
-        $user->lastname = time();
-        $user->email = $mail;
-        $user->description = "local_edusupport";
-        return \core_useruser_create_user($user, false, false);
+    public function change_user_mail(string $mail) {
+        $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+        $user->mail = $mail;
+        user_update_user($user, false);
     }
 
-    public function delete_temp_user(string $mail) {
-        global $DB;
-        $user = find_user($mail);
-        user_delete_user($user);
+    public function reset_user_mail() {
+        $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+        $user->mail = "edusupport@example.com";
+        user_update_user($user, false);
     }
 }

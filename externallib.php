@@ -58,6 +58,7 @@ class local_edusupport_external extends external_api {
             'screenshotname' => new external_value(PARAM_TEXT, 'the filename to use'),
             'url' => new external_value(PARAM_TEXT, 'URL where the error happened'), // We use PARAM_TEXT, as any input by the user is valid.
             'contactphone' => new external_value(PARAM_TEXT, 'Contactphone'), // We use PARAM_TEXT, was the user can enter any contact information.
+            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, NULL, true), 
         ));
     }
 
@@ -65,18 +66,19 @@ class local_edusupport_external extends external_api {
      * Create an issue in the targetforum.
      * @return postid of created issue
      */
-    public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone) {
+    public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone, $guestmail) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
 
-        $guestmail = true;
+        $guestmodeenabled = false;
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
         if ($guestmode && isset($guestmail) && isguestuser()) {
             $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+            $guestmodeenabled = true;
         } else {
             $user = $USER;
         }
         //$user = user_get_users_by_id($guestuser);
-        $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone));
+        $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone, 'guestmail' => $guestmail));
         $reply = array(
             'discussionid' => 0,
             'responsibles' => array(),
@@ -172,7 +174,7 @@ class local_edusupport_external extends external_api {
                 }
 
                 $context = context_module::instance($cm->id);
-                self::validate_context($context);
+                // self::validate_context($context);
 
                 // Validate options.
                 $options = array(
@@ -234,7 +236,7 @@ class local_edusupport_external extends external_api {
                 forum_check_blocking_threshold($thresholdwarning);
 
                 $message = $OUTPUT->render_from_template("local_edusupport/issue_template", $params);
-
+                
                 // Create the discussion.
                 $discussion = new stdClass();
                 $discussion->course = $course->id;
@@ -245,8 +247,14 @@ class local_edusupport_external extends external_api {
                 $discussion->itemid = 0; //$options['inlineattachmentsid'];
                 $discussion->groupid = $groupid;
                 $discussion->mailnow = 1;
-                $discussion->subject = $params['subject'];
-                $discussion->name = $discussion->subject;
+                if ($guestmodeenabled) {
+                    $discussion->subject = '[Guestticket: ' . $params['guestmail'] . ']' . $params['subject'];
+                    $discussion->name = $discussion->subject;
+                } else {
+                    $discussion->subject = $params['subject'];
+                    $discussion->name = $discussion->subject;
+                }
+                
                 $discussion->timestart = 0;
                 $discussion->timeend = 0;
                 $discussion->timelocked = 0;

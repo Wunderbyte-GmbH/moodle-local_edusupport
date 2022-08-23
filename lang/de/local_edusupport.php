@@ -172,6 +172,7 @@ $string['toggle'] = 'Kurssupportforum';
 $string['toggle:central'] = 'Zentrales Supportforum';
 $string['guestmodeenabled'] = 'Gastmodus aktiv';
 $string['guestmodeenabled:description'] = 'Gäste können auch Supporttickets anlegen und werden dann per Mail benachrichtigt';
+$string['guestmail'] = 'Ihre E-Mail Adresse';
 
 $string['trackhost'] = 'Hostnamen angeben';
 $string['trackhost:description'] = 'Große Moodle-Sites nutzen möglicherweise eine Architektur mit mehreren Webhosts. Schalten Sie diese Option ein, damit der Hostname des aktiven Webhosts bei Problemen erfasst wird.';

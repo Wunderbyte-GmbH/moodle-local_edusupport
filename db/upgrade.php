@@ -26,8 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_local_edusupport_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
-
-    if ($oldversion < 2022081700) {
+    if ($oldversion < 2022082300) {
         $user = new stdClass();
         $user->username = "edusupport_guest_ticket";
         $user->firstname = "Guest";
@@ -35,8 +34,20 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         $user->email = 'edusupport@example.com';
         $guestuserid = user_create_user($user, false, false);
         set_config('guestuserid', $guestuserid, 'local_edusupport');
-        upgrade_plugin_savepoint(true, 2022081700, 'local', 'edusupport');
+        upgrade_plugin_savepoint(true, 2022082300, 'local', 'edusupport');
     }
+
+    if ($oldversion < 2022081800) {
+        $table = new xmldb_table('local_edusupport_issues');
+        $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null,
+                'opened');
+
+        // Launch rename field text.
+        $dbman->rename_field($table, $field, 'status');
+
+        upgrade_plugin_savepoint(true, 2022081800, 'local', 'edusupport');
+    }
+  
     if ($oldversion < 2022032500) {
         $table = new xmldb_table('local_edusupport_supporters');
         $field = new xmldb_field('holidaymode', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'supportlevel');

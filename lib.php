@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die;
  */
 function local_edusupport_before_standard_html_head(){
     global $CFG, $DB, $OUTPUT, $PAGE, $SITE, $USER;
-    if (isloggedin() && !isguestuser($USER)) {
+    if (isloggedin() && !isguestuser()) {
 
     }
 

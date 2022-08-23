@@ -75,7 +75,7 @@ $string['faqlink'] = 'FAQ-link';
 $string['faqlink:description'] =  'link to FAQ';
 $string['faqread'] = 'faq read toggle';
 $string['faqread:description'] =  'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
-
+$string['guestmail'] = 'Your e-mail';
 
 
 $string['header'] = 'Request for help in <i>{$a}</i>';

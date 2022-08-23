@@ -168,9 +168,9 @@ class issue_create_form extends moodleform {
             $mform->setType('contactphone', PARAM_TEXT);
         }
         if (isguestuser() && $guestuserallowed) {
-            $mform->addElement('text', 'mail', get_string('mail', 'local_edusupport'), array('style' => 'width: 100%;'));
-            $mform->setType('mail', PARAM_EMAIL);
-            $mform->addRule('mail', get_string('mail_missing', 'local_edusupport'), 'required', null, 'server');
+            $mform->addElement('text', 'guestmail', get_string('guestmail', 'local_edusupport'), array('style' => 'width: 100%;'));
+            $mform->setType('guestmail', PARAM_EMAIL);
+            $mform->addRule('guestmail', get_string('mail_missing', 'local_edusupport'), 'required', null, 'server');
         }
         $mform->addElement('textarea', 'description', get_string('description', 'local_edusupport'), array('style' => 'width: 100%;', 'rows' => 10));
         $mform->setType('description', PARAM_RAW);

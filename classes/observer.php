@@ -66,11 +66,26 @@ class observer {
 
             $post->issuelink = $CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussion->id;
             $post->replylink = $CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussion->id . '&replyto=' . $post->id;
-
+        
             // Get all subscribers
             $fromuser = \core_user::get_support_user();
             $subscribers = $DB->get_records('local_edusupport_subscr', array('discussionid' => $discussion->id));
+            if ($post->author == get_config('local_edusupport', 'guestuserid')) {
 
+            }
+            $guestmode = get_config('local_edusupport', 'guestmodeenabled');
+            
+            // Write to Guestuser 
+            if ($guestmode && strpos($discussion->name, 'Guestticket')) {
+                preg_match('/(?<=Guestticket: )(.*)(?=\])/', $discussion->name, $matches);
+                $mail = $matches[0];
+                $touser = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+                $touser->email = $mail;
+                $mailhtml =  $OUTPUT->render_from_template('local_edusupport/post_mailhtml', $post);
+                $mailtext =  $OUTPUT->render_from_template('local_edusupport/post_mailtext', $post);
+                $subject = $discussion->name;
+                \email_to_user($touser, $author, $subject, $mailtext, $mailhtml, "", true);
+            }
             foreach ($subscribers AS $subscriber) {
                 // We do not want to send to ourselves...
                 if ($subscriber->userid == $author->id) continue;
