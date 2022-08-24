@@ -20,11 +20,11 @@
     <div class="row">
             <div class="col-md-3">
                 <h3>{{current}}</h3>
-                <p>{{#str}} issue:countcurrent, local_edusupport {{/str}} </p>
+                <p>{{#str}} issue:countcurrent,  local_edusupport {{/str}}</p>
             </div>
             <div class="col-md-3">
                 <h3>{{assigned}}</h3>
-                <p>{{#str}} issue:countassigned, local_edusupport {{/str}}</p>
+                <p>{{#str}} issue:countassigned, local_edusupport{{/str}}</p>
             </div>
             <div class="col-md-3">
                 <h3>{{other}}</h3>
@@ -43,8 +43,8 @@
                 <th width="200">#</th>
                 <th>{{#str}} issue, local_edusupport {{/str}}</th>
                 <th>{{#str}} name {{/str}}</th>
-                <th>{{#str}} assigned, local_edusupport {{/str}}</th>
-                <th>{{#str}} lastpost, forum {{/str}}</th>
+                <th>{{#str}} assigned, local_edusupport {{/str}}
+                <br>{{#str}} lastpost, forum {{/str}}</th>
                 <th>{{#str}} modified {{/str}}</th>
                 <th>{{#str}} action {{/str}}</th>
                 {{#hasprio}}
@@ -87,8 +87,7 @@
                         {{^userlinks}}
                             {{currentsupportername}}
                         {{/userlinks}}
-                    </td>
-                    <td>
+                    <br>
                         {{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{lastpostuserid}}">
                                 {{lastpostuserfullname}}
@@ -98,8 +97,20 @@
                             {{lastpostuserfullname}}
                         {{/userlinks}}
                     </td>
-                    <td>{{#userdate}} {{lastmodified}}, %F %X {{/userdate}}</td>
                     <td>
+                        <div class="container">
+                            <button type="button" class="badge badge-danger" id="stbtn">{{#str}} status:notstarted,  local_edusupport{{/str}}<span class="badge badge-light" id="stbtn"></span>
+                            </button>
+                            <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
+                        </div>
+                    </td>
+                    <td>
+                    <select class="changeStatusSelect" id="statusChange1" onchange="changeStatus()">
+                        <option selected disabled class="hideoption">-</option>
+                        <option value="New">New</option>
+                        <option value="Awaiting user reply">Awaiting user reply</option>
+                    </select>
+                    <br>
                         <a class="btn btn-outline-info" href="{{wwwroot}}/local/edusupport/issues.php?asignto={{discussionid}}" onclick="require(['local_edusupport/main'], function(MAIN){ MAIN.assignSupporter({{discussionid}}); }); return false;" data-toggle="tooltip" data-placement="top" title="assign someone">
                             {{#pix}} i/enrolusers, core {{/pix}}
                         </a>
@@ -162,8 +173,7 @@
                         {{^userlinks}}
                             {{currentsupportername}}
                         {{/userlinks}}
-                    </td>
-                    <td>
+                    <br>
                         {{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{lastpostuserid}}">
                                 {{lastpostuserfullname}}
@@ -173,7 +183,13 @@
                                 {{lastpostuserfullname}}
                         {{/userlinks}}
                     </td>
-                    <td>{{#userdate}} {{lastmodified}}, %F %X {{/userdate}}</td>
+                    <td>
+                        <div class="container">
+                            <button type="button" class="badge badge-danger" id="stbtn">{{#str}} status:notstarted,  local_edusupport{{/str}}<span class="badge badge-light"></span>
+                            </button>
+                            <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
+                        </div>
+                    </td>
                     <td>
                         <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?unassign={{discussionid}}" data-toggle="tooltip" data-placement="top" title="unsubscribe">
                             {{#pix}} i/show, core {{/pix}}
@@ -243,8 +259,7 @@
                         {{^userlinks}}
                             {{currentsupportername}}
                         {{/userlinks}}
-                    </td>
-                    <td>
+                    <br>
                         {{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{lastpostuserid}}">
                                 {{lastpostuserfullname}}
@@ -254,7 +269,13 @@
                                 {{lastpostuserfullname}}
                         {{/userlinks}}
                     </td>
-                    <td>{{#userdate}} {{lastmodified}}, %F %X {{/userdate}}</td>
+                    <td>
+                        <div class="container">
+                            <button type="button" class="badge badge-danger" id="stbtn">{{#str}} status:notstarted,  local_edusupport{{/str}}<span class="badge badge-light"></span>
+                            </button>
+                            <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
+                        </div>
+                    </td>
                     <td>
                         <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?assign={{discussionid}}" data-toggle="tooltip" data-placement="top" title="watch">
                             {{#pix}} i/hide, core {{/pix}}
@@ -318,9 +339,7 @@
                         {{^userlinks}}
                             {{currentsupportername}}
                         {{/userlinks}}
-
-                    </td>
-                    <td>
+                    <br>
                         {{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{lastpostuserid}}">
                                 {{lastpostuserfullname}}
@@ -330,7 +349,13 @@
                                 {{lastpostuserfullname}}
                         {{/userlinks}}
                     </td>
-                    <td>{{#userdate}} {{lastmodified}}, %F %X {{/userdate}}</td>
+                    <td>
+                        <div class="container">
+                           <button type="button" class="badge badge-success"> {{#str}} status:closed, local_edusupport {{/str}} <span class="badge badge-light"></span>
+                            </button>
+                            <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
+                        </div>
+                    </td>
                     <td>
                         <a class="btn btn-outline-success" href="{{wwwroot}}/local/edusupport/issues.php?reopen={{discussionid}}" data-toggle="tooltip" data-placement="top" title="reopen">
                             <i class="fa fa-refresh" aria-hidden="true"></i>

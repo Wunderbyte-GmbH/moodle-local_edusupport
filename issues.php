@@ -23,14 +23,18 @@
 
 require_once('../../config.php');
 
+
 $context = \context_system::instance();
 $PAGE->set_context($context);
 require_login();
 $PAGE->set_url(new moodle_url('/local/edusupport/issues.php', array()));
 $PAGE->requires->css('/local/edusupport/style/edusupport.css');
 $title = get_string('issues', 'local_edusupport');
+$title = get_string('notasigned', 'local_edusupport');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
+$PAGE->requires->js('/local/edusupport/amd/src/main.js',true);
+
 
 echo $OUTPUT->header();
 
@@ -113,6 +117,9 @@ if (!\local_edusupport\lib::is_supportteam()) {
         // Check for any actions.
         if (!empty($assign) && $assign == $issue->discussionid && empty($assigned->id)) {
             $assigned = \local_edusupport\lib::subscription_add($issue->discussionid);
+        }
+        if(empty($issue->discussionid)) {
+            $issue->discussionid == $string->notasigned;
         }
         if (!empty($unassign) && $unassign == $issue->discussionid) {
             \local_edusupport\lib::subscription_remove($issue->discussionid);

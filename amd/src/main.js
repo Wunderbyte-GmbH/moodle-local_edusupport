@@ -516,3 +516,16 @@ define(
         },
     };
 });
+
+function changeStatus() {
+    var selectValue = document.querySelector("statusChange1").value;
+    document.querySelector("stbtn").innerHTML = selectValue;
+    if (selectValue === "New") {
+        document.querySelector("stbtn").className = "badge badge-danger";
+    } else {
+        if (selectValue === "Awaiting user reply") {
+            document.querySelector("stbtn").className = "badge badge-primary";
+        }
+    }
+}
+

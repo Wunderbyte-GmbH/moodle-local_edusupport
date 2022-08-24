@@ -85,6 +85,7 @@ $string['holidaymode'] = 'Holidaymode';
 $string['holidaymode_is_on'] = 'Holidaymode is on';
 $string['holidaymode_is_on_descr'] = 'As long as you are on holidays, no new issues will be assigned to you.';
 $string['holidaymode_end'] = 'End holidaymode';
+$string['notasigned'] = 'No support user has been assigned yet';
 $string['issue'] = 'Issue';
 $string['issue:countcurrent'] = 'Open issues';
 $string['issue:countassigned'] = 'Subscribed issues';
@@ -122,6 +123,7 @@ $string['issues'] = 'Issues';
 $string['issues:assigned'] = 'Subscribed';
 $string['issues:assigned:none'] = 'Currently you do not have any issue subscriptions';
 $string['issues:closed'] = 'Closed issues';
+
 $string['issues:current'] = 'My issues';
 $string['issues:current:none'] = 'Seems you deserve a break - no issue left for your!';
 $string['issues:other'] = 'Other issues';
@@ -190,7 +192,6 @@ $string['weburl'] = 'URL';
 
 $string['allowguesttickets'] = 'Allow tickets from guest user.';
 $string['allowguesttickets:description'] = 'Guest can post one ticket and gets updates via mail.';
-
 $string['back'] = 'back';
 $string['continue'] = 'continue';
 $string['firstlvlgroupmode'] = '1st level support group modus';
@@ -199,6 +200,11 @@ $string['customfieldname'] = 'customfieldname for group mode';
 $string['customfieldname:description'] = 'customfieldname for group mode';
 $string['rolename'] = 'rolename';
 $string['rolename:description'] = 'rolename for the supporters (e.g. teacher instead of editingtecher or customrole)';
+$string['status:awaitinguserreply'] = 'awaiting user reply';
+$string['status:answered'] = 'answered';
+$string['status:notstarted'] = 'not started';
+$string['status:closed'] = 'closed';
+$string['status:ongoing'] = 'ongoing';
 
 /* Events */
 $string['supportadded'] = "Supportuser added";
