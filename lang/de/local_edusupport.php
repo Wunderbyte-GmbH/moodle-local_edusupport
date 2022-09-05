@@ -200,7 +200,7 @@ $string['status:closed'] = 'abgeschlossen';
 $string['status:notstarted'] = 'neu';
 $string['status:ongoing'] = 'in beareitung';
 $string['status'] = 'status';
-
+$string['startedby'] = 'gestartet von';
 
 $string['back'] = 'zurück';
 $string['continue'] = 'weiter';

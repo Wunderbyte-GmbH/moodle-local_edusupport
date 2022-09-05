@@ -68,9 +68,6 @@
                 <br>{{#str}} lastpost, forum {{/str}}</th>
                 <th>{{#str}} modified {{/str}}</th>
                 <th>{{#str}} action {{/str}}</th>
-                {{#hasprio}}
-                <th>{{#str}} priority, local_edusupport {{/str}}</th>
-                {{/hasprio}}
             </tr>
         </thead>
         <tbody>
@@ -87,10 +84,9 @@
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
-                        </a>
-                    </td>
-                    <td>
-                        {{#userlinks}}
+                        </a> 
+                        <br>
+                        <span>{{#str}} startedby, local_edusupport {{/str}} :</span>{{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{userid}}">
                                 {{userfullname}}
                             </a>
@@ -138,10 +134,9 @@
                         <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}">
                             <i class="fa fa-window-close" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="close issue"></i>
                         </a>
-                    </td>
-                    {{#hasprio}}
-                    <td>
-                        <a class="btn btn-outline-info {{priolow}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=1" data-toggle="tooltip" data-placement="top" title="priortiy low">
+                        {{#hasprio}}
+                        <div class="mt-2">
+                         <a class="btn btn-outline-info {{priolow}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=1" data-toggle="tooltip" data-placement="top" title="priortiy low">
                             !
                         </a>
                         <a class="btn btn-outline-warning {{priomid}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=2"  data-toggle="tooltip" data-placement="top" title="priortiy mid">
@@ -150,8 +145,10 @@
                         <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=3"  data-toggle="tooltip" data-placement="top" title="priortiy high">
                             !!!
                         </a>
+                        </div>
+                        {{/hasprio}}
                     </td>
-                    {{/hasprio}}
+                       
                 </tr>
             {{/current}}
             {{^current}}
@@ -172,10 +169,9 @@
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
-                        </a>
-                    </td>
-                    <td>
-                        {{#userlinks}}
+                        </a> 
+                        <br>
+                        <span>{{#str}} startedby, local_edusupport {{/str}} :</span>{{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{userid}}">
                                 {{userfullname}}
                             </a>
@@ -221,9 +217,8 @@
                         <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}" data-toggle="tooltip" data-placement="top" title="close issue">
                             <i class="fa fa-window-close" aria-hidden="true"></i>
                         </a>
-                    </td>
-                    {{#hasprio}}
-                    <td>
+                        {{#hasprio}}
+                        <div class="mt-2">
                         <a class="btn btn-outline-primary  {{priolow}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=1" data-toggle="tooltip" data-placement="top" title="priortiy low">
                         !
                         </a>
@@ -233,8 +228,9 @@
                         <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=3"  data-toggle="tooltip" data-placement="top" title="priortiy high">
                         !!!
                         </a>
-                    </td>
+                        </div>
                     {{/hasprio}}
+                    </td>   
                 </tr>
             {{/assigned}}
             {{^assigned}}
@@ -256,10 +252,9 @@
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
-                        </a>
-                    </td>
-                    <td>
-                        {{#userlinks}}
+                        </a> 
+                        <br>
+                        <span>{{#str}} startedby, local_edusupport {{/str}} :</span>{{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{userid}}">
                                 {{userfullname}}
                             </a>
@@ -305,9 +300,8 @@
                         <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}" data-toggle="tooltip" data-placement="top" title="close issue">
                             <i class="fa fa-window-close" aria-hidden="true"></i>
                         </a>
-                    </td>
-                    {{#hasprio}}
-                    <td>
+                        {{#hasprio}}
+                        <div class="mt-2">
                         <a class="btn btn-outline-primary {{priolow}}"  href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=1"  data-toggle="tooltip" data-placement="top" title="priortiy low">
                             !
                         </a>
@@ -317,8 +311,10 @@
                         <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=3"  data-toggle="tooltip" data-placement="top" title="priortiy high">
                             !!!
                         </a>
-                    </td>
+                        </div>
                     {{/hasprio}}
+                    </td>
+
                 </tr>
             {{/other}}<tr class="accordion-toggle collapsed" id="accordion1" data-toggle="collapse" data-parent="#accordion1" href="#collapseOne" aria-expanded="false">
             <tr>
@@ -375,10 +371,6 @@
                             <i class="fa fa-refresh" aria-hidden="true"></i>
                         </a>
                     </td>
-                    {{#hasprio}}
-                    <td>
-                    </td>
-                    {{/hasprio}}
                 </tr>
             {{/closed}}
         </tbody>
