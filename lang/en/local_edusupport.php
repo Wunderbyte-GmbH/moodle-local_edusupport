@@ -99,7 +99,7 @@ $string['issue_assign_3rdlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id
 $string['issue_assign_3rdlevel:postself'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> has taken responsibility for this issue.';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
-$string['issue_assign_nextlevel:post'] = "We are happy to inform you that your support request has been assigned to [NAME] from the atingi support team!
+$string['issue_assign_nextlevel:post'] = "We are happy to inform you that your support request has been assigned to the atingi support team!
 
 You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.
 You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under “My support requests” on atingi.
@@ -112,15 +112,17 @@ $string['issue_assigned:text'] = 'The support issue was assigned to <a href="{$a
 $string['issue_close'] = 'Close issue';
 $string['issue_closed:subject'] = 'Issue closed';
 $string['issue_closed:post'] = 'This issue closed was closed by <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a>. If you need further assistance please forward this issue again to the platform support team.';
-$string['issue_responsibles:post'] = '
-    <p>
-        The responsibility for this issue has been assigned to: {$a->responsibles}!
-    </p>
-    <p>
-        The managers of your organization can forward this issue to the {$a->sitename}-Support by clicking the button "Forward this ticket to the {$a->sitename}-Support" (visible only for managers on the right upper side of the page).
-    </p>
+$string['issue_responsibles:post'] = '<p>We are happy to inform you that your support request has been assigned to {$a->responsibles} from the atingi support team!</p>
+
+    <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
+    
+    <p>You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under “My support requests” on atingi.</p>
+    
+    <p>We wish you a great learning experience!</p>
+    
+    <p>Your atingi team</p>
 ';
-$string['issue_responsibles:subject'] = 'Issue assigned';
+$string['issue_responsibles:subject'] = 'Your support request has been assigned';
 $string['issue_revoke'] = 'Revoke this issue from higher support level';
 $string['issue_revoke:error'] = 'Sorry, this issue could not be revoked from the higher support levels';
 $string['issue_revoke:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> revoked this issue from the higher support level';

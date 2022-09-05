@@ -256,6 +256,11 @@ class local_edusupport_external extends external_api {
                     $discussion->subject = $params['subject'];
                     $discussion->name = $discussion->subject;
                 }
+                if ($subjectprefixenabled) {
+                    $discussion->subject = get_string('subject_prefix', 'local_edusupport') . " " . $discussion->subject;
+                    $discussion->name = $discussion->subject;
+                }
+                
                 
                 $discussion->timestart = 0;
                 $discussion->timeend = 0;

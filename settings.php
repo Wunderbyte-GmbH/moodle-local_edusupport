@@ -131,7 +131,6 @@ if ($hassiteconfig) {
             'local_edusupport/predefined_subjects_prefix',
             get_string('predefined_subjects_prefix', 'local_edusupport'),
             get_string('predefined_subjects_prefix:description', 'local_edusupport'),
-            '',
             0
         )
     );
