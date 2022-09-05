@@ -1051,7 +1051,7 @@ class lib {
         $DB->update_record('local_edusupport_issues', $issue);
     }
 
-    public static function status_to_string(int $status) {
+    public static function status_to_string($status) {
         switch ($status) {
             case ISSUE_STATUS_NOTSTARTED:
                 return array('status' => get_string('status:notstarted', 'local_edusupport'), 'class' => 'badge-danger', 'stateclass' => 'notstarted');
