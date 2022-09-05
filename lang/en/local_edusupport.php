@@ -106,7 +106,7 @@ You are receiving this email because you asked the atingi team for help via a su
 We wish you a great learning experience!
 
 Your atingi team";
-$string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team';
+//$string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team';
 $string['issue_assigned:subject'] = 'Your support request has been assigned';
 $string['issue_assigned:text'] = 'The support issue was assigned to <a href="{$a->wwwroot}/user/view.php?id={$a->id}">{$a->firstname} {$a->lastname}</a>!';
 $string['issue_close'] = 'Close issue';
