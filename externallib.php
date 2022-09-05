@@ -69,6 +69,8 @@ class local_edusupport_external extends external_api {
     public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone, $guestmail) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
 
+
+        $subjectprefixenabled = get_config('local_edusupport', 'predefined_subjects_prefix');
         $guestmodeenabled = false;
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
         if ($guestmode && isset($guestmail) && isguestuser()) {

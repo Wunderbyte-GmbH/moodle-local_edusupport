@@ -154,6 +154,7 @@ $string['predefined_subjects'] = 'Define predefined subjects here';
 $string['predefined_subjects:description'] = 'When submitting a support request you can define a list of subjects to choose from instead of a text input field. Leave empty if you want to use text input. One subject per line if you want to provide predefined subjects';
 $string['predefined_subjects_prefix'] = 'Enable prefix';
 $string['predefined_subjects_prefix:description'] = 'Enable prefix (name can be changed in language customisation subject_prefix e.g. Other:)';
+
 $string['subject_prefix'] = 'Other:';
 $string['privacy:metadata'] = 'This plugin does not store any personal data as it uses a forum as target.';
 $string['priority'] = 'set priority';

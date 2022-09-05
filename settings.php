@@ -127,12 +127,12 @@ if ($hassiteconfig) {
     );
 
     $settings->add(
-        new admin_setting_configtext(
+        new admin_setting_configcheckbox(
             'local_edusupport/predefined_subjects_prefix',
             get_string('predefined_subjects_prefix', 'local_edusupport'),
             get_string('predefined_subjects_prefix:description', 'local_edusupport'),
             '',
-            PARAM_TEXT
+            0
         )
     );
 

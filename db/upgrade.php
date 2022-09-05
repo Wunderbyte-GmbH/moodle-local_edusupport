@@ -63,8 +63,10 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         $user->username = "edusupport_guest_ticket";
         $user->firstname = "Guest";
         $user->email = 'edusupport@example.com';
-        $guestuserid = user_create_user($user, false, false);
-        set_config('guestuserid', $guestuserid, 'local_edusupport');
+        if (!$DB->record_exists('user', array('email' => $user->email))) {
+            $guestuserid = user_create_user($user, false, false);
+            set_config('guestuserid', $guestuserid, 'local_edusupport');
+        }
         upgrade_plugin_savepoint(true, 2022090502, 'local', 'edusupport');
     }
 

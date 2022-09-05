@@ -267,7 +267,8 @@ class lib {
      */
     public static function create_post($discussionid, $text, $subject = "") {
         global $DB, $USER;
-
+ 
+        $subjectprefixenabled = get_config('local_edusupport', 'predefined_subjects_prefix');
         $guestmodeenabled = false;
 
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
@@ -279,6 +280,7 @@ class lib {
         }
         if (empty($subject)) $subject = substr($text, 0, 30);
         if ($guestmodeenabled) $subject = "[Guestmode: test@mail.at]" . $subject; 
+        if ($subjectprefixenabled) $subject = get_string('subject_prefix') . " " . $subject;
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         $post = $DB->get_record('forum_posts', array('discussion' => $discussionid, 'parent' => 0));
         $post->parent = $post->id;
