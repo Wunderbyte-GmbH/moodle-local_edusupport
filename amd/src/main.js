@@ -130,7 +130,7 @@ define(
                         if ($(this).find('.reply-' + postid).length == 0) {
                             $(this).find('.post-actions:first-child').append(
                                 $('<a data-region="post-action" class="btn btn-link reply-' + postid + '" title="' + s[0] + '" aria-label="' + s[0] + '" role="menuitem" tabindex="-1">')
-                                    .html(s[0]).attr('href', URL.relativeUrl('/local/edusupport/issue.php?discussion=' + discussion + '&replyto=' + postid))
+                                    .html(s[0]).attr('href', URL.relativeUrl('/local/edusupport/issue.php?discussion=' + discussion + '&replyto=' + postid + '#mformforum'))
                             );
                         }
                     });
