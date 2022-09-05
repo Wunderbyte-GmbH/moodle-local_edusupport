@@ -99,13 +99,13 @@ $string['issue_assign_3rdlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id
 $string['issue_assign_3rdlevel:postself'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> has taken responsibility for this issue.';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
-$string['issue_assign_nextlevel:post'] = "We are happy to inform you that your support request has been assigned to the atingi support team!
+$string['issue_assign_nextlevel:post'] = "<p>We are happy to inform you that your support request has been assigned to the atingi support team!</p>
 
-You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.
-You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under “My support requests” on atingi.
-We wish you a great learning experience!
+<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
+<p>You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under “My support requests” on atingi.</p>
+<p>We wish you a great learning experience!</p>
 
-Your atingi team";
+<p>Your atingi team</p>";
 //$string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team';
 $string['issue_assigned:subject'] = 'Your support request has been assigned';
 $string['issue_assigned:text'] = 'The support issue was assigned to <a href="{$a->wwwroot}/user/view.php?id={$a->id}">{$a->firstname} {$a->lastname}</a>!';
