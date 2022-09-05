@@ -26,28 +26,29 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_local_edusupport_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
-    if ($oldversion < 2022082300) {
-        $user = new stdClass();
-        $user->username = "edusupport_guest_ticket";
-        $user->firstname = "Guest";
-        $user->lastname = "Ticket";
-        $user->email = 'edusupport@example.com';
-        $guestuserid = user_create_user($user, false, false);
-        set_config('guestuserid', $guestuserid, 'local_edusupport');
-        upgrade_plugin_savepoint(true, 2022082300, 'local', 'edusupport');
-    }
 
-    if ($oldversion < 2022081800) {
+    if ($oldversion < 2022082400) {
+
+        // Define field status to be added to local_edusupport_issues.
         $table = new xmldb_table('local_edusupport_issues');
-        $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null,
-                'opened');
+        $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'opened');
 
-        // Launch rename field text.
-        $dbman->rename_field($table, $field, 'status');
+        // Conditionally launch add field status.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
-        upgrade_plugin_savepoint(true, 2022081800, 'local', 'edusupport');
+        // Rename field priority on table local_edusupport_issues to NEWNAMEGOESHERE.
+        $table = new xmldb_table('local_edusupport_issues');
+        $field = new xmldb_field('opened', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'currentsupporter');
+
+        // Launch rename field priority.
+        $dbman->rename_field($table, $field, 'priority');
+
+        // Edusupport savepoint reached.
+        upgrade_plugin_savepoint(true, 2022082400, 'local', 'edusupport');
     }
-  
+
     if ($oldversion < 2022032500) {
         $table = new xmldb_table('local_edusupport_supporters');
         $field = new xmldb_field('holidaymode', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'supportlevel');

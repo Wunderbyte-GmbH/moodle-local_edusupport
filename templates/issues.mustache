@@ -37,10 +37,31 @@
         </div>
      {{/count}}
    </ul>
+    <h3>Filter</h3>
+   <div id="issuefilter" class="container-fluid">
+        <div class="row">
+            <div class="p-2">
+            <input type="checkbox" name="statefilter" value="awaitinguserreply" id="awaitinguserreply">
+            <label for="awaitinguserreply">{{#str}} status:awaitinguserreply, local_edusupport {{/str}}</label>
+            </div>
+            <div class="p-2"><input type="checkbox" name="statefilter" value="answered" id="answered">
+            <label for="answered">{{#str}} status:answered, local_edusupport {{/str}}</label>
+            </div>
+            <div class="p-2"><input type="checkbox" name="statefilter" value="notstarted" id="notstarted">
+            <label for="notstarted">{{#str}} status:notstarted, local_edusupport {{/str}}</label>
+            </div>
+            <div class="p-2"><input type="checkbox" name="statefilter" value="ongoing" id="ongoing">
+            <label for="reserves">{{#str}} status:ongoing, local_edusupport {{/str}}</label>
+            </div>
+            <div class="p-2"><input type="checkbox" name="statefilter" value="closed" id="closed">
+            <label for="closed">{{#str}} status:closed, local_edusupport {{/str}}</label>
+            </div>
+        </div>
+    </div>
     <table class="generaltable" width="100%">
         <thead>
             <tr>
-                <th width="200">#</th>
+                <th width="20">#</th>
                 <th>{{#str}} issue, local_edusupport {{/str}}</th>
                 <th>{{#str}} name {{/str}}</th>
                 <th>{{#str}} assigned, local_edusupport {{/str}}
@@ -57,7 +78,7 @@
                 <th colspan="8">{{#str}} issues:current, local_edusupport {{/str}}</th>
             </tr>
             {{#current}}
-                <tr>
+                <tr class="issue {{state.stateclass}}">
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{{prio}}}{{id}}
@@ -99,16 +120,16 @@
                     </td>
                     <td>
                         <div class="container">
-                            <button type="button" class="badge badge-danger" id="stbtn">{{#str}} status:notstarted,  local_edusupport{{/str}}<span class="badge badge-light" id="stbtn"></span>
+                            <button type="button" class="badge {{state.class}} position-static" id="stbtn">{{state.status}}
                             </button>
                             <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
                         </div>
                     </td>
                     <td>
-                    <select class="changeStatusSelect" id="statusChange1" onchange="changeStatus()">
+                    <select class="changeStatusSelect" data-issueid="{{id}}">
                         <option selected disabled class="hideoption">-</option>
-                        <option value="New">New</option>
-                        <option value="Awaiting user reply">Awaiting user reply</option>
+                        <option value="1">New</option>
+                        <option value="2">Awaiting user reply</option>
                     </select>
                     <br>
                         <a class="btn btn-outline-info" href="{{wwwroot}}/local/edusupport/issues.php?asignto={{discussionid}}" onclick="require(['local_edusupport/main'], function(MAIN){ MAIN.assignSupporter({{discussionid}}); }); return false;" data-toggle="tooltip" data-placement="top" title="assign someone">
@@ -142,13 +163,12 @@
                 <th colspan="8">{{#str}} issues:assigned, local_edusupport {{/str}}</th>
             </tr>
             {{#assigned}}
-                <tr>
+                <tr class="issue {{state.stateclass}}">
                     <td>
                         {{{prio}}}
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{id}}
                         </a>
-                    </td>
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
@@ -184,11 +204,9 @@
                         {{/userlinks}}
                     </td>
                     <td>
-                        <div class="container">
-                            <button type="button" class="badge badge-danger" id="stbtn">{{#str}} status:notstarted,  local_edusupport{{/str}}<span class="badge badge-light"></span>
+                            <button type="button" class="badge {{state.class}} position-static" id="stbtn">{{state.status}}
                             </button>
                             <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
-                        </div>
                     </td>
                     <td>
                         <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?unassign={{discussionid}}" data-toggle="tooltip" data-placement="top" title="unsubscribe">
@@ -228,7 +246,7 @@
                 <th colspan="8">{{#str}} issues:other, local_edusupport {{/str}}</th>
             </tr>
             {{#other}}
-                <tr>
+                <tr class="issue {{state.stateclass}}">
                     <td>
                          {{{prio}}}
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
@@ -270,11 +288,9 @@
                         {{/userlinks}}
                     </td>
                     <td>
-                        <div class="container">
-                            <button type="button" class="badge badge-danger" id="stbtn">{{#str}} status:notstarted,  local_edusupport{{/str}}<span class="badge badge-light"></span>
+                            <button type="button" class="badge {{state.class}} position-static"  id="stbtn">{{state.status}}
                             </button>
                             <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
-                        </div>
                     </td>
                     <td>
                         <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?assign={{discussionid}}" data-toggle="tooltip" data-placement="top" title="watch">
@@ -309,7 +325,7 @@
                 <th colspan="8">{{#str}} issues:closed, local_edusupport {{/str}}</th>
             </tr>
             {{#closed}}
-                <tr>
+                <tr class="issue {{state.stateclass}}">
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{id}}
@@ -350,11 +366,9 @@
                         {{/userlinks}}
                     </td>
                     <td>
-                        <div class="container">
-                           <button type="button" class="badge badge-success"> {{#str}} status:closed, local_edusupport {{/str}} <span class="badge badge-light"></span>
+                           <button type="button" class="badge {{state.class}} position-static"> {{state.status}}
                             </button>
                             <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
-                        </div>
                     </td>
                     <td>
                         <a class="btn btn-outline-success" href="{{wwwroot}}/local/edusupport/issues.php?reopen={{discussionid}}" data-toggle="tooltip" data-placement="top" title="reopen">
@@ -367,8 +381,13 @@
                     {{/hasprio}}
                 </tr>
             {{/closed}}
-
-
         </tbody>
     </table>
 </div>
+
+
+{{#js}}
+    require(['local_edusupport/issues'], function(issues) {
+    issues.init();
+  });
+{{/js}}

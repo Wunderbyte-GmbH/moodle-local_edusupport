@@ -89,4 +89,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => 1,
     ),
+    'local_edusupport_set_status' => array(
+        'classname'   => 'local_edusupport_external',
+        'methodname'  => 'set_status',
+        'classpath'   => 'local/edusupport/externallib.php',
+        'description' => 'Sets the supportlevel of a user',
+        'type'        => 'write',
+        'ajax'        => 1,
+    ),
 );

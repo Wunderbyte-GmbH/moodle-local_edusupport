@@ -53,6 +53,14 @@ class observer {
             if (empty($issue->id)) return;
             \local_edusupport\lib::reopen_issue($discussion->id);
             $author = $DB->get_record('user', array('id' => $post->userid));
+            
+
+            if ($post->userid == $discussion->userid) {
+                \local_edusupport\lib::set_status(ISSUE_STATUS_ONGOING, $issue->id);
+            } else {
+                \local_edusupport\lib::set_status(ISSUE_STATUS_ANSWERED, $issue->id);
+            }
+
             // enhance post data.
             $post->wwwroot = $CFG->wwwroot;
             $post->authorfullname = \fullname($author);
@@ -70,7 +78,7 @@ class observer {
             // Get all subscribers
             $fromuser = \core_user::get_support_user();
             $subscribers = $DB->get_records('local_edusupport_subscr', array('discussionid' => $discussion->id));
-            if ($post->author == get_config('local_edusupport', 'guestuserid')) {
+            if ($post->userid == get_config('local_edusupport', 'guestuserid')) {
 
             }
             $guestmode = get_config('local_edusupport', 'guestmodeenabled');

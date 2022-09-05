@@ -142,6 +142,9 @@ $string['prioritylvl:mid'] = 'mittlere Priorität';
 $string['prioritylvl:high'] = 'hohe Priorität';
 $string['predefined_subjects'] = 'Definieren Sie hier vorgegebene Support-Betreffe';
 $string['predefined_subjects:description'] = 'Beim Einreichen einer Support-Anfrage können Sie eine Liste von Betreffen voreinstellen, aus der Sie anstelle eines Texteingabefeldes auswählen können. Lassen Sie das Feld leer, wenn Sie die Texteingabe verwenden möchten. Ein Betreff pro Zeile, wenn Sie vordefinierte Betreffe angeben möchten.';
+$string['predefined_subjects_prefix'] = 'Aktviere Betreff Prefix';
+$string['predefined_subjects_prefix:description'] = 'Aktviere Betreff Prefix (Prefix kann in den Sprachpaketen geändert werden  subject_prefix e.g. Other:)';
+$string['subject_prefix'] = 'Other:';
 $string['relativeurlsupportarea'] = 'Relative URL zum Supportbereich';
 $string['select_subject'] = 'Bitte wählen Sie einen Betreff für die Anfrage';
 $string['screenshot'] = 'Screenshot anhängen';
@@ -196,6 +199,7 @@ $string['status:awaitinguserreply'] = 'erwate antwort des benutzers';
 $string['status:closed'] = 'abgeschlossen';
 $string['status:notstarted'] = 'neu';
 $string['status:ongoing'] = 'in beareitung';
+$string['status'] = 'status';
 
 
 $string['back'] = 'zurück';
@@ -224,4 +228,4 @@ $string['privacy:metadata:edusupport:supporters'] = 'Alle Supporter';
 $string['privacy:metadata:edusupport:supportlvl'] = 'Supportlevel';
 $string['privacy:metadata:edusupport:courseid'] = 'Kurs Id mit dem Supportforum';
 $string['privacy:metadata:edusupport:currentsupporter'] = 'User Id des supportenden Users';
-$string['privacy:metadata:edusupport:opened'] = 'Ticketstatus';
+$string['privacy:metadata:edusupport:priority'] = 'Ticketstatus';

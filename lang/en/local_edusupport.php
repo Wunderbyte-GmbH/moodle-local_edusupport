@@ -97,8 +97,15 @@ $string['issue_assign_3rdlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id
 $string['issue_assign_3rdlevel:postself'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> has taken responsibility for this issue.';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
+$string['issue_assign_nextlevel:post'] = "We are happy to inform you that your support request has been assigned to [NAME] from the atingi support team!
+
+You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.
+You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under “My support requests” on atingi.
+We wish you a great learning experience!
+
+Your atingi team";
 $string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team';
-$string['issue_assigned:subject'] = 'Supportissue assigned';
+$string['issue_assigned:subject'] = 'Your support request has been assigned';
 $string['issue_assigned:text'] = 'The support issue was assigned to <a href="{$a->wwwroot}/user/view.php?id={$a->id}">{$a->firstname} {$a->lastname}</a>!';
 $string['issue_close'] = 'Close issue';
 $string['issue_closed:subject'] = 'Issue closed';
@@ -143,6 +150,9 @@ $string['postto2ndlevel'] = 'Submit to platform support team';
 $string['postto2ndlevel:description'] = 'Directly forward to the {$a->sitename}-Support!';
 $string['predefined_subjects'] = 'Define predefined subjects here';
 $string['predefined_subjects:description'] = 'When submitting a support request you can define a list of subjects to choose from instead of a text input field. Leave empty if you want to use text input. One subject per line if you want to provide predefined subjects';
+$string['predefined_subjects_prefix'] = 'Enable prefix';
+$string['predefined_subjects_prefix:description'] = 'Enable prefix (name can be changed in language customisation subject_prefix e.g. Other:)';
+$string['subject_prefix'] = 'Other:';
 $string['privacy:metadata'] = 'This plugin does not store any personal data as it uses a forum as target.';
 $string['priority'] = 'set priority';
 $string['prioritylvl'] = 'enable priorities';
@@ -205,6 +215,7 @@ $string['status:answered'] = 'answered';
 $string['status:notstarted'] = 'not started';
 $string['status:closed'] = 'closed';
 $string['status:ongoing'] = 'ongoing';
+$string['status'] = 'status';
 
 /* Events */
 $string['supportadded'] = "Supportuser added";
@@ -222,4 +233,4 @@ $string['privacy:metadata:edusupport:supporters'] = 'All defined supporters';
 $string['privacy:metadata:edusupport:supportlvl'] = 'Supportlevel';
 $string['privacy:metadata:edusupport:courseid'] = 'Course Id with supportforum';
 $string['privacy:metadata:edusupport:currentsupporter'] = 'User Id of the assigned user';
-$string['privacy:metadata:edusupport:opened'] = 'Status of issue';
+$string['privacy:metadata:edusupport:status'] = 'Status of issue';

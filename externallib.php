@@ -22,7 +22,7 @@
  */
 
 use local_edusupport\guestuser;
-
+use local_edusupport;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . "/externallib.php");
@@ -490,7 +490,7 @@ class local_edusupport_external extends external_api {
         $forum = $DB->get_record('forum', array('id' => $params['forumid']));
         if (empty($forum->id)) return -1;
 
-        if (local_edusupport::can_config_course($forum->course)){
+        if (\local_edusupport\lib::can_config_course($forum->course)){
             $entry = $DB->get_record('local_edusupport', array('courseid' => $forum->course));
             if (!empty($entry->courseid)) {
                 $entry->forumid = !empty($entry->forumid) ? $entry->forumid : 0;
@@ -540,7 +540,7 @@ class local_edusupport_external extends external_api {
         $forum = $DB->get_record('forum', array('id' => $params['forumid']));
         if (empty($forum->id)) return -1;
         if ($params['asglobal']) {
-            if (local_edusupport::can_config_global()) {
+            if (\local_edusupport\lib::can_config_global()) {
                 set_config('targetforum', $forum->id, 'local_edusupport');
             } else {
                 return -2;
@@ -549,7 +549,7 @@ class local_edusupport_external extends external_api {
             set_config('targetforum', 0, 'local_edusupport');
         }
 
-        if (local_edusupport::can_config_course($forum->course)){
+        if (\local_edusupport\lib::can_config_course($forum->course)){
             $entry = $DB->get_record('local_edusupport', array('courseid' => $forum->course));
             if (!empty($entry->forumid)) {
                 $entry->forumid = $forum->id;
@@ -574,10 +574,10 @@ class local_edusupport_external extends external_api {
         ));
     }
     public static function set_supporter($courseid, $userid, $supportlevel) {
-        global $CFG, $DB, $PAGE;
+        global $DB;
 
         $params = self::validate_parameters(self::set_supporter_parameters(), array('courseid' => $courseid, 'userid' => $userid, 'supportlevel' => $supportlevel));
-        if (local_edusupport::can_config_course($params['courseid'])){
+        if (\local_edusupport\lib::can_config_course($params['courseid'])){
             if (empty($params['supportlevel'])) {
                 $DB->delete_records('local_edusupport_supporters', array('courseid' => $params['courseid'], 'userid' => $params['userid']));
             } else {
@@ -596,5 +596,27 @@ class local_edusupport_external extends external_api {
     public static function set_supporter_returns() {
         return new external_value(PARAM_INT, 'Returns 1 if successful');
     }
+
+    public static function set_status_parameters() {
+        return new external_function_parameters(array(
+            'status' => new external_value(PARAM_INT, 'status'),
+            'issueid' => new external_value(PARAM_INT, 'issueid'),
+        ));
+    }
+    public static function set_status($status, $issueid) {
+        global $USER;
+        require_login();
+        //require_capability();
+        $params = self::validate_parameters(self::set_status_parameters(), array('status' => $status, 'issueid' => $issueid));
+        if (\local_edusupport\lib::is_supportteam($USER->id) || \is_siteadmin()){
+            \local_edusupport\lib::set_status($params['status'], $params['issueid']);
+            return 1;
+        }
+        return 0;
+    }
+    public static function set_status_returns() {
+        return new external_value(PARAM_INT, 'Returns 1 if successful');
+    }
+
 
 }

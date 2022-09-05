@@ -6,7 +6,7 @@ define(
         modal: undefined,
         screenshot: '',
         screenshotname: '',
-        triggerSteps: 0,
+        triggerSteps: 0,  
         assignSupporter: function(discussionid /*, userid*/){
             var MAIN = this;
             //if (MAIN.debug > 0) //console.log('local_edusupport/main:assignSupporter(discussionid, userid)', discussionid, userid);
@@ -252,7 +252,7 @@ define(
             var screenshot = MAIN.screenshot; // $('#local_edusupport_create_form img#screenshot').attr('src');
             var screenshotname = MAIN.screenshotname;
             var faqread = $('#local_edusupport_create_form #id_faqread').prop('checked') ? 1 : 0;
-            var guestmail = $('#local_edusupport_create_form #id_guestmail').val();
+            var guestmail = $('#local_edusupport_create_form #id_guestmail').length ? $('#local_edusupport_create_form #id_guestmail').val() : null;
             /*var priority = $('#local_edusupport_create_form #id_prioritylvl').val();
             subject = priority + " " + subject;
             console.log.subject; */
@@ -283,6 +283,7 @@ define(
             MAIN.is_sending = true;
 
             var imagedataurl = (post_screenshot && typeof screenshot !== 'undefined' ) ? screenshot : '';
+            console.log(guestmail);
             if (MAIN.debug > 0) console.log('local_edusupport_create_issue', { subject: subject, description: description, forum_group: forum_group,
                  postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname, url: url, contactphone: contactphone, guestmail: guestmail});
             AJAX.call([{
@@ -518,14 +519,21 @@ define(
 });
 
 function changeStatus() {
-    var selectValue = document.querySelector("statusChange1").value;
-    document.querySelector("stbtn").innerHTML = selectValue;
-    if (selectValue === "New") {
-        document.querySelector("stbtn").className = "badge badge-danger";
-    } else {
-        if (selectValue === "Awaiting user reply") {
-            document.querySelector("stbtn").className = "badge badge-primary";
-        }
-    }
+    var selectValue = document.querySelector("#statusChange1").value;
+    Ajax.call([{
+        methodname: "local_edusupport_set_status",
+        args: { status: selectValue},
+        done: function(data) {
+            if (data.status == false) {
+                return;
+            }
+        },
+        fail: function(ex) {
+            // eslint-disable-next-line no-console
+            console.log("ex:" + ex);
+        },
+    }]);
+
+       
 }
 

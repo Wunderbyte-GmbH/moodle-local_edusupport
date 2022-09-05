@@ -37,7 +37,7 @@ class reminder extends \core\task\scheduled_task {
         global $DB;
         $sql = "SELECT discussionid,currentsupporter
                     FROM {local_edusupport_issues}
-                    WHERE opened=1
+                    WHERE priority>0
                         AND currentsupporter>0
                     ORDER BY currentsupporter ASC";
         $issues = $DB->get_records_sql($sql, array());

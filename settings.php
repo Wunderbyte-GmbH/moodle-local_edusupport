@@ -126,6 +126,16 @@ if ($hassiteconfig) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configtext(
+            'local_edusupport/predefined_subjects_prefix',
+            get_string('predefined_subjects_prefix', 'local_edusupport'),
+            get_string('predefined_subjects_prefix:description', 'local_edusupport'),
+            '',
+            PARAM_TEXT
+        )
+    );
+
     // Prepage before form
     $settings->add(
         new admin_setting_configcheckbox(
@@ -188,6 +198,34 @@ if ($hassiteconfig) {
             get_string('guestmodeenabled', 'local_edusupport'),
             get_string('guestmodeenabled:description', 'local_edusupport'),
             0
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'local_edusupport/guestmodeenabled',
+            get_string('guestmodeenabled', 'local_edusupport'),
+            get_string('guestmodeenabled:description', 'local_edusupport'),
+            0
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'local_edusupport/guestmodeenabled',
+            get_string('guestmodeenabled', 'local_edusupport'),
+            get_string('guestmodeenabled:description', 'local_edusupport'),
+            0
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtextarea(
+            'local_edusupport/predefined_subjects',
+            get_string('predefined_subjects', 'local_edusupport'),
+            get_string('predefined_subjects:description', 'local_edusupport'),
+            '',
+            PARAM_TEXT
         )
     );
 

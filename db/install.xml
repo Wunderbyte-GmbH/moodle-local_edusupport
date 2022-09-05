@@ -1,8 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/edusupport/db" VERSION="20200307" COMMENT="XMLDB file for Moodle local/edusupport"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
->
+<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="local/edusupport/db" VERSION="20200824" COMMENT="XMLDB file for Moodle local/edusupport" xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
   <TABLES>
     <TABLE NAME="local_edusupport" COMMENT="Default comment for local_edusupport, please edit me">
       <FIELDS>
@@ -22,7 +18,8 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="discussionid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="currentsupporter" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="This is the supporter that is currently responsible"/>
-        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="priority" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

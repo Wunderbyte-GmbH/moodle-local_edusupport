@@ -69,7 +69,7 @@ class provider implements
             'id' => 'privacy:metadata:edusupport:fieldid',
             'discussionid' => 'privacy:metadata:edusupport:discussionid',
             'currentsupporter' => 'privacy:metadata:edusupport:currentsupporter',
-            'opened' => 'privacy:metadata:edusupport:opened',
+            'priority' => 'privacy:metadata:edusupport:priority',
             ],
             'privacy:metadata:edusupport:issues'
             );
@@ -226,7 +226,7 @@ class provider implements
             'issueid' => $row->id,
             'discussionid' => $row->discussionid,
             'currentsupporter' => $row->currentsupporter, 
-            'opened' => $row->opened
+            'priority' => $row->priority
             ]; 
         }
         writer::with_context($context)

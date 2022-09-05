@@ -30,10 +30,9 @@ require_login();
 $PAGE->set_url(new moodle_url('/local/edusupport/issues.php', array()));
 $PAGE->requires->css('/local/edusupport/style/edusupport.css');
 $title = get_string('issues', 'local_edusupport');
-$title = get_string('notasigned', 'local_edusupport');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->requires->js('/local/edusupport/amd/src/main.js',true);
+
 
 
 echo $OUTPUT->header();
@@ -77,7 +76,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
     $prio = optional_param('prio', 0, PARAM_INT);
     $lvl = optional_param('lvl', 0, PARAM_INT);
     $sql = "SELECT id,discussionid FROM {local_edusupport_issues}";
-    $issues = $DB->get_records('local_edusupport_issues', array(), 'opened,id,discussionid');
+    $issues = $DB->get_records('local_edusupport_issues', array(), 'priority,id,discussionid,status');
 
     $params = array(
         'current' => array(), // issues the user is responsible for
@@ -137,14 +136,15 @@ if (!\local_edusupport\lib::is_supportteam()) {
         }
         if (!empty($reopen) && $reopen == $issue->discussionid) {
             \local_edusupport\lib::reopen_issue($issue->discussionid);
-            $issue->opened = "1";
+            $issue->priority = "1";
             if (substr($issue->name, 0, strlen($prefix)) == $prefix) {
                 $issue->name = substr($issue->name, strlen($prefix));
             }
         }
         if (!empty($close) && $close == $issue->discussionid) {
             \local_edusupport\lib::close_issue($issue->discussionid);
-            $issue->opened = "0";
+            $issue->priority = "0";
+            $issue->status = ISSUE_STATUS_CLOSED;
             unset($assigned);
             if (substr($issue->name, 0, strlen($prefix)) == $prefix) {
                 $issue->name = substr($issue->name, strlen($prefix));
@@ -152,7 +152,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
         }
         if (!empty($prio) && $prio == $issue->discussionid && !empty($lvl)) {
             \local_edusupport\lib::set_prioritylvl($issue->discussionid,$lvl);
-            $issue->opened = $lvl;
+            $issue->priority = $lvl;
         }
 
         // Now get the current supporter
@@ -165,35 +165,38 @@ if (!\local_edusupport\lib::is_supportteam()) {
         }
 
 
+        $issue->state = \local_edusupport\lib::status_to_string($issue->status);
+
+
         if ($hasprio) {
-            if ($issue->opened <= 1) {
+            if ($issue->priority <= 1) {
                 $issue->priolow = "active";
                 $issue->priomid = "";
                 $issue->priohigh = "";
             }
-            if ($issue->opened > 1) {
+            if ($issue->priority > 1) {
                 $issue->priolow = "";
                 $issue->priomid = "active";
                 $issue->priohigh = "";
             }
-            if ($issue->opened > 2) {
+            if ($issue->priority > 2) {
                 $issue->priolow = "";
                 $issue->priomid = "";
                 $issue->priohigh = "active";
             }
         }
         // Now separate between current, assigned and other issues.
-        if ($issue->currentsupporter == $USER->id && $issue->opened > 0) {
+        if ($issue->currentsupporter == $USER->id && $issue->priority > 0) {
             $params['current'][] = $issue;
             $params['count']['current'] = $params['count']['current'] + 1;
         } elseif (!empty($assigned->id)) {
             $params['assigned'][] = $issue;
             $params['count']['assigned'] = $params['count']['assigned'] + 1;
-        } elseif($issue->opened > 0) {
+        } elseif($issue->priority > 0) {
             $params['other'][] = $issue;
             $params['count']['other'] = $params['count']['other'] + 1;
         }
-        elseif($issue->opened == 0) {
+        elseif($issue->priority == 0) {
             $params['closed'][] = $issue;
             $params['count']['closed'] = $params['count']['closed'] + 1;
         }
