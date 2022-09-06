@@ -73,12 +73,10 @@ $string['extralinks'] = 'Extralinks';
 $string['extralinks:description'] = 'If you enter links here, the "help"-Button will be a menu instead of button. It will include the "help"-Button as first element, and all extra links as additional links. Enter links line by line in the following form: linkname|url|faicon|target';
 $string['faqlink'] = 'FAQ-link';
 $string['faqlink:description'] =  'link to FAQ';
-$string['faqread'] = 'faq read toggle';
+$string['faqread'] = 'Please confirm, that you have read the FAQ';
 $string['faqread:description'] =  'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
 $string['guestmail'] = 'Your e-mail';
 $string['startedby'] = 'started by';
-
-
 
 $string['header'] = 'Request for help in <i>{$a}</i>';
 $string['holidaymodeenabled'] = "Activate holidaymode";
