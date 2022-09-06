@@ -110,15 +110,15 @@ $string['issue_assigned:text'] = 'The support issue was assigned to <a href="{$a
 $string['issue_close'] = 'Close issue';
 $string['issue_closed:subject'] = 'Issue closed';
 $string['issue_closed:post'] = 'This issue closed was closed by <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a>. If you need further assistance please forward this issue again to the platform support team.';
-$string['issue_responsibles:post'] = '<p>We are happy to inform you that your support request has been assigned to {$a->responsibles} from the atingi support team!</p>
+$string['issue_responsibles:post'] = '<p>We are happy to inform you that your support request has been assigned to {$a->responsibles} from the {$a->sitename} support team!</p>
 
     <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
     
-    <p>You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under “My support requests” on atingi.</p>
+    <p>You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.</p>
     
     <p>We wish you a great learning experience!</p>
     
-    <p>Your atingi team</p>
+    <p>Your {$a->sitename} team</p>
 ';
 $string['issue_responsibles:subject'] = 'Your support request has been assigned';
 $string['issue_revoke'] = 'Revoke this issue from higher support level';
@@ -155,7 +155,7 @@ $string['predefined_subjects:description'] = 'When submitting a support request 
 $string['predefined_subjects_prefix'] = 'Enable prefix';
 $string['predefined_subjects_prefix:description'] = 'Enable prefix (name can be changed in language customisation subject_prefix e.g. Other:)';
 
-$string['subject_prefix'] = 'Other:';
+$string['subject_prefix'] = 'Support request with following topic: ';
 $string['privacy:metadata'] = 'This plugin does not store any personal data as it uses a forum as target.';
 $string['priority'] = 'set priority';
 $string['prioritylvl'] = 'enable priorities';

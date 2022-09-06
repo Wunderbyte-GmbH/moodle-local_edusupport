@@ -346,6 +346,7 @@ class local_edusupport_external extends external_api {
                                 $responsibles[] = "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$manager->id}\" target=\"_blank\">{$manager->firstname} {$manager->lastname}</a>";
                             }
                         }
+                        $forum = $DB->get_record('forum', array('id' => $discussion->forum));
                         \local_edusupport\lib::create_post($discussion->id,
                             get_string(
                                 'issue_responsibles:post',
@@ -353,6 +354,7 @@ class local_edusupport_external extends external_api {
                                 array(
                                     'responsibles' => implode(', ', $responsibles),
                                     'sitename' => $SITE->fullname,
+                                    'supportforumname' => $forum->name
                                 )
                             ),
                             get_string('issue_responsibles:subject', 'local_edusupport')
