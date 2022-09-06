@@ -249,7 +249,7 @@ class local_edusupport_external extends external_api {
                 $discussion->groupid = $groupid;
                 $discussion->mailnow = 1;
                 if ($guestmodeenabled) {
-                    $discussion->subject = '[Guestticket: ' . $params['guestmail'] . ']' . $params['subject'];
+                    $discussion->subject = '[Guestticket: ' . $params['guestmail'] . '] ' . $params['subject'];
                     $discussion->name = $discussion->subject;
                 } else {
                     $discussion->subject = $params['subject'];
