@@ -218,15 +218,18 @@ if ($hassiteconfig) {
         )
     );
 
-    $settings->add(
-        new admin_setting_configtextarea(
-            'local_edusupport/predefined_subjects',
-            get_string('predefined_subjects', 'local_edusupport'),
-            get_string('predefined_subjects:description', 'local_edusupport'),
-            '',
-            PARAM_TEXT
-        )
-    );
+    /*$possiblemanagers = \local_edusupport\lib::get_all_category_managers_from_site();
+    if ($possiblemangers) {
+        $settings->add(
+            new admin_setting_configmultiselect(
+                'local_edusupport/accountmanager',
+                get_string('accountmanager', 'local_edusupport'),
+                get_string('accountmanager:description', 'local_edusupport'),
+                array(),
+                $possiblemanagers
+            )
+        );
+    } */
 
     $options = [
         0 => get_string('inactive'),
@@ -252,6 +255,8 @@ if ($hassiteconfig) {
             5,
             [ 1 => 1, 2 => 2, 5 => 5, 10 => 10, 20 => 20])
     );
+
+    
 
     // @TODO a feature from the future.
     // $settings->add(new admin_setting_configcheckbox('local_edusupport/sendreminders', get_string('cron:reminder:title', 'local_edusupport'), '', '', PARAM_INT));

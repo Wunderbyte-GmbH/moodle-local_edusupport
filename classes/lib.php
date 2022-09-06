@@ -307,9 +307,6 @@ class lib {
         if (empty($subject)) {
             $subject = substr($text, 0, 30);
         }
-        if ($guestmodeenabled) {
-            $subject = "[Guestmode: test@mail.at]" . $subject;
-        }
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         $post = $DB->get_record('forum_posts', array('discussion' => $discussionid, 'parent' => 0));
         $post->parent = $post->id;
@@ -1170,5 +1167,29 @@ class lib {
                 break;
         }
         return '';
+    }
+
+    public static function get_all_category_managers_from_site() {
+        global $DB;
+        $sql = '
+        SELECT
+        u.username, u.id as userid, u.firstname, u.lastname 
+        FROM {role_assignments} ra
+        JOIN {user} u ON u.id = ra.userid
+        JOIN {role} r ON r.id = ra.roleid
+        JOIN {context} ctx ON ctx.id = ra.contextid
+        where ctx.contextlevel = 40
+        ORDER BY u.username
+        ';
+        $users = $DB->get_records_sql($sql);
+        if (isset($users)) {
+            foreach ($users as $user) {
+                $name = $user->firstname + $user->lastname;
+                $id = $user->userid;
+                $possibleusers[$id] = $name;
+            }
+            return $possibleusers;
+        }
+        return $DB->get_records_sql($sql);
     }
 }
