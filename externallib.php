@@ -57,7 +57,7 @@ class local_edusupport_external extends external_api {
             'screenshotname' => new external_value(PARAM_TEXT, 'the filename to use'),
             'url' => new external_value(PARAM_TEXT, 'URL where the error happened'), // We use PARAM_TEXT, as any input by the user is valid.
             'contactphone' => new external_value(PARAM_TEXT, 'Contactphone'), // We use PARAM_TEXT, was the user can enter any contact information.
-            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, NULL, true), 
+            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, NULL, true),
         ));
     }
 
@@ -71,6 +71,25 @@ class local_edusupport_external extends external_api {
         $protecttime = get_config('local_edusupport','spamprotectionthreshold');
         $protectamount = get_config('local_edusupport','spamprotectionlimit');
 
+        $cache = \cache::make('local_edusupport', 'spamprotect');
+        $timeoffset = time() - $protecttime;
+        $log = $cache->get('log');
+        if (!empty($log)) {
+            for ($a = 0; $a < count($log); $a++) {
+                if ($log[$a] < $timeoffset) {
+                    $log[$a] = '';
+                }
+            }
+            $log = array_filter($log);
+            $log = array_values($log);
+            $cache->set('log', $log);
+            if ($protectamount <= count($log)) {
+                throw new \moodle_exception('spamprotection:exception', 'local_edusupport');
+            }
+        }
+        $log[] = time();
+        $cache->set('log', $log);
+
         $subjectprefixenabled = get_config('local_edusupport', 'predefined_subjects_prefix');
         $guestmodeenabled = false;
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
@@ -80,8 +99,6 @@ class local_edusupport_external extends external_api {
         } else {
             $user = $USER;
         }
-        $log[] = time();
-        $cache->set('log', $log);
 
         $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone));
         $reply = array(
@@ -99,27 +116,6 @@ class local_edusupport_external extends external_api {
             $forumid = $tmp[0];
             $groupid = $tmp[1];
         }
-
-        /* Message dummy for issue created
-        $posthtml  ="test";
-        $postsubject = "asd";
-        $posttext = "asdsa";
-        $eventdata = new \core\message\message();
-        $userto = core_user::get_user(7);
-        $eventdata->userfrom = $USER;
-        $eventdata->userto = $userto;
-        $eventdata->subject = $postsubject;
-        $eventdata->fullmessage = $posttext;
-        $eventdata->fullmessageformat = FORMAT_PLAIN;
-        $eventdata->fullmessagehtml = $posthtml;
-        $eventdata->smallmessage = $postsubject;
-        $eventdata->contexturl = (new \moodle_url('/course/'))->out(false); // A relevant URL for the notification
-        $eventdata->contexturlname = 'Course list'; // Link title explaining where users get to for the contexturl
-        $eventdata->name = 'edusupport_issue';
-        $eventdata->component = 'local_edusupport';
-        $eventdata->notification = 1;
-        message_send($eventdata);
-        */
 
         $PAGE->set_context(\context_system::instance());
 
@@ -241,7 +237,7 @@ class local_edusupport_external extends external_api {
                 forum_check_blocking_threshold($thresholdwarning);
 
                 $message = $OUTPUT->render_from_template("local_edusupport/issue_template", $params);
-                
+
                 // Create the discussion.
                 $discussion = new stdClass();
                 $discussion->course = $course->id;
@@ -263,8 +259,8 @@ class local_edusupport_external extends external_api {
                     $discussion->subject = get_string('subject_prefix', 'local_edusupport') . " " . $discussion->subject;
                     $discussion->name = $discussion->subject;
                 }
-                
-                
+
+
                 $discussion->timestart = 0;
                 $discussion->timeend = 0;
                 $discussion->timelocked = 0;
@@ -454,7 +450,15 @@ class local_edusupport_external extends external_api {
             )
         );
     }
-    public static function get_potentialsupporters($discussionid) {
+
+    /**
+     * @param int $discussionid
+     * @return false|string
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     */
+    public static function get_potentialsupporters(int $discussionid) {
         global $DB, $USER;
         $params = self::validate_parameters(self::get_potentialsupporters_parameters(), array('discussionid' => $discussionid));
         $reply['supporters'] = array();
@@ -483,6 +487,10 @@ class local_edusupport_external extends external_api {
 
         return json_encode($reply, JSON_NUMERIC_CHECK);
     }
+
+    /**
+     * @return external_value
+     */
     public static function get_potentialsupporters_returns() {
         return new external_value(PARAM_RAW, 'Returns a json encoded array containing potential supporters.');
     }
@@ -492,8 +500,15 @@ class local_edusupport_external extends external_api {
             'forumid' => new external_value(PARAM_INT, 'ForumID of archive'),
         ));
     }
-    public static function set_archive($forumid) {
-        global $CFG, $DB, $PAGE;
+
+    /**
+     * @param int $forumid
+     * @return int
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     */
+    public static function set_archive(int $forumid) {
+        global $DB;
 
         $params = self::validate_parameters(self::set_archive_parameters(), array('forumid' => $forumid));
 
@@ -583,7 +598,16 @@ class local_edusupport_external extends external_api {
             'supportlevel' => new external_value(PARAM_TEXT, 'Supportlevel to set'),
         ));
     }
-    public static function set_supporter($courseid, $userid, $supportlevel) {
+
+    /**
+     * @param int $courseid
+     * @param int $userid
+     * @param string $supportlevel
+     * @return int
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     */
+    public static function set_supporter(int $courseid, int $userid, string $supportlevel) {
         global $DB;
 
         $params = self::validate_parameters(self::set_supporter_parameters(), array('courseid' => $courseid, 'userid' => $userid, 'supportlevel' => $supportlevel));
@@ -603,10 +627,17 @@ class local_edusupport_external extends external_api {
         }
         return 0;
     }
+
+    /**
+     * @return external_value
+     */
     public static function set_supporter_returns() {
         return new external_value(PARAM_INT, 'Returns 1 if successful');
     }
 
+    /**
+     * @return external_function_parameters
+     */
     public static function set_status_parameters() {
         return new external_function_parameters(array(
             'status' => new external_value(PARAM_INT, 'status'),
@@ -614,7 +645,16 @@ class local_edusupport_external extends external_api {
         ));
     }
 
-    public static function set_status($status, $issueid) {
+    /**
+     * @param int $status
+     * @param int $issueid
+     * @return int
+     * @throws coding_exception
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @throws require_login_exception
+     */
+    public static function set_status(int $status, int $issueid) {
         global $USER;
         require_login();
         //require_capability();
@@ -625,6 +665,10 @@ class local_edusupport_external extends external_api {
         }
         return 0;
     }
+
+    /**
+     * @return external_value
+     */
     public static function set_status_returns() {
         return new external_value(PARAM_INT, 'Returns 1 if successful');
     }
