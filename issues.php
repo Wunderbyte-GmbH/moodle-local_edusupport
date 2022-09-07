@@ -112,7 +112,10 @@ if (!\local_edusupport\lib::is_supportteam()) {
         $issue->priolow = "";
         $issue->priomid = "";
         $issue->priohigh = "";
-
+        if(isset($issue->accountmanager)) {
+            $accountmanager = $DB->get_record('user', array('id' => $issue->accountmanager));
+            $issue->accountmanagerfn = \fullname($accountmanager); 
+        }
         // Check for any actions.
         if (!empty($assign) && $assign == $issue->discussionid && empty($assigned->id)) {
             $assigned = \local_edusupport\lib::subscription_add($issue->discussionid);
@@ -226,6 +229,8 @@ if (!\local_edusupport\lib::is_supportteam()) {
         $supporter->holidayform = $mform->render();
         echo $OUTPUT->render_from_template('local_edusupport/holidaymode', $supporter);
     }
+    $params['accountmanagerenabled'] = !empty(get_config('local_edusupport', 'accountmanagers'));
+
     echo $OUTPUT->render_from_template('local_edusupport/issues', $params);
 }
 

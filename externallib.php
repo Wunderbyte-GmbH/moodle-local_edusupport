@@ -57,7 +57,8 @@ class local_edusupport_external extends external_api {
             'screenshotname' => new external_value(PARAM_TEXT, 'the filename to use'),
             'url' => new external_value(PARAM_TEXT, 'URL where the error happened'), // We use PARAM_TEXT, as any input by the user is valid.
             'contactphone' => new external_value(PARAM_TEXT, 'Contactphone'), // We use PARAM_TEXT, was the user can enter any contact information.
-            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, NULL, true),
+            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, NULL, NULL_ALLOWED),
+            'accountmanager' => new external_value(PARAM_RAW, 'Accountmanager', VALUE_OPTIONAL, NULL, NULL_ALLOWED),
         ));
     }
 
@@ -65,7 +66,7 @@ class local_edusupport_external extends external_api {
      * Create an issue in the targetforum.
      * @return postid of created issue
      */
-    public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone, $guestmail) {
+    public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone, $guestmail, $accountmanager = null) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
 
         $protecttime = get_config('local_edusupport','spamprotectionthreshold');
@@ -100,7 +101,7 @@ class local_edusupport_external extends external_api {
             $user = $USER;
         }
 
-        $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone, 'guestmail' => $guestmail));
+        $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone, 'guestmail' => $guestmail, 'accountmanager' => $accountmanager));
         $reply = array(
             'discussionid' => 0,
             'responsibles' => array(),

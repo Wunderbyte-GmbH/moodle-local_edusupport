@@ -253,6 +253,7 @@ define(
             var screenshotname = MAIN.screenshotname;
             var faqread = $('#local_edusupport_create_form #id_faqread').prop('checked') ? 1 : 0;
             var guestmail = $('#local_edusupport_create_form #id_guestmail').length ? $('#local_edusupport_create_form #id_guestmail').val() : null;
+            var accountmanager = $('#local_edusupport_create_form #id_accountmanager').length ? $('#local_edusupport_create_form #id_accountmanager').val() : null;
             /*var priority = $('#local_edusupport_create_form #id_prioritylvl').val();
             subject = priority + " " + subject;
             console.log.subject; */
@@ -283,13 +284,13 @@ define(
             MAIN.is_sending = true;
 
             var imagedataurl = (post_screenshot && typeof screenshot !== 'undefined' ) ? screenshot : '';
-            console.log(guestmail);
+            console.log(accountmanager);
             if (MAIN.debug > 0) console.log('local_edusupport_create_issue', { subject: subject, description: description, forum_group: forum_group,
-                 postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname, url: url, contactphone: contactphone, guestmail: guestmail});
+                 postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname, url: url, contactphone: contactphone, guestmail: guestmail, accountmanager: accountmanager});
             AJAX.call([{
                 methodname: 'local_edusupport_create_issue',
                 args: { subject: subject, description: description, forum_group: forum_group, postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname,
-                     url: url, contactphone: contactphone, guestmail: guestmail},
+                     url: url, contactphone: contactphone, guestmail: guestmail, accountmanager: accountmanager},
                 done: function(result) {
                     // result is the discussion id, -999 if sent by mail, or -1. if > 0 show confirm box that redirects to post. if -1 show error.
                     if (MAIN.debug > 0) console.log(result);

@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_edusupport\accountmanager;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . "/formslib.php");
@@ -172,6 +174,12 @@ class issue_create_form extends moodleform {
             $mform->setType('guestmail', PARAM_EMAIL);
             $mform->addRule('guestmail', get_string('mail_missing', 'local_edusupport'), 'required', null, 'server');
         }
+
+        // Accountmanager select.
+        $am = new accountmanager;
+        $am->prepare_accountmanager_for_form($mform);
+
+
         $mform->addElement('textarea', 'description', get_string('description', 'local_edusupport'), array('style' => 'width: 100%;', 'rows' => 10));
         $mform->setType('description', PARAM_RAW);
         $mform->addRule('description', get_string('description_missing', 'local_edusupport'), 'required', null, 'server');

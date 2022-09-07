@@ -242,3 +242,12 @@ $string['privacy:metadata:edusupport:supportlvl'] = 'Supportlevel';
 $string['privacy:metadata:edusupport:courseid'] = 'Course Id with supportforum';
 $string['privacy:metadata:edusupport:currentsupporter'] = 'User Id of the assigned user';
 $string['privacy:metadata:edusupport:status'] = 'Status of issue';
+
+
+/* Accountmanager */
+$string['possiblemanagers'] = 'Possible managers';
+$string['none'] = 'none chosen';
+$string['accountmanagers'] = 'Account managers';
+$string['accountmanager'] = 'Your Account managers';
+$string['capstocheck'] = 'Capabilties that are checked';
+$string['setaccountmanager'] = 'Set Account managers';

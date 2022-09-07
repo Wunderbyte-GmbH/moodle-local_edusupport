@@ -229,3 +229,11 @@ $string['privacy:metadata:edusupport:supportlvl'] = 'Supportlevel';
 $string['privacy:metadata:edusupport:courseid'] = 'Kurs Id mit dem Supportforum';
 $string['privacy:metadata:edusupport:currentsupporter'] = 'User Id des supportenden Users';
 $string['privacy:metadata:edusupport:priority'] = 'Ticketstatus';
+
+/* Accountmanager */
+$string['possiblemanagers'] = 'Mögliche Manager';
+$string['none'] = 'nichts ausgewählt';
+$string['accountmanagers'] = 'Account Manager';
+$string['accountmanager'] = 'Dein Account Manager';
+$string['capstocheck'] = 'Rechte die geprüft werden';
+$string['setaccountmanager'] = 'Setze Account Manager';

@@ -218,19 +218,6 @@ if ($hassiteconfig) {
         )
     );
 
-    /*$possiblemanagers = \local_edusupport\lib::get_all_category_managers_from_site();
-    if ($possiblemangers) {
-        $settings->add(
-            new admin_setting_configmultiselect(
-                'local_edusupport/accountmanager',
-                get_string('accountmanager', 'local_edusupport'),
-                get_string('accountmanager:description', 'local_edusupport'),
-                array(),
-                $possiblemanagers
-            )
-        );
-    } */
-
     $options = [
         0 => get_string('inactive'),
         60 => "1 " . get_string('minute'),
@@ -262,7 +249,8 @@ if ($hassiteconfig) {
     // $settings->add(new admin_setting_configcheckbox('local_edusupport/sendreminders', get_string('cron:reminder:title', 'local_edusupport'), '', '', PARAM_INT));
 
     $actions = array(
-        (object) array('name' => 'supporters', 'href' => 'choosesupporters.php')
+        (object) array('name' => 'supporters', 'href' => 'choosesupporters.php'),
+        (object) array('name' => 'setaccountmanager', 'href' => 'accountmanager.php'),
     );
     $links = "<div class=\"grid-eq-3\">";
     foreach($actions AS $action) {

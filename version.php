@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version  = 2022090602;
+$plugin->version  = 2022090701;
 $plugin->requires = 2020061500;
 $plugin->component = 'local_edusupport';
 $plugin->release = '2.3';
