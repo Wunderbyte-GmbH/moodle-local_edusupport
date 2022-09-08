@@ -63,6 +63,7 @@
             <tr>
                 <th width="20">#</th>
                 <th>{{#str}} issue, local_edusupport {{/str}}</th>
+                {{#accountmanagerenabled}}<th>{{#str}} accountmanagertitle , local_edusupport {{/str}}</th>{{/accountmanagerenabled}}
                 <th>{{#str}} assigned, local_edusupport {{/str}}
                 <br>{{#str}} lastpost, forum {{/str}}</th>
                 <th>{{#str}} modified {{/str}}</th>
@@ -94,6 +95,20 @@
                             {{userfullname}}
                         {{/userlinks}}
                     </td>
+                    {{#accountmanagerenabled}}
+                    <td>
+                        {{#accountmanager}}
+                            {{#userlinks}}
+                                <a href="{{wwwroot}}/user/view.php?id={{accountmanager}}">
+                                    {{accountmanagerfn}}
+                                </a>
+                            {{/userlinks}}
+                            {{^userlinks}}
+                                {{accountmanagerfn}}
+                            {{/userlinks}}
+                        {{/accountmanager}}
+                    </td>
+                    {{/accountmanagerenabled}}
                     <td>
                         {{#userlinks}}
                             {{#currentsupporterid}}<a href="{{wwwroot}}/user/view.php?id={{currentsupporterid}}">{{/currentsupporterid}}
@@ -181,6 +196,20 @@
                             {{userfullname}}
                         {{/userlinks}}
                     </td>
+                    {{#accountmanagerenabled}}
+                    <td>
+                        {{#accountmanager}}
+                            {{#userlinks}}
+                                <a href="{{wwwroot}}/user/view.php?id={{accountmanager}}">
+                                    {{accountmanagerfn}}
+                                </a>
+                            {{/userlinks}}
+                            {{^userlinks}}
+                                {{accountmanagerfn}}
+                            {{/userlinks}}
+                        {{/accountmanager}}
+                    </td>
+                    {{/accountmanagerenabled}}
                     <td>
                         {{#userlinks}}
                             {{#currentsupporterid}}<a href="{{wwwroot}}/user/view.php?id={{currentsupporterid}}">{{/currentsupporterid}}
@@ -264,6 +293,20 @@
                             {{userfullname}}
                         {{/userlinks}}
                     </td>
+                    {{#accountmanagerenabled}}
+                    <td>
+                        {{#accountmanager}}
+                            {{#userlinks}}
+                                <a href="{{wwwroot}}/user/view.php?id={{accountmanager}}">
+                                    {{accountmanagerfn}}
+                                </a>
+                            {{/userlinks}}
+                            {{^userlinks}}
+                                {{accountmanagerfn}}
+                            {{/userlinks}}
+                        {{/accountmanager}}
+                    </td>
+                    {{/accountmanagerenabled}}
                     <td>
                         {{#userlinks}}
                             {{#currentsupporterid}}<a href="{{wwwroot}}/user/view.php?id={{currentsupporterid}}">{{/currentsupporterid}}
@@ -333,6 +376,20 @@
                             {{name}}
                         </a>
                     </td>
+                    {{#accountmanagerenabled}}
+                    <td>
+                        {{#accountmanager}}
+                            {{#userlinks}}
+                                <a href="{{wwwroot}}/user/view.php?id={{accountmanager}}">
+                                    {{accountmanagerfn}}
+                                </a>
+                            {{/userlinks}}
+                            {{^userlinks}}
+                                {{accountmanagerfn}}
+                            {{/userlinks}}
+                        {{/accountmanager}}
+                    </td>
+                    {{/accountmanagerenabled}}
                     <td>
                         {{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{userid}}">

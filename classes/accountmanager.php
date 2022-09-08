@@ -111,6 +111,7 @@ class accountmanager {
      */
     private function can_choose_accountmanager() {
         global $DB, $USER;
+        if (empty(get_config('local_edusupport', 'capstocheck'))) return false;
         $capability = explode(',', get_config('local_edusupport', 'capstocheck'));
         $sql = '
             SELECT  c.id as cid, ra.id, ra.userid, ra.contextid, ra.roleid, r.shortname, ra.component, ra.itemid, c.path

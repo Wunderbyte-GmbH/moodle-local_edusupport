@@ -327,14 +327,20 @@ class local_edusupport_external extends external_api {
                     $settings = new stdClass();
                     $settings->discussionsubscribe = $options['discussionsubscribe'];
                     forum_post_subscription($settings, $forum, $discussion);
+                    $keyvaluepair = null;
+                    if (isset($params['accountmanager'])) {
+                        $keyvaluepair = new stdClass();
+                        $keyvaluepair->key = 'accountmanager';
+                        $keyvaluepair->value = $params['accountmanager'];
+                    }
                     if ($postto2ndlevel && get_config('local_edusupport', 'firstlvlgroupmode')) {
-                        \local_edusupport\lib::set_2nd_level($discussion->id);
+                        \local_edusupport\lib::set_2nd_level($discussion->id, $keyvaluepair);
                     }
                     else if ($canpostto2ndlevel && !empty($postto2ndlevel)) {
-                        \local_edusupport\lib::set_2nd_level($discussion->id);
+                        \local_edusupport\lib::set_2nd_level($discussion->id, $keyvaluepair);
                     }
                     else if (get_config('local_edusupport', 'auto2ndlvl')) {
-                        \local_edusupport\lib::set_2nd_level($discussion->id);
+                        \local_edusupport\lib::set_2nd_level($discussion->id, $keyvaluepair);
                     }
                     else {
                         // Post answer containing the reponsibles.

@@ -251,3 +251,4 @@ $string['accountmanagers'] = 'Account managers';
 $string['accountmanager'] = 'Your Account managers';
 $string['capstocheck'] = 'Capabilties that are checked';
 $string['setaccountmanager'] = 'Set Account managers';
+$string['accountmanagertitle'] = 'Account manager';

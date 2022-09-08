@@ -415,7 +415,7 @@ class lib {
      * @param discussionid.
      * @param createifnotexist (optional).
      */
-    public static function get_issue($discussionid, $createifnotexist = false) {
+    public static function get_issue($discussionid, $createifnotexist = false, $keyvaluepair = null) {
         global $DB;
         if (empty($discussionid)) {
             return;
@@ -425,8 +425,11 @@ class lib {
             $issue = (object) array(
                 'discussionid' => $discussionid,
                 'currentsupporter' => 0,
-                'created' => time()
+                'created' => time(),
             );
+            if(isset($keyvaluepair)) {
+                $issue->{$keyvaluepair->key} = $keyvaluepair->value;
+            }
             $issue->id = $DB->insert_record('local_edusupport_issues', $issue);
         }
         return $issue;
@@ -639,11 +642,11 @@ class lib {
      * @param discussionid.
      * @return true or false.
      */
-    public static function set_2nd_level($discussionid): bool {
+    public static function set_2nd_level($discussionid, $keyvaluepair = null): bool {
         global $CFG, $DB, $USER, $PAGE, $SITE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
-        $issue = self::get_issue($discussionid, true);
+        $issue = self::get_issue($discussionid, true, $keyvaluepair);
         if (!self::is_supportforum($discussion->forum)) {
             return false;
         }
