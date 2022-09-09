@@ -54,8 +54,8 @@ class observer {
             \local_edusupport\lib::reopen_issue($discussion->id);
             $author = $DB->get_record('user', array('id' => $post->userid));
             
-            $morethanoneuser = $DB->get_record_sql('Select count(distinct userid) From {forum_posts} where discussion = ?', array($discussion->id));
-            if ($morethanoneuser > 1) {
+            $morethanoneuser = $DB->get_record_sql('Select count(distinct userid) as count From {forum_posts} where discussion = ?', array($discussion->id));
+            if ($morethanoneuser->count > 1) {
                 if ($post->userid == $discussion->userid) {
                     \local_edusupport\lib::set_status(ISSUE_STATUS_ONGOING, $issue->id);
                 } else {
@@ -63,7 +63,6 @@ class observer {
                 }
             } else {
                 \local_edusupport\lib::set_status(ISSUE_STATUS_NOTSTARTED, $issue->id);
-
             }
             // enhance post data.
             $post->wwwroot = $CFG->wwwroot;
