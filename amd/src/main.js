@@ -281,6 +281,15 @@ define(
                 return;
             }
 
+            var validregex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            if ($('#local_edusupport_create_form #id_guestmail').length && !$('#local_edusupport_create_form #id_guestmail').val().match(validregex)) {
+                var invalidmail = STR.get_string('invalidmail', 'local_edusupport', {});
+                $.when(editaPresent).done(function(localizedEditString) {
+                    NOTIFICATION.alert('', localizedEditString);
+                });
+                return;
+            }
+
             MAIN.is_sending = true;
 
             var imagedataurl = (post_screenshot && typeof screenshot !== 'undefined' ) ? screenshot : '';

@@ -224,6 +224,9 @@ $string['status:notstarted'] = 'not started';
 $string['status:closed'] = 'closed';
 $string['status:ongoing'] = 'ongoing';
 $string['status'] = 'status';
+$string['invalidmail'] = 'invalid email address';
+
+
 
 /* Events */
 $string['supportadded'] = "Supportuser added";

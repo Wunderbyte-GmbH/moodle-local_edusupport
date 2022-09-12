@@ -201,6 +201,7 @@ $string['status:notstarted'] = 'neu';
 $string['status:ongoing'] = 'in beareitung';
 $string['status'] = 'status';
 $string['startedby'] = 'gestartet von';
+$string['invalidmail'] = 'keine valide E-Mail Adresse';
 
 $string['back'] = 'zurück';
 $string['continue'] = 'weiter';
