@@ -43,6 +43,18 @@ function xmldb_local_edusupport_install(){
 
     set_config('supportteamrole', $role->id, 'local_edusupport');
 
+    $user = new stdClass();
+    $user->username = "edusupport_guest_ticket";
+    $user->firstname = "Guest";
+    $user->email = 'edusupport@example.com';
+    $user->lastname = "Ticket";
+    $user->mnethostid = 1;
+
+    if (!$DB->record_exists('user', array('email' => $user->email))) {
+        $guestuserid = user_create_user($user, false, true);
+        set_config('guestuserid', $guestuserid, 'local_edusupport');
+    }
+
     // Ensure, that this role is assigned in the required context levels.
     $chk = $DB->get_record('role_context_levels', array('roleid' => $role->id, 'contextlevel' => CONTEXT_MODULE));
     if (empty($chk->id)) {
