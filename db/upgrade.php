@@ -24,7 +24,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 function xmldb_local_edusupport_upgrade($oldversion) {
-    global $DB;
+    global $DB, $CFG;
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2022082400) {
@@ -87,7 +87,7 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         $user->firstname = "Guest";
         $user->lastname = "Ticket";
         $user->email = 'edusupport@example.com';
-        $user->mnethostid = 1;
+        $user->mnethostid = $CFG->mnet_localhost_id;
         if (!$DB->record_exists('user', array('email' => $user->email))) {
             $guestuserid = user_create_user($user, false, true);
             set_config('guestuserid', $guestuserid, 'local_edusupport');

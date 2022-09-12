@@ -24,7 +24,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 function xmldb_local_edusupport_install(){
-    global $DB;
+    global $DB, $CFG;
 
     $role = $DB->get_record('role', array('shortname' => 'local_edusupport'));
     if (empty($role->id)) {
@@ -48,7 +48,7 @@ function xmldb_local_edusupport_install(){
     $user->firstname = "Guest";
     $user->email = 'edusupport@example.com';
     $user->lastname = "Ticket";
-    $user->mnethostid = 1;
+    $user->mnethostid = $CFG->mnet_localhost_id;
 
     if (!$DB->record_exists('user', array('email' => $user->email))) {
         $guestuserid = user_create_user($user, false, true);
