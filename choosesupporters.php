@@ -76,6 +76,7 @@ if (!is_siteadmin()) {
                 if ($success) {
                     $event = \local_edusupport\event\supportuser_deleted::create(
                         array(
+                            'objectid' => $id,
                             'context' => $context,
                             'relateduserid' => $record->userid,
                             'other' => array('supportuserid' => $record->userid, 'supportlevel' => $record->supportlevel)
@@ -93,6 +94,7 @@ if (!is_siteadmin()) {
                 if ($success) {
                     $event = \local_edusupport\event\supportuser_changed::create(
                         array(
+                            'objectid' => $id,
                             'context' => $context,
                             'relateduserid' => $record->userid,
                             'other' => array(
@@ -116,6 +118,7 @@ if (!is_siteadmin()) {
             if ($success) {
                 $event = \local_edusupport\event\supportuser_added::create(
                     array(
+                        'objectid' => $success,
                         'context' => $context,
                         'relateduserid'	=> $userid,
                         'other' => array('supportuserid' => $userid, 'supportlevel' => $supportlevel)));
