@@ -139,7 +139,7 @@ class lib {
 
         $issue->priority = 0;
         $issue->discussionid = $discussionid;
-
+        $issue->status = 5;
         // 4.) remove issue-link from database
         $DB->update_record('local_edusupport_issues', $issue);
         // Mark post as closed.
@@ -1136,10 +1136,10 @@ class lib {
 
     /**
      * Updates status of an issueid
-     * 
+     *
      * @param int $status
      * @param int $issueid
-     * 
+     *
      * @return void
      */
     public static function set_status($status, $issueid) {

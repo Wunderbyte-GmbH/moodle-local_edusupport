@@ -56,11 +56,11 @@ $url = new \moodle_url('/admin/category.php', [ 'category' => 'localplugins']);
 $PAGE->navbar->add(get_string('localplugins'), $url);
 
 $url = new \moodle_url('/admin/settings.php', [ 'section' => 'local_edusupport_settings' ]);
+$returnurl = $url;
 $PAGE->navbar->add(get_string('pluginname', 'local_edusupport'), $url);
 
 $PAGE->navbar->add(get_string('supporters', 'local_edusupport'), $PAGE->url);
 
-echo $OUTPUT->header();
 if (!is_siteadmin()) {
     $tourl = new moodle_url('/my', array());
     echo $OUTPUT->render_from_template('local_edusupport/alert', array(
@@ -68,7 +68,7 @@ if (!is_siteadmin()) {
         'type' => 'danger',
         'url' => $tourl->__toString(),
     ));
-} 
+}
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
@@ -77,6 +77,7 @@ if ($mform->is_cancelled()) {
     $accountmanager->form_to_config_edusupport_accountmanager($data->possiblemanagers, $data->capstocheck);
 
 }
+echo $OUTPUT->header();
 
 $mform->set_data(new stdClass());
 $mform->display();
