@@ -33,6 +33,7 @@ class observer {
         $entry = (object)$event->get_data();
         if ($entry->eventname == '\core\event\user_deleted') {
             $conditions = array('id' => $event->relateduserid);
+            \local_edusupport\accountmanager::delete_account_manager($event->relateduserid);
             return $DB->delete_records('local_edusupport_supporters', $conditions);
         }
         if ($entry->eventname == '\mod_forum\event\discussion_deleted') {
@@ -53,7 +54,7 @@ class observer {
             if (empty($issue->id)) return;
             \local_edusupport\lib::reopen_issue($discussion->id);
             $author = $DB->get_record('user', array('id' => $post->userid));
-            
+
             $morethanoneuser = $DB->get_record_sql('Select count(distinct userid) as count From {forum_posts} where discussion = ?', array($discussion->id));
             if ($morethanoneuser->count > 1) {
                 if ($post->userid == $discussion->userid) {
@@ -77,7 +78,7 @@ class observer {
 
             $post->issuelink = $CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussion->id;
             $post->replylink = $CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussion->id . '&replyto=' . $post->id;
-        
+
             // Get all subscribers
             $fromuser = \core_user::get_support_user();
             $subscribers = $DB->get_records('local_edusupport_subscr', array('discussionid' => $discussion->id));
@@ -85,8 +86,8 @@ class observer {
 
             }
             $guestmode = get_config('local_edusupport', 'guestmodeenabled');
-            
-            // Write to Guestuser 
+
+            // Write to Guestuser
             if ($guestmode && strpos($discussion->name, 'Guestticket')) {
                 preg_match('/(?<=Guestticket: )(.*)(?=\])/', $discussion->name, $matches);
                 $mail = $matches[0];

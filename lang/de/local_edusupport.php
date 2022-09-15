@@ -238,3 +238,6 @@ $string['accountmanagers'] = 'Account Manager';
 $string['accountmanager'] = 'Dein Account Manager';
 $string['capstocheck'] = 'Rechte die geprüft werden';
 $string['setaccountmanager'] = 'Setze Account Manager';
+
+
+$string['furtherquestions'] = 'Sie können leider nicht auf diese EMails antworten. Für ein besseres Support Erlebnis registrieren Sie bitte einen Account auf {$a->sitename}.';

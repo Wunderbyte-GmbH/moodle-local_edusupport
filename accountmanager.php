@@ -78,8 +78,6 @@ if ($mform->is_cancelled()) {
 
 }
 echo $OUTPUT->header();
-
 $mform->set_data(new stdClass());
 $mform->display();
-
 echo $OUTPUT->footer();

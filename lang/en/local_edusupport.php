@@ -113,11 +113,11 @@ $string['issue_closed:post'] = 'This issue closed was closed by <a href="{$a->ww
 $string['issue_responsibles:post'] = '<p>We are happy to inform you that your support request has been assigned to {$a->responsibles} from the {$a->sitename} support team!</p>
 
     <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
-    
+
     <p>You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.</p>
-    
+
     <p>We wish you a great learning experience!</p>
-    
+
     <p>Your {$a->sitename} team</p>
 ';
 $string['issue_responsibles:subject'] = 'Your support request has been assigned';
@@ -255,3 +255,7 @@ $string['accountmanager'] = 'Your Account managers';
 $string['capstocheck'] = 'Capabilties that are checked';
 $string['setaccountmanager'] = 'Set Account managers';
 $string['accountmanagertitle'] = 'Account manager';
+
+/* Guestticket */
+$string['furtherquestions'] = 'You can not reply to this emails. If you have further questions please register an Account at {$a->sitename}.';
+

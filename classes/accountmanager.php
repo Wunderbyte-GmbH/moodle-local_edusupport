@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * guestuser
+ * accountmanager
  *
  * @package     local_edusupport
  * @author      Thomas Winkler
@@ -25,15 +25,11 @@
 
 namespace local_edusupport;
 
-use mod_bigbluebuttonbn\instance;
-
-require_once('../../config.php');
-
-
 defined('MOODLE_INTERNAL') || die;
 
+
 /**
- * Class guestuser
+ * Class accountmanager
  * @author      Thomas Winkler
  * @copyright   2022 Wunderbyte GmbH
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -48,12 +44,12 @@ class accountmanager {
      *
      */
     public function __construct() {
-       
+
     }
 
     /**
      *
-     * This is to change mail before issue mail is sent 
+     * This is to change mail before issue mail is sent
      * @param string $mail
      *
      */
@@ -82,16 +78,30 @@ class accountmanager {
      */
     public static function get_all_category_managers_from_site() {
         global $DB;
+        $roles = get_roles_with_capability('moodle/course:create', CAP_ALLOW);
         $sql = '
         SELECT
-        u.username, u.id as userid, u.firstname, u.lastname 
+        DISTINCT u.username as username, u.id as userid, u.firstname, u.lastname
         FROM {role_assignments} ra
         JOIN {user} u ON u.id = ra.userid
         JOIN {role} r ON r.id = ra.roleid
         JOIN {context} ctx ON ctx.id = ra.contextid
-        where ctx.contextlevel = 40
-        ORDER BY u.username
-        ';
+        WHERE ';
+        $i = 0;
+        foreach($roles as $role) {
+            if ($i == 0) {
+                $sql .= "r.id = ". $role->id . " ";
+            } else {
+                $sql .= "OR r.id = " . $role->id . " ";
+            }
+            $i++;
+        }
+        $sql .= " UNION select u.username as username, u.id as userid, u.firstname, u.lastname
+        FROM {user} u
+        WHERE
+        u.id IN (SELECT value FROM {config} WHERE name = 'siteadmins') ";
+        $sql .= "ORDER BY username";
+
         $users = $DB->get_records_sql($sql);
         if (isset($users)) {
             foreach ($users as $user) {
@@ -103,13 +113,13 @@ class accountmanager {
         }
         return false;
     }
-    
+
 
     /**
-     * Checks if a users can choose an accountmanager
+     * Checks if a user can choose an accountmanager
      * @return bool
      */
-    private function can_choose_accountmanager() {
+    public function can_choose_accountmanager() {
         global $DB, $USER;
         if (empty(get_config('local_edusupport', 'capstocheck'))) return false;
         $capability = explode(',', get_config('local_edusupport', 'capstocheck'));
@@ -135,6 +145,7 @@ class accountmanager {
 
     /**
      * Prepares the accountmanagers for the issue create form
+     *
      */
     public function prepare_accountmanager_for_form(&$mform) {
         global $CFG;
@@ -154,5 +165,21 @@ class accountmanager {
         $mform->setDefault('accountmanager', 0);
 
     }
-    
+    /**
+     * Deletes account manager from setting
+     *
+     * @param int $userid
+     * @return void
+     */
+    public static function delete_account_manager(int $userid) {
+        if (!get_config('local_edusupport', 'accountmanagers')) {
+            return;
+        }
+        $accountmanagers = explode(',', get_config('local_edusupport', 'accountmanagers'));
+        if (in_array($userid, $accountmanagers)) {
+            unset($accountmanagers[array_search($userid, $accountmanagers)]);
+            $accountmanagerslist = implode(',', $accountmanagers);
+            set_config('accountmanagers', $accountmanagerslist, 'local_edusupport');
+        }
+    }
 }
