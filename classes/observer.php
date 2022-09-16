@@ -93,6 +93,8 @@ class observer {
                 $mail = $matches[0];
                 $touser = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
                 $touser->email = $mail;
+                $post->furtherquestions = get_string('furtherquestions' ,'local_edusupport', ['sitename' => $CFG->wwwroot]);
+
                 $mailhtml =  $OUTPUT->render_from_template('local_edusupport/post_mailhtml_guest', $post);
                 $mailtext =  $OUTPUT->render_from_template('local_edusupport/post_mailtext_guest', $post);
                 $subject = $discussion->name;
