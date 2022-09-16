@@ -243,10 +243,8 @@ if ($hassiteconfig) {
             [ 1 => 1, 2 => 2, 5 => 5, 10 => 10, 20 => 20])
     );
 
-    
 
-    // @TODO a feature from the future.
-    // $settings->add(new admin_setting_configcheckbox('local_edusupport/sendreminders', get_string('cron:reminder:title', 'local_edusupport'), '', '', PARAM_INT));
+    $settings->add(new admin_setting_configcheckbox('local_edusupport/sendreminders', get_string('cron:reminder:title', 'local_edusupport'), '', '', PARAM_INT));
 
     $actions = array(
         (object) array('name' => 'supporters', 'href' => 'choosesupporters.php'),

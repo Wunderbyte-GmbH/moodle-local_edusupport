@@ -30,11 +30,12 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 
-define("ISSUE_STATUS_CLOSED", 5);
 define("ISSUE_STATUS_NOTSTARTED", 1);
-define("ISSUE_STATUS_AWAITING", 2);
-define("ISSUE_STATUS_ANSWERED", 3);
-define("ISSUE_STATUS_ONGOING", 4);
+define("ISSUE_STATUS_AWAITING_USER_REPLY", 2);
+define("ISSUE_STATUS_ONGOING", 3);
+define("ISSUE_STATUS_AWAITING_SUPPORT_ACTION", 4);
+define("ISSUE_STATUS_CLOSED", 5);
+
 
 class lib {
     const SYSTEM_COURSE_ID = 1;
@@ -140,6 +141,7 @@ class lib {
         $issue->priority = 0;
         $issue->discussionid = $discussionid;
         $issue->status = 5;
+        $issue->timemodified = time();
         // 4.) remove issue-link from database
         $DB->update_record('local_edusupport_issues', $issue);
         // Mark post as closed.
@@ -221,6 +223,7 @@ class lib {
 
         $issue->priority = 1;
         $issue->discussionid = $discussionid;
+        $issue->timemodified = time();
 
         // 4.) remove issue-link from database.
         $DB->update_record('local_edusupport_issues', $issue);
@@ -430,6 +433,8 @@ class lib {
             if(isset($keyvaluepair)) {
                 $issue->{$keyvaluepair->key} = $keyvaluepair->value;
             }
+            $issue->timecreated = time();
+            $issue->timemodified = time();
             $issue->id = $DB->insert_record('local_edusupport_issues', $issue);
         }
         return $issue;
@@ -815,7 +820,7 @@ class lib {
         $issue = self::get_issue($discussionid);
         $issue->priority = $priority;
         $issue->discussionid = $discussionid;
-
+        $issue->timemodified = $time();
         $DB->update_record('local_edusupport_issues', $issue);
         return true;
     }
@@ -1147,27 +1152,32 @@ class lib {
         $issue = new stdClass();
         $issue->id = $issueid;
         $issue->status = $status;
-
+        $issue->timemodified = time();
         $DB->update_record('local_edusupport_issues', $issue);
     }
 
-    public static function status_to_string($status) {
+    /**
+     * Translates the status number to data used by the template.
+     *
+     * @param int $status
+     */
+    public static function status_to_template($status) {
         switch ($status) {
             case ISSUE_STATUS_NOTSTARTED:
                 return array('status' => get_string('status:notstarted', 'local_edusupport'), 'class' => 'badge-danger',
                     'stateclass' => 'notstarted');
                 break;
-            case ISSUE_STATUS_AWAITING:
+            case ISSUE_STATUS_AWAITING_USER_REPLY:
                 return array('status' => get_string('status:awaitinguserreply', 'local_edusupport'), 'class' => 'badge-warning',
                     'stateclass' => 'awaiting');
                 break;
-            case ISSUE_STATUS_ANSWERED:
-                return array('status' => get_string('status:answered', 'local_edusupport'), 'class' => 'badge-success',
-                    'stateclass' => 'answered');
-                break;
             case ISSUE_STATUS_ONGOING:
-                return array('status' => get_string('status:ongoing', 'local_edusupport'), 'class' => 'badge-warning',
+                return array('status' => get_string('status:ongoing', 'local_edusupport'), 'class' => 'badge-success',
                     'stateclass' => 'ongoing');
+                break;
+            case ISSUE_STATUS_AWAITING_SUPPORT_ACTION:
+                return array('status' => get_string('status:awaitingsupportaction', 'local_edusupport'), 'class' => 'badge-warning',
+                    'stateclass' => 'awaitingsupportaction');
                 break;
             case ISSUE_STATUS_CLOSED:
                 return array('status' => get_string('status:closed', 'local_edusupport'), 'class' => 'badge-success',

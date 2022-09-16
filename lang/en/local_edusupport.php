@@ -218,13 +218,17 @@ $string['customfieldname'] = 'customfieldname for group mode';
 $string['customfieldname:description'] = 'customfieldname for group mode';
 $string['rolename'] = 'rolename';
 $string['rolename:description'] = 'rolename for the supporters (e.g. teacher instead of editingtecher or customrole)';
+
+$string['invalidmail'] = 'Please enter a vaild email address';
+
+/* State */
+
+$string['status:notstarted'] = 'not yet started';
 $string['status:awaitinguserreply'] = 'awaiting user reply';
-$string['status:answered'] = 'answered';
-$string['status:notstarted'] = 'not started';
-$string['status:closed'] = 'closed';
 $string['status:ongoing'] = 'ongoing';
+$string['status:closed'] = 'closed';
+$string['status:awaitingsupportaction'] = 'awaiting support action';
 $string['status'] = 'status';
-$string['invalidmail'] = 'invalid email address';
 
 
 
@@ -257,5 +261,5 @@ $string['setaccountmanager'] = 'Set Account managers';
 $string['accountmanagertitle'] = 'Account manager';
 
 /* Guestticket */
-$string['furtherquestions'] = 'You can not reply to this emails. If you have further questions please register an Account at {$a->sitename}.';
+$string['furtherquestions'] = 'As you have posted a support request as guest user, this ticket is now closed. You can not reply or post further comments for that issue. If you want to have further support please register on {$a->sitename}.';
 

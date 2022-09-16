@@ -194,14 +194,19 @@ $string['customfieldname'] = 'Profilfeldname für den Gruppenmodus';
 $string['customfieldname:description'] = 'Profilfeldname für den Gruppenmodus';
 $string['rolename'] = 'Rollenname';
 $string['rolename:description'] = 'Rollenname für den 1st Level Support (z.B. teacher statt editingtecher oder eine eigens erstellte Rolle)';
-$string['status:answered'] = 'beantworted';
-$string['status:awaitinguserreply'] = 'erwate antwort des benutzers';
+
+/* Status */
+
+$string['status:notstarted'] = 'noch nicht gestartet';
+$string['status:awaitinguserreply'] = 'erwate Antwort des Benutzers';
+$string['status:ongoing'] = 'in bearbeitung';
+$string['status:awaitingsupportaction'] = 'erwarte Bearbeitung durch Supporter';
 $string['status:closed'] = 'abgeschlossen';
-$string['status:notstarted'] = 'neu';
-$string['status:ongoing'] = 'in beareitung';
+
+
 $string['status'] = 'status';
 $string['startedby'] = 'gestartet von';
-$string['invalidmail'] = 'keine valide E-Mail Adresse';
+$string['invalidmail'] = 'Bitte tragen Sie eine richtige E-Mail Adresse ein.';
 
 $string['back'] = 'zurück';
 $string['continue'] = 'weiter';
@@ -240,4 +245,4 @@ $string['capstocheck'] = 'Rechte die geprüft werden';
 $string['setaccountmanager'] = 'Setze Account Manager';
 
 
-$string['furtherquestions'] = 'Sie können leider nicht auf diese EMails antworten. Für ein besseres Support Erlebnis registrieren Sie bitte einen Account auf {$a->sitename}.';
+$string['furtherquestions'] = 'As you have posted a support request as guest user, this ticket is now closed. You can not reply or post further comments for that issue. If you want to have further support please register on {$a->sitename}.';

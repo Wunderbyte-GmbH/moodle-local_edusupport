@@ -168,7 +168,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
         }
 
 
-        $issue->state = \local_edusupport\lib::status_to_string($issue->status);
+        $issue->state = \local_edusupport\lib::status_to_template($issue->status);
 
 
         if ($hasprio) {
@@ -192,14 +192,13 @@ if (!\local_edusupport\lib::is_supportteam()) {
         if ($issue->currentsupporter == $USER->id && $issue->priority > 0) {
             $params['current'][] = $issue;
             $params['count']['current'] = $params['count']['current'] + 1;
-        } elseif (!empty($assigned->id)) {
+        } else if (!empty($assigned->id)) {
             $params['assigned'][] = $issue;
             $params['count']['assigned'] = $params['count']['assigned'] + 1;
-        } elseif($issue->priority > 0) {
+        } else if($issue->priority > 0) {
             $params['other'][] = $issue;
             $params['count']['other'] = $params['count']['other'] + 1;
-        }
-        elseif($issue->priority == 0) {
+        } else if($issue->priority == 0) {
             $params['closed'][] = $issue;
             $params['count']['closed'] = $params['count']['closed'] + 1;
         }

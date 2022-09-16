@@ -40,18 +40,18 @@
     <h3>Filter</h3>
    <div id="issuefilter" class="container-fluid">
         <div class="row">
+            <div class="p-2"><input type="checkbox" name="statefilter" value="notstarted" id="notstarted">
+            <label for="notstarted">{{#str}} status:notstarted, local_edusupport {{/str}}</label>
+            </div>
             <div class="p-2">
             <input type="checkbox" name="statefilter" value="awaiting" id="awaiting">
             <label for="awaiting">{{#str}} status:awaitinguserreply, local_edusupport {{/str}}</label>
             </div>
-            <div class="p-2"><input type="checkbox" name="statefilter" value="answered" id="answered">
-            <label for="answered">{{#str}} status:answered, local_edusupport {{/str}}</label>
+            <div class="p-2"><input type="checkbox" name="statefilter" value="ongoing" id="answered">
+            <label for="ongoing">{{#str}} status:ongoing, local_edusupport {{/str}}</label>
             </div>
-            <div class="p-2"><input type="checkbox" name="statefilter" value="notstarted" id="notstarted">
-            <label for="notstarted">{{#str}} status:notstarted, local_edusupport {{/str}}</label>
-            </div>
-            <div class="p-2"><input type="checkbox" name="statefilter" value="ongoing" id="ongoing">
-            <label for="reserves">{{#str}} status:ongoing, local_edusupport {{/str}}</label>
+            <div class="p-2"><input type="checkbox" name="statefilter" value="awaitingsupportaction" id="ongoing">
+            <label for="awaitingsupportaction">{{#str}} status:awaitingsupportaction, local_edusupport {{/str}}</label>
             </div>
             <div class="p-2"><input type="checkbox" name="statefilter" value="closed" id="closed">
             <label for="closed">{{#str}} status:closed, local_edusupport {{/str}}</label>
@@ -84,7 +84,7 @@
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
-                        </a> 
+                        </a>
                         <br>
                         <span>{{#str}} startedby, local_edusupport {{/str}} :</span>{{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{userid}}">
@@ -136,13 +136,7 @@
                         </div>
                     </td>
                     <td>
-                    <select class="changeStatusSelect" data-issueid="{{id}}">
-                        <option selected disabled class="hideoption">-</option>
-                        <option value="1">New</option>
-                        <option value="2">Awaiting user reply</option>
-                        <option value="4">Ongoing</option>
-                        <option value="3">Answered</option>
-                    </select>
+                    {{> local_edusupport/issue_state_select }}
                     <br>
                         <a class="btn btn-outline-info" href="{{wwwroot}}/local/edusupport/issues.php?asignto={{discussionid}}" onclick="require(['local_edusupport/main'], function(MAIN){ MAIN.assignSupporter({{discussionid}}); }); return false;" data-toggle="tooltip" data-placement="top" title="assign someone">
                             {{#pix}} i/enrolusers, core {{/pix}}
@@ -164,7 +158,7 @@
                         </div>
                         {{/hasprio}}
                     </td>
-                       
+
                 </tr>
             {{/current}}
             {{^current}}
@@ -185,7 +179,7 @@
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
-                        </a> 
+                        </a>
                         <br>
                         <span>{{#str}} startedby, local_edusupport {{/str}} :</span>{{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{userid}}">
@@ -260,7 +254,7 @@
                         </a>
                         </div>
                     {{/hasprio}}
-                    </td>   
+                    </td>
                 </tr>
             {{/assigned}}
             {{^assigned}}
@@ -282,7 +276,7 @@
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
-                        </a> 
+                        </a>
                         <br>
                         <span>{{#str}} startedby, local_edusupport {{/str}} :</span>{{#userlinks}}
                             <a href="{{wwwroot}}/user/view.php?id={{userid}}">

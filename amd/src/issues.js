@@ -27,11 +27,9 @@ var checked = {};
 export const init = () => {
 
     var allCheckboxes = document.querySelectorAll('#issuefilter input[type=checkbox]');
-   
+
 
     getChecked('statefilter');
-
-
     Array.prototype.forEach.call(allCheckboxes, function (el) {
     el.addEventListener('change', toggleCheckbox);
     });
@@ -40,13 +38,13 @@ export const init = () => {
            setStatus(status.value, status.dataset.issueid);
         });
    });
-}
+};
+
 
 export const setStatus = (status, issueid) => {
-        console.log(status);
         Ajax.call([{
         methodname: "local_edusupport_set_status",
-        args: { status: status, 
+        args: { status: status,
                 issueid: issueid,
         },
             done: function(data) {
@@ -60,24 +58,20 @@ export const setStatus = (status, issueid) => {
 };
 
 
-// not exactly vanilla as there is one lodash function
-
-
-
 export const toggleCheckbox = (e)  => {
   getChecked(e.target.name);
   setVisibility();
-}
+};
 
 export const getChecked = (name)  => {
   checked[name] = Array.from(document.querySelectorAll('input[name=' + name + ']:checked')).map(function (el) {
     return el.value;
   });
-}
+};
 
 export const setVisibility = () => {
   alltr.map(function (el) {
-    var statefilter = checked.statefilter.length ? 
+    var statefilter = checked.statefilter.length ?
 (Array.from(el.classList).filter(value => checked.statefilter.includes(value))).length : true;
     if (statefilter) {
       el.style.display = 'table-row';
@@ -85,4 +79,4 @@ export const setVisibility = () => {
       el.style.display = 'none';
     }
   });
-}
+};

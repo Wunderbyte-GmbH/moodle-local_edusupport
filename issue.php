@@ -260,7 +260,11 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
             "href" => $CFG->wwwroot . '/user/view.php?id' . $supporter->id,
         );
     }
-
+    $status = \local_edusupport\lib::status_to_template($issue->status);
+    $options[] = array(
+        "title" => $status['status'],
+        "class" => $status['class'],
+    );
     $options[] = array(
         "title" => get_string('issue_assign', 'local_edusupport'),
         "class" => 'btn-secondary',
@@ -275,7 +279,14 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
         "href" => '#',
         "onclick" => "require(['local_edusupport/main'], function(MAIN){ MAIN.closeIssue($discussionid); }); return false;",
     );
-    echo $OUTPUT->render_from_template('local_edusupport/issue_options', array('options' => $options));
+    $changestatus = true;
+    $id = $issue->id;
+    echo $OUTPUT->render_from_template('local_edusupport/issue_options',
+            array(
+                'options' => $options,
+                'changestatus' => $changestatus,
+                'id' => $id)
+    );
 
     // We capture the output, as we need to modify links to attachments!
     ob_start();

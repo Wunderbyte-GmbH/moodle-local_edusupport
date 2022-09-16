@@ -82,6 +82,7 @@ function xmldb_local_edusupport_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022091202) {
+        require_once($CFG->dirroot.'/user/lib.php');
         $user = new stdClass();
         $user->username = "edusupport_guest_ticket";
         $user->firstname = "Guest";
@@ -93,6 +94,28 @@ function xmldb_local_edusupport_upgrade($oldversion) {
             set_config('guestuserid', $guestuserid, 'local_edusupport');
         }
         upgrade_plugin_savepoint(true, 2022091202, 'local', 'edusupport');
+    }
+
+
+    if ($oldversion < 2022091500) {
+        $table = new xmldb_table('local_edusupport_issues');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', true, null, null, time(), 'accountmanager');
+
+        // Conditionally launch add field status.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('local_edusupport_issues');
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', true, null, null, time(), 'timecreated');
+
+        // Conditionally launch add field status.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Rename field
+        upgrade_plugin_savepoint(true, 2022091500, 'local', 'edusupport');
     }
 
     return true;

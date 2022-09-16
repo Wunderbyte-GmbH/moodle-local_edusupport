@@ -44,23 +44,12 @@
        ]
    }
  }}
-<div class="local_edusupport issue_options" style="float: right;">
-    {{#options}}
-        <a href="{{href}}"
-            class="btn {{#class}} {{class}} {{/class}}"
-            {{#onclick}} onclick="{{onclick}}" {{/onclick}}>
-            {{#icon}} {{#pix}} {{icon}} {{/pix}} {{/icon}}
-            {{title}}
-        </a>
-    {{/options}}
-    {{#changestatus}}
-        {{> local_edusupport/issue_state_select }}
-    {{/changestatus}}
-</div>
-{{#changestatus}}
-{{#js}}
-    require(['local_edusupport/issues'], function(issues) {
-    issues.init();
-  });
-{{/js}}
-{{/changestatus}}
+
+<select class="changeStatusSelect" data-issueid="{{id}}">
+    <option selected disabled class="hideoption">-</option>
+    <option value="1">{{#str}}status:notstarted, local_edusupport{{/str}}</option>
+    <option value="2">{{#str}}status:awaitinguserreply, local_edusupport{{/str}}</option>
+    <option value="3">{{#str}}status:ongoing, local_edusupport{{/str}}</option>
+    <option value="4">{{#str}}status:awaitingsupportaction, local_edusupport{{/str}}</option>
+</select>
+

@@ -58,9 +58,9 @@ class observer {
             $morethanoneuser = $DB->get_record_sql('Select count(distinct userid) as count From {forum_posts} where discussion = ?', array($discussion->id));
             if ($morethanoneuser->count > 1) {
                 if ($post->userid == $discussion->userid) {
-                    \local_edusupport\lib::set_status(ISSUE_STATUS_ONGOING, $issue->id);
+                    \local_edusupport\lib::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
                 } else {
-                    \local_edusupport\lib::set_status(ISSUE_STATUS_ANSWERED, $issue->id);
+                    \local_edusupport\lib::set_status(ISSUE_STATUS_ONGOING, $issue->id);
                 }
             } else {
                 \local_edusupport\lib::set_status(ISSUE_STATUS_NOTSTARTED, $issue->id);

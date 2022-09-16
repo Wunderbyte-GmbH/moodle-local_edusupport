@@ -35,12 +35,16 @@ class reminder extends \core\task\scheduled_task {
         if (!get_config('local_edusupport', 'sendreminders')) return;
         echo "Sending";
         global $DB;
+        $twodaysbefore =  time() - (2*24*60*60);
+        $status = ISSUE_STATUS_AWAITING_SUPPORT_ACTION;
         $sql = "SELECT discussionid,currentsupporter
                     FROM {local_edusupport_issues}
                     WHERE priority>0
                         AND currentsupporter>0
+                        AND status = ?
+                        AND timemodified < ?
                     ORDER BY currentsupporter ASC";
-        $issues = $DB->get_records_sql($sql, array());
+        $issues = $DB->get_records_sql($sql, array($status, $twodaysbefore));
         if ($debug) {
             print_r($issues);
         }
