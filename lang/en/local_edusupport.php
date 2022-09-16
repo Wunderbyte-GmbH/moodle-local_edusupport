@@ -263,3 +263,4 @@ $string['accountmanagertitle'] = 'Account manager';
 /* Guestticket */
 $string['furtherquestions'] = 'As you have posted a support request as guest user, this ticket is now closed. You can not reply or post further comments for that issue. If you want to have further support please register on {$a->sitename}.';
 
+$string['timebeforereminder'] = 'Time between last statusupdate and reminder';

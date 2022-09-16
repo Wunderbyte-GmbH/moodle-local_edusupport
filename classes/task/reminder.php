@@ -36,16 +36,18 @@ class reminder extends \core\task\scheduled_task {
         }
         echo "Sending";
         global $DB;
-        $twodaysbefore = time() - (2 * 24 * 60 * 60);
-        $status = 4;
+        $timebeforeminder = time() - (get_config('local_edusupport', 'timebeforeminder'));
+        $status1 = 4;
+        $status2 = 1;
+
         $sql = "SELECT discussionid,currentsupporter
                     FROM {local_edusupport_issues}
                     WHERE priority>0
                         AND currentsupporter>0
-                        AND status = ?
+                        AND (status = ? OR status = ?)
                         AND timemodified < ?
                     ORDER BY currentsupporter ASC";
-        $issues = $DB->get_records_sql($sql, array($status, $twodaysbefore));
+        $issues = $DB->get_records_sql($sql, array($status1, $status2, $timebeforeminder));
 
         $currentsupporter = new \stdClass();
         $reminders = array();
