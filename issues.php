@@ -37,28 +37,6 @@ $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 
-$event = \local_edusupport\event\supportuser_added::create(array('context' => $context, 'objectid' => 1, 'relateduserid'	=> 1, 'other' => array("useridfrom" => 1, 'supportuserid' => 1, 'supportlevel' => 1)));
-// ... code that may add some record snapshots
-$event->trigger();
-
-
-
-$event = \local_edusupport\event\supportuser_changed::create(
-    array(
-        'context' => $context,
-        'objectid' => 1,
-        'relateduserid' => 1,
-        'other' => array(
-            'useridfrom' => 1,
-            'oldsupportuserid' => 1,
-            'newsupportuserid' => 2,
-            'oldsupportlevel' => 1,
-            'newsupportlevel' => 2)
-        )
-);
-// ... code that may add some record snapshots
-$event->trigger();
-
 if (!\local_edusupport\lib::is_supportteam()) {
     $tocmurl = new moodle_url('/course/view.php', array('id' => $courseid));
     echo $OUTPUT->render_from_template('local_edusupport/alert', array(
@@ -103,7 +81,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
         $issue->userfullname = \fullname($postinguser);
         $sql = "SELECT id,modified,userid FROM {forum_posts} WHERE discussion=? ORDER BY modified DESC LIMIT 1 OFFSET 0";
         $lastpost = $DB->get_record_sql($sql, array($issue->discussionid));
-        $issue->lastmodified = $lastpost->modified;
+        $issue->lastmodified = $issue->timemodified;
         $issue->lastpostuserid = $lastpost->userid;
         $lastuser = $DB->get_record('user', array('id' => $issue->lastpostuserid));
         $issue->lastpostuserfullname = fullname($lastuser);
