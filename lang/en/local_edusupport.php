@@ -76,7 +76,10 @@ $string['faqlink:description'] =  'link to FAQ';
 $string['faqread'] = 'Please confirm, that you have read the FAQ';
 $string['faqread:description'] =  'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
 $string['guestmail'] = 'Your e-mail';
-$string['startedby'] = 'started by';
+
+$string['status'] = 'Status';
+$string['changestatus'] = 'Change status';
+$string['startedby'] = 'Started by';
 
 $string['header'] = 'Request for help in <i>{$a}</i>';
 $string['holidaymodeenabled'] = "Activate holidaymode";
@@ -223,14 +226,12 @@ $string['invalidmail'] = 'Please enter a vaild email address';
 
 /* State */
 
-$string['status:notstarted'] = 'not yet started';
-$string['status:awaitinguserreply'] = 'awaiting user reply';
-$string['status:ongoing'] = 'ongoing';
-$string['status:closed'] = 'closed';
-$string['status:awaitingsupportaction'] = 'awaiting support action';
-$string['status'] = 'status';
-
-
+$string['status:notstarted'] = 'Not yet started';
+$string['status:awaitinguserreply'] = 'Awaiting user reply';
+$string['status:ongoing'] = 'Ongoing';
+$string['status:closed'] = 'Closed';
+$string['status:awaitingsupportaction'] = 'Awaiting support action';
+$string['status'] = 'Status';
 
 /* Events */
 $string['supportadded'] = "Supportuser added";

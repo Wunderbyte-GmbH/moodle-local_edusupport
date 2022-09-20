@@ -186,8 +186,8 @@ $string['userlinks:description'] =  'zeige Userlinks in Taskliste';
 $string['your_issues'] = 'Ihre Anfragen';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';
-$string['back'] = 'zurück';
-$string['continue'] = 'weiter';
+$string['back'] = 'Zurück';
+$string['continue'] = 'Weiter';
 $string['firstlvlgroupmode'] = '1st level Support Gruppen Modus';
 $string['firstlvlgroupmode:description'] = 'Aktiviert den Gruppenmodus, so dass Nicht-Lehrer (andere Rollen) auf der Grundlage eines benutzerdefinierten Feldes verbunden werden und im Kursforum antworten können (stellen Sie sicher, dass Sie der Rolle "canforward2ndlevel" das Recht geben. Aktivieren Sie auch den Gruppenmodus im Kurs und aktivieren Sie getrennte Gruppen.';
 $string['customfieldname'] = 'Profilfeldname für den Gruppenmodus';
@@ -196,16 +196,15 @@ $string['rolename'] = 'Rollenname';
 $string['rolename:description'] = 'Rollenname für den 1st Level Support (z.B. teacher statt editingtecher oder eine eigens erstellte Rolle)';
 
 /* Status */
+$string['status:notstarted'] = 'Noch nicht gestartet';
+$string['status:awaitinguserreply'] = 'Erwarte Antwort des Benutzers';
+$string['status:ongoing'] = 'In bearbeitung';
+$string['status:awaitingsupportaction'] = 'Erwarte Bearbeitung durch Supporter';
+$string['status:closed'] = 'Abgeschlossen';
 
-$string['status:notstarted'] = 'noch nicht gestartet';
-$string['status:awaitinguserreply'] = 'erwate Antwort des Benutzers';
-$string['status:ongoing'] = 'in bearbeitung';
-$string['status:awaitingsupportaction'] = 'erwarte Bearbeitung durch Supporter';
-$string['status:closed'] = 'abgeschlossen';
-
-
-$string['status'] = 'status';
-$string['startedby'] = 'gestartet von';
+$string['status'] = 'Status';
+$string['changestatus'] = 'Status ändern';
+$string['startedby'] = 'Gestartet von';
 $string['invalidmail'] = 'Bitte tragen Sie eine richtige E-Mail Adresse ein.';
 
 $string['back'] = 'zurück';

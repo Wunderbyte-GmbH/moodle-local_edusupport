@@ -118,5 +118,26 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022091500, 'local', 'edusupport');
     }
 
+    if ($oldversion < 2022092004) {
+        $records = $DB->get_records('local_edusupport_issues', ['status' => NULL]);
+        if(!empty($records)) {
+            foreach ($records as $record) {
+                $record->status = 1;
+                $DB->update_record('local_edusupport_issues', $record, true);
+            }
+        }
+        upgrade_plugin_savepoint(true, 2022092004, 'local', 'edusupport');
+    }
+    if ($oldversion < 2022092005) {
+        $table = new xmldb_table('local_edusupport_issues');
+        $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 1, 'priority');
+        // Conditionally launch change field status.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_notnull($table, $field);
+            $dbman->change_field_default($table, $field);
+        }
+        // Rename field
+        upgrade_plugin_savepoint(true, 2022092005, 'local', 'edusupport');
+    }
     return true;
 }

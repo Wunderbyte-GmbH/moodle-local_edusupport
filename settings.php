@@ -200,7 +200,6 @@ if ($hassiteconfig) {
         )
     );
 
-
     $options = [
         0 => get_string('inactive'),
         60 => "1 " . get_string('minute'),
@@ -226,7 +225,6 @@ if ($hassiteconfig) {
             [ 1 => 1, 2 => 2, 5 => 5, 10 => 10, 20 => 20])
     );
 
-
     $settings->add(
         new admin_setting_configcheckbox(
             'local_edusupport/sendreminders',
@@ -236,8 +234,7 @@ if ($hassiteconfig) {
     );
 
     $settings->add(new admin_setting_configduration('local_edusupport/timebeforereminder',
-    get_string('timebeforereminder', 'local_edusupport'), '', 0));
-
+    get_string('timebeforereminder', 'local_edusupport'), '', 2));
 
     $actions = array(
         (object) array('name' => 'supporters', 'href' => 'choosesupporters.php'),

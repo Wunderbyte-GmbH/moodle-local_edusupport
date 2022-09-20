@@ -145,9 +145,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
             $issue->currentsupportername = get_string('label:2ndlevel', 'local_edusupport');
         }
 
-
         $issue->state = \local_edusupport\lib::status_to_template($issue->status);
-
 
         if ($hasprio) {
             if ($issue->priority <= 1) {

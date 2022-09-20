@@ -1157,33 +1157,34 @@ class lib {
     }
 
     /**
-     * Translates the status number to data used by the template.
+     * Translates the status number to data used by the template. Returns associative array: ['status' => string, 'class' => string]
      *
      * @param int $status
+     * @return array
      */
-    public static function status_to_template($status) {
+    public static function status_to_template(int $status) : array {
         switch ($status) {
             case ISSUE_STATUS_NOTSTARTED:
-                return array('status' => get_string('status:notstarted', 'local_edusupport'), 'class' => 'badge-danger',
+                return array('status' => get_string('status:notstarted', 'local_edusupport'), 'class' => 'badge badge-danger',
                     'stateclass' => 'notstarted');
                 break;
             case ISSUE_STATUS_AWAITING_USER_REPLY:
-                return array('status' => get_string('status:awaitinguserreply', 'local_edusupport'), 'class' => 'badge-warning',
+                return array('status' => get_string('status:awaitinguserreply', 'local_edusupport'), 'class' => 'badge badge-warning',
                     'stateclass' => 'awaiting');
                 break;
             case ISSUE_STATUS_ONGOING:
-                return array('status' => get_string('status:ongoing', 'local_edusupport'), 'class' => 'badge-success',
+                return array('status' => get_string('status:ongoing', 'local_edusupport'), 'class' => 'badge badge-success',
                     'stateclass' => 'ongoing');
                 break;
             case ISSUE_STATUS_AWAITING_SUPPORT_ACTION:
-                return array('status' => get_string('status:awaitingsupportaction', 'local_edusupport'), 'class' => 'badge-warning',
+                return array('status' => get_string('status:awaitingsupportaction', 'local_edusupport'), 'class' => 'badge badge-warning',
                     'stateclass' => 'awaitingsupportaction');
                 break;
             case ISSUE_STATUS_CLOSED:
-                return array('status' => get_string('status:closed', 'local_edusupport'), 'class' => 'badge-success',
+                return array('status' => get_string('status:closed', 'local_edusupport'), 'class' => 'badge badge-success',
                     'stateclass' => 'closed');
                 break;
         }
-        return '';
+        return [];
     }
 }

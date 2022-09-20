@@ -46,21 +46,37 @@
  }}
 <div class="local_edusupport issue_options" style="float: right;">
     {{#options}}
-        <a href="{{href}}"
-            class="btn {{#class}} {{class}} {{/class}}"
-            {{#onclick}} onclick="{{onclick}}" {{/onclick}}>
-            {{#icon}} {{#pix}} {{icon}} {{/pix}} {{/icon}}
-            {{title}}
-        </a>
+        {{#href}}
+            <a href="{{href}}"
+               class="btn {{#class}} {{class}} {{/class}}"
+                {{#onclick}} onclick="{{onclick}}" {{/onclick}}>
+                {{#icon}} {{#pix}} {{icon}} {{/pix}} {{/icon}}
+                {{title}}
+            </a>
+        {{/href}}
+        {{^href}}
+            <span class="alert {{#class}} {{class}} {{/class}}"
+                {{#onclick}} onclick="{{onclick}}" {{/onclick}}>
+                {{#icon}} {{#pix}} {{icon}} {{/pix}} {{/icon}}
+                {{title}}
+            </span>
+        {{/href}}
     {{/options}}
     {{#changestatus}}
-        {{> local_edusupport/issue_state_select }}
+        <div class="d-inline-block">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="local_edusupport_issue_state_select">Change status</label>
+                </div>
+                {{> local_edusupport/issue_state_select }}
+            </div>
+        </div>
     {{/changestatus}}
 </div>
 {{#changestatus}}
-{{#js}}
-    require(['local_edusupport/issues'], function(issues) {
-    issues.init();
-  });
-{{/js}}
+    {{#js}}
+        require(['local_edusupport/issues'], function(issues) {
+        issues.init();
+        });
+    {{/js}}
 {{/changestatus}}
