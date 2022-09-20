@@ -23,7 +23,6 @@
 
 require_once('../../config.php');
 
-
 $context = \context_system::instance();
 $PAGE->set_context($context);
 require_login();
@@ -32,8 +31,6 @@ $PAGE->requires->css('/local/edusupport/style/edusupport.css');
 $title = get_string('issues', 'local_edusupport');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-
-
 
 echo $OUTPUT->header();
 

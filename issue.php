@@ -29,15 +29,13 @@ require_once('../../config.php');
 $d = optional_param('d', 0, PARAM_INT); // discussionid.
 $discussion = optional_param('discussion', 0, PARAM_INT); // discussionid.
 $discussionid = $discussion | $d;
-$replyto = optional_param('replyto', 0, PARAM_INT);          // If set, we reply to this post.
-
+$replyto = optional_param('replyto', 0, PARAM_INT);      // If set, we reply to this post.
 $parent = optional_param('parent', 0, PARAM_INT);        // If set, then display this post and all children.
 $mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread
 $move   = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum
 $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
 $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 $pin    = optional_param('pin', -1, PARAM_INT);          // If set, pin or unpin this discussion.
-
 $edit   = optional_param('edit', 0, PARAM_INT);
 $delete   = optional_param('delete', 0, PARAM_INT);
 
@@ -55,6 +53,7 @@ $issue = \local_edusupport\lib::get_issue($discussionid, false);
 $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid), '*', MUST_EXIST);
 $PAGE->set_title($discussion->name);
 $PAGE->set_heading($discussion->name);
+$issueslinkname = get_string('issues', 'local_edusupport');
 
 if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
     echo $OUTPUT->header();
@@ -77,8 +76,8 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
         'type' => 'danger',
     ));
 } else {
-    $course = $DB->get_record('course', array('id' => $discussion->course), '*', MUST_EXIST);
     $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+    $course = get_course($forum->course);
     $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
     $post = $DB->get_record('forum_posts', array('discussion' => $discussionid, 'parent' => 0));
     $coursecontext = \context_course::instance($forum->course);
@@ -86,6 +85,9 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
 
     $PAGE->set_title("$course->shortname: ".format_string($discussion->name));
     $PAGE->set_heading($course->fullname);
+    $PAGE->navbar->add($issueslinkname, new moodle_url('/local/edusupport/issues.php'));
+    $PAGE->navbar->add($course->shortname, new moodle_url('/mod/forum/view.php', ['id' => $cm->id]));
+    $PAGE->navbar->add(get_string('issue', 'local_edusupport') . ": {$discussion->name}", new moodle_url($url));
 
     $vaultfactory = \mod_forum\local\container::get_vault_factory();
     $discussionvault = $vaultfactory->get_discussion_vault();
@@ -104,14 +106,9 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
         throw new \moodle_exception('Unable to find forum with id ' . $vdiscussion->get_forum_id());
     }
 
-    //$course = $forum->get_course_record();
-    $course = get_course($forum->course);
-    //$cm = $forum->get_course_module_record();
     $cm =  get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
 
-
     if (!empty($replyto)) {
-        //require_once($CFG->dirroot . '/mod/forum/classes/post_form.php');
         require_once($CFG->dirroot . '/local/edusupport/classes/post_form.php');
         $thresholdwarning = forum_check_throttling($forum->id, $cm);
         $mform_post = new \local_edusupport_post_form($CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussionid . '&replyto=' . $replyto, array(

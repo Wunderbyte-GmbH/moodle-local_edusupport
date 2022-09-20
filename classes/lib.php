@@ -820,7 +820,7 @@ class lib {
         $issue = self::get_issue($discussionid);
         $issue->priority = $priority;
         $issue->discussionid = $discussionid;
-        $issue->timemodified = $time();
+        $issue->timemodified = time();
         $DB->update_record('local_edusupport_issues', $issue);
         return true;
     }
