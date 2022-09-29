@@ -1156,7 +1156,7 @@ class lib {
         $issue->timemodified = time();
 
         $DB->update_record('local_edusupport_issues', $issue);
-        if ($status == ISSUE_STATUS_AWAITING_SUPPORT_ACTION && !get_config('local_edusupport', 'sendreminders')) {
+        if ($status == ISSUE_STATUS_AWAITING_SUPPORT_ACTION && get_config('local_edusupport', 'sendreminders')) {
             $taskdata = array(
                 'issueid' => $issueid,
                 'status' => $status,
