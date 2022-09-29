@@ -1160,7 +1160,7 @@ class lib {
             $taskdata = array(
                 'issueid' => $issueid,
                 'status' => $status,
-                'sendagain' => true,
+                'sendagain' => true
             );
 
             $task = new reminder();
