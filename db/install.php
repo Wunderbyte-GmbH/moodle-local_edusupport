@@ -51,6 +51,7 @@ function xmldb_local_edusupport_install(){
     $user->mnethostid = $CFG->mnet_localhost_id;
 
     if (!$DB->record_exists('user', array('email' => $user->email))) {
+        require_once($CFG->dirroot.'/user/lib.php');
         $guestuserid = user_create_user($user, false, true);
         set_config('guestuserid', $guestuserid, 'local_edusupport');
     }
