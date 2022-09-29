@@ -58,18 +58,6 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022090501, 'local', 'edusupport');
     }
 
-    if ($oldversion < 2022090502) {
-        $user = new stdClass();
-        $user->username = "edusupport_guest_ticket";
-        $user->firstname = "Guest";
-        $user->email = 'edusupport@example.com';
-        if (!$DB->record_exists('user', array('email' => $user->email))) {
-            $guestuserid = user_create_user($user, false, false);
-            set_config('guestuserid', $guestuserid, 'local_edusupport');
-        }
-        upgrade_plugin_savepoint(true, 2022090502, 'local', 'edusupport');
-    }
-
     if ($oldversion < 2022090701) {
         $table = new xmldb_table('local_edusupport_issues');
         $field = new xmldb_field('accountmanager', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'status');
