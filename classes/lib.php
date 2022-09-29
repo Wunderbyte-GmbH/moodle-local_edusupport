@@ -1156,15 +1156,16 @@ class lib {
         $issue->timemodified = time();
 
         $DB->update_record('local_edusupport_issues', $issue);
-        if ($status == ISSUE_STATUS_AWAITING_SUPPORT_ACTION) {
+        if ($status == ISSUE_STATUS_AWAITING_SUPPORT_ACTION && !get_config('local_edusupport', 'sendreminders')) {
             $taskdata = array(
                 'issueid' => $issueid,
-                'status' => $status
+                'status' => $status,
+                'sendagain' => true,
             );
 
             $task = new reminder();
             $task->set_custom_data($taskdata);
-            $timebeforeminder = time() - (get_config('local_edusupport', 'timebeforeminder'));
+            $timebeforeminder = time() + (get_config('local_edusupport', 'timebeforeminder'));
             $task->set_next_run_time($timebeforeminder);
 
             // Now queue the task or reschedule it if it already exists (with matching data).

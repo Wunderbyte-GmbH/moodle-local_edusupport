@@ -39,7 +39,7 @@ class reminder extends \core\task\adhoc_task {
             return;
         }
         global $DB;
-        $timebeforeminder = time() - (get_config('local_edusupport', 'timebeforeminder'));
+        $timebeforeminder = time() + (get_config('local_edusupport', 'timebeforeminder'));
         $status1 = 4;
         $status2 = 1;
 
@@ -73,13 +73,15 @@ class reminder extends \core\task\adhoc_task {
                 }
             }
             $this->send($currentsupporter, $reminders, $debug);
-            $task = new reminder();
-            $task->set_custom_data($taskdata);
-            $timebeforeminder = time() - 2 * (get_config('local_edusupport', 'timebeforeminder'));
-            $task->set_next_run_time($timebeforeminder);
-
-            // Now queue the task or reschedule it if it already exists (with matching data).
-            \core\task\manager::queue_adhoc_task($task);
+            if ($taskdata->sendagain) {
+                $task = new reminder();
+                $taskdata->sendagain = false;
+                $task->set_custom_data($taskdata);
+                $timebeforeminder = time() + 2 * (get_config('local_edusupport', 'timebeforeminder'));
+                $task->set_next_run_time($timebeforeminder);
+                 // Now queue the task or reschedule it if it already exists (with matching data).
+                \core\task\manager::queue_adhoc_task($task);
+            }
             return true;
         }
         return true;
