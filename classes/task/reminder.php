@@ -39,7 +39,7 @@ class reminder extends \core\task\adhoc_task {
             return;
         }
         global $DB;
-        $timebeforeminder = time() + (get_config('local_edusupport', 'timebeforeminder'));
+        $timebeforeminder = time() - (get_config('local_edusupport', 'timebeforeminder'));
         $status1 = 4;
         $status2 = 1;
 
