@@ -23,6 +23,7 @@
 
 namespace local_edusupport;
 
+use local_edusupport\task\reminder;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
@@ -1153,7 +1154,22 @@ class lib {
         $issue->id = $issueid;
         $issue->status = $status;
         $issue->timemodified = time();
+
         $DB->update_record('local_edusupport_issues', $issue);
+        if ($status == ISSUE_STATUS_AWAITING_SUPPORT_ACTION) {
+            $taskdata = array(
+                'issueid' => $issueid,
+                'status' => $status
+            );
+
+            $task = new reminder();
+            $task->set_custom_data($taskdata);
+            $timebeforeminder = time() - (get_config('local_edusupport', 'timebeforeminder'));
+            $task->set_next_run_time($timebeforeminder);
+
+            // Now queue the task or reschedule it if it already exists (with matching data).
+            \core\task\manager::queue_adhoc_task($task);
+        }
     }
 
     /**

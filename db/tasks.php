@@ -33,15 +33,6 @@ $tasks = array(
         'dayofweek' => '1',
         'month' => '*',
     ),
-    array(
-        'classname' => 'local_edusupport\task\reminder',
-        'blocking' => 0,
-        'minute' => '0',
-        'hour' => '*/4',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*',
-    ),
 );
 
 
