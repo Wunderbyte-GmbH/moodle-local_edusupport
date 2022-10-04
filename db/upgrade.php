@@ -139,8 +139,5 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         // Edusupport savepoint reached.
         upgrade_plugin_savepoint(true, 2022092008, 'local', 'edusupport');
     }
-
-
-
     return true;
 }
