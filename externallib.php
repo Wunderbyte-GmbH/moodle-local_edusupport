@@ -57,7 +57,7 @@ class local_edusupport_external extends external_api {
             'url' => new external_value(PARAM_TEXT, 'URL where the error happened'), // We use PARAM_TEXT, as any input by the user is valid.
             'contactphone' => new external_value(PARAM_TEXT, 'Contactphone'), // We use PARAM_TEXT, was the user can enter any contact information.
             'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, NULL, NULL_ALLOWED),
-            'accountmanager' => new external_value(PARAM_RAW, 'Accountmanager', VALUE_OPTIONAL, NULL, NULL_ALLOWED),
+            'accountmanager' => new external_value(PARAM_INT, 'Accountmanager', VALUE_OPTIONAL, NULL, NULL_ALLOWED),
         ));
     }
 

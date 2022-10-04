@@ -127,5 +127,20 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         // Rename field
         upgrade_plugin_savepoint(true, 2022092005, 'local', 'edusupport');
     }
+    if ($oldversion < 2022092008) {
+
+        // Changing type of field archiveid on table local_edusupport to int.
+        $table = new xmldb_table('local_edusupport_issues');
+        $field = new xmldb_field('accountmanager', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'status');
+
+        // Launch change of type for field archiveid.
+        $dbman->change_field_type($table, $field);
+
+        // Edusupport savepoint reached.
+        upgrade_plugin_savepoint(true, 2022092008, 'local', 'edusupport');
+    }
+
+
+
     return true;
 }
