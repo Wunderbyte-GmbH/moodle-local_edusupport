@@ -280,7 +280,7 @@ function local_edusupport_render_navbar_output(\renderer_base $renderer) {
 
     $guestmode = get_config('local_edusupport', 'guestmodeenabled');
     // Early bail out conditions.
-    if (!isloggedin()) {
+    if (!isloggedin()  && !$guestmode) {
         return '';
     }
     if (isguestuser() && !$guestmode) {
