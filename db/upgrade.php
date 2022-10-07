@@ -124,20 +124,35 @@ function xmldb_local_edusupport_upgrade($oldversion) {
             $dbman->change_field_notnull($table, $field);
             $dbman->change_field_default($table, $field);
         }
-        // Rename field
         upgrade_plugin_savepoint(true, 2022092005, 'local', 'edusupport');
     }
     if ($oldversion < 2022092008) {
-
         // Changing type of field archiveid on table local_edusupport to int.
         $table = new xmldb_table('local_edusupport_issues');
         $field = new xmldb_field('accountmanager', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'status');
-
-        // Launch change of type for field archiveid.
-        $dbman->change_field_type($table, $field);
-
+        if ($dbman->field_exists($table, $field)) {
+            // Launch change of type for field archiveid.
+            $dbman->change_field_type($table, $field);
+        }
         // Edusupport savepoint reached.
         upgrade_plugin_savepoint(true, 2022092008, 'local', 'edusupport');
+    }
+    if ($oldversion < 2022100703) {
+        $sql = 'SELECT lei.* FROM {local_edusupport_issues} lei
+                JOIN {forum_discussions} fd
+                ON fd.id = lei.discussionid
+                WHERE lei.priority = 0
+                AND lei.status = 1
+                AND fd.name LIKE "[Closed%"';
+        $closedissues = $DB->get_records_sql($sql);
+        if(!empty($closedissues)) {
+            foreach ($closedissues as $issue) {
+                $issue->status = 5; // ISSUE_STATUS_CLOSED.
+                $DB->update_record('local_edusupport_issues', $issue);
+            }
+        }
+        // Edusupport savepoint reached.
+        upgrade_plugin_savepoint(true, 2022100703, 'local', 'edusupport');
     }
     return true;
 }

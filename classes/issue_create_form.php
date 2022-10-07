@@ -35,7 +35,7 @@ class issue_create_form extends moodleform {
     var $subdirs = 0;
 
     function definition() {
-        global $CFG, $COURSE, $DB, $SITE;
+        global $CFG, $COURSE, $SITE;
 
         $faqread = get_config('local_edusupport','faqread');
         $faqlink = get_config('local_edusupport','faqlink');
@@ -81,28 +81,14 @@ class issue_create_form extends moodleform {
 
         // If there are not potentialtargets we don't care. We will send a mail to the Moodle default support contact.
         $options = array();
-        $labels = array();
-
         foreach ($potentialtargets AS $pt) {
-            $managers = array_values(\local_edusupport\lib::get_course_supporters($pt));
-            $label = array();
-            for ($a = 0; $a < count($managers) && $a < 3; $a++) {
-                $manager = $managers[$a];
-                $label[] = "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$manager->id}\" target=\"_blank\">{$manager->firstname} {$manager->lastname}</a>";
-            }
-            if (count($managers) > 3) {
-                $label[] = '...';
-            }
-            $label = implode(", ", $label);
             if (empty($pt->potentialgroups) || count($pt->potentialgroups) == 0) {
-                $labels[$pt->id . '_0'] = $label;
                 $options[$pt->id . '_0'] = $pt->name;
                 if (empty($pt->postto2ndlevel)) {
                     $hideifs[] = $pt->id . '_0';
                 }
             } else {
                 foreach($pt->potentialgroups AS $group) {
-                    $labels[$pt->id . '_' . $group->id] = $label;
                     $options[$pt->id . '_' . $group->id] = $pt->name . ' > ' . $group->name;
                     if (empty($pt->postto2ndlevel)) {
                         $hideifs[] = $pt->id . '_' . $group->id;
@@ -113,7 +99,6 @@ class issue_create_form extends moodleform {
         $supportuser = \core_user::get_support_user();
         if (count($potentialtargets) == 0) {
             $options['mail'] = get_string('email_to_xyz', 'local_edusupport', (object) array('email' => $supportuser->email));
-            $labels['mail'] = $supportuser->email;
         }
 
         $hideifs = '["' . implode('","', $hideifs) . '"]';
@@ -128,25 +113,8 @@ class issue_create_form extends moodleform {
                 '$(pt2).closest(\'div.form-group\').css(\'display\', hide ? \'none\' : \'block\');',
             '});'
         ];
-        $mform->addElement('select', 'forum_group', get_string('to_group', 'local_edusupport'), $options, array('onchange' => implode("",$postto2ndlevel_hideshow)));
+        $mform->addElement('select', 'forum_group', get_string('to_group', 'local_edusupport'), $options, array('onchange' => implode("", $postto2ndlevel_hideshow)));
         $mform->setType('forum_group', PARAM_INT);
-
-        $managerslabel = [
-            '<div class="form-group row fitem">',
-            '   <div class="col-md-3"></div>',
-            '   <div class="col-md-9">',
-        ];
-
-        foreach ($labels as $identifier => $label) {
-            $managerslabel[] = '        <div class="edusupport_label hidden" id="edusupport_label_' . $identifier . '" class="hidden">';
-            $managerslabel[] = '            ' . $label;
-            $managerslabel[] = '        </div>';
-        }
-
-        $managerslabel[] = '   </div>';
-        $managerslabel[] = '</div>';
-
-        $mform->addElement('html', implode("\n", $managerslabel));
 
         if (!empty($usesubjects = get_config('local_edusupport', 'predefined_subjects'))) {
             $options = ['' => ''];

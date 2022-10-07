@@ -234,7 +234,7 @@ if ($hassiteconfig) {
     );
 
     $settings->add(new admin_setting_configduration('local_edusupport/timebeforereminder',
-    get_string('timebeforereminder', 'local_edusupport'), '', 2));
+    get_string('timebeforereminder', 'local_edusupport'), '', 2, 86400));
 
     $actions = array(
         (object) array('name' => 'supporters', 'href' => 'choosesupporters.php'),

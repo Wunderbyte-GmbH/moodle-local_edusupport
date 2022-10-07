@@ -115,6 +115,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
         if (!empty($reopen) && $reopen == $issue->discussionid) {
             \local_edusupport\lib::reopen_issue($issue->discussionid);
             $issue->priority = "1";
+            $issue->status = ISSUE_STATUS_ONGOING;
             if (substr($issue->name, 0, strlen($prefix)) == $prefix) {
                 $issue->name = substr($issue->name, strlen($prefix));
             }
@@ -168,10 +169,10 @@ if (!\local_edusupport\lib::is_supportteam()) {
         } else if (!empty($assigned->id)) {
             $params['assigned'][] = $issue;
             $params['count']['assigned'] = $params['count']['assigned'] + 1;
-        } else if($issue->priority > 0) {
+        } else if($issue->status != ISSUE_STATUS_CLOSED) {
             $params['other'][] = $issue;
             $params['count']['other'] = $params['count']['other'] + 1;
-        } else if($issue->priority == 0) {
+        } else if($issue->status == ISSUE_STATUS_CLOSED) {
             $params['closed'][] = $issue;
             $params['count']['closed'] = $params['count']['closed'] + 1;
         }
@@ -202,7 +203,6 @@ if (!\local_edusupport\lib::is_supportteam()) {
         echo $OUTPUT->render_from_template('local_edusupport/holidaymode', $supporter);
     }
     $params['accountmanagerenabled'] = !empty(get_config('local_edusupport', 'accountmanagers'));
-
 
     echo $OUTPUT->render_from_template('local_edusupport/issues', $params);
 }

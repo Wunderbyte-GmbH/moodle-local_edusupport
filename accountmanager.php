@@ -20,19 +20,20 @@
  * @author     Thomas Winkler
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_edusupport;
 
 require_once('../../config.php');
+
 use local_edusupport\form\accountmanager_form;
 use moodle_url;
 use stdClass;
 
 $context = \context_system::instance();
-global $USER, $PAGE;
 
 // Set PAGE variables.
 $PAGE->set_context($context);
-$PAGE->set_url($CFG->wwwroot . '/local/edusuppoort/accountmanager.php');
+$PAGE->set_url($CFG->wwwroot . '/local/edusupport/accountmanager.php');
 
 // Force the user to login/create an account to access this page.
 require_login();
@@ -46,17 +47,16 @@ $mform = new accountmanager_form();
 $PAGE->set_title($title);
 $PAGE->set_heading($heading);
 
-$url = new \moodle_url('/admin/search.php', [ ]);
+$url = new \moodle_url('/admin/search.php', []);
 $PAGE->navbar->add(get_string('administrationsite'), $url);
 
-$url = new \moodle_url('/admin/category.php', [ 'category' => 'modules']);
+$url = new \moodle_url('/admin/category.php', ['category' => 'modules']);
 $PAGE->navbar->add(get_string('plugins', 'core_admin'), $url);
 
-$url = new \moodle_url('/admin/category.php', [ 'category' => 'localplugins']);
+$url = new \moodle_url('/admin/category.php', ['category' => 'localplugins']);
 $PAGE->navbar->add(get_string('localplugins'), $url);
 
-$url = new \moodle_url('/admin/settings.php', [ 'section' => 'local_edusupport_settings' ]);
-$returnurl = $url;
+$url = new \moodle_url('/admin/settings.php', ['section' => 'local_edusupport_settings']);
 $PAGE->navbar->add(get_string('pluginname', 'local_edusupport'), $url);
 
 $PAGE->navbar->add(get_string('supporters', 'local_edusupport'), $PAGE->url);
@@ -70,12 +70,9 @@ if (!is_siteadmin()) {
     ));
 }
 if ($mform->is_cancelled()) {
-    redirect($returnurl);
-
+    redirect($url);
 } else if ($data = $mform->get_data()) {
-    $context = \context_system::instance();
     $accountmanager->form_to_config_edusupport_accountmanager($data->possiblemanagers, $data->capstocheck);
-
 }
 echo $OUTPUT->header();
 $mform->set_data(new stdClass());

@@ -440,7 +440,6 @@ class local_edusupport_external extends external_api {
         } else {
             $output = $form->render();
         }
-
         return $output;
     }
     /**

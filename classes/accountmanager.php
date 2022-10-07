@@ -27,14 +27,13 @@ namespace local_edusupport;
 
 defined('MOODLE_INTERNAL') || die;
 
-
 /**
  * Class accountmanager
+ *
  * @author      Thomas Winkler
  * @copyright   2022 Wunderbyte GmbH
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class accountmanager {
 
     public $userid;
@@ -50,6 +49,7 @@ class accountmanager {
     /**
      *
      * This is to change mail before issue mail is sent
+     *
      * @param string $mail
      *
      */
@@ -62,6 +62,7 @@ class accountmanager {
 
     /**
      * returns all managers from site
+     *
      * @return array
      */
     public static function get_capabiltities_to_check() {
@@ -72,8 +73,10 @@ class accountmanager {
             'enrol/category:config' => 'enrol/category:config',
         );
     }
+
     /**
      * returns all managers from site
+     *
      * @return array|bool
      */
     public static function get_all_category_managers_from_site() {
@@ -88,9 +91,9 @@ class accountmanager {
         JOIN {context} ctx ON ctx.id = ra.contextid
         WHERE ';
         $i = 0;
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
             if ($i == 0) {
-                $sql .= "r.id = ". $role->id . " ";
+                $sql .= "r.id = " . $role->id . " ";
             } else {
                 $sql .= "OR r.id = " . $role->id . " ";
             }
@@ -114,25 +117,28 @@ class accountmanager {
         return false;
     }
 
-
     /**
      * Checks if a user can choose an accountmanager
+     *
      * @return bool
      */
-    public function can_choose_accountmanager() {
+    public function can_choose_accountmanager(): bool {
         global $DB, $USER;
-        if (empty(get_config('local_edusupport', 'capstocheck'))) return false;
+        if (empty(get_config('local_edusupport', 'capstocheck'))) {
+            return false;
+        }
         $capability = explode(',', get_config('local_edusupport', 'capstocheck'));
         $sql = '
-            SELECT  c.id as cid, ra.id, ra.userid, ra.contextid, ra.roleid, r.shortname, ra.component, ra.itemid, c.path
+            SELECT  c.id as cid
             FROM {role_assignments} ra
             JOIN {context} c ON ra.contextid = c.id
             JOIN {role} r ON ra.roleid = r.id
    		    WHERE ra.userid = ?
+   		    AND c.contextlevel IN (10,40,50)
             ORDER BY contextlevel DESC, contextid ASC, r.sortorder ASC
         ';
-        if ($DB->record_exists_sql($sql, array($USER->id))) {
-            $records = $DB->get_records_sql($sql, array($USER->id));
+        $records = $DB->get_records_sql($sql, [$USER->id]);
+        if (!empty($records)) {
             foreach ($records as $record) {
                 $context = \context::instance_by_id($record->cid);
                 if (has_any_capability($capability, $context)) {
@@ -147,9 +153,9 @@ class accountmanager {
      * Prepares the accountmanagers for the issue create form
      *
      */
-    public function prepare_accountmanager_for_form(&$mform) {
+    public function prepare_accountmanager_for_form(&$mform): void {
         global $CFG;
-        require_once($CFG->dirroot.'/user/lib.php');
+        require_once($CFG->dirroot . '/user/lib.php');
         $users = \user_get_users_by_id(explode(',', get_config('local_edusupport', 'accountmanagers')));
         if (empty($users) || !$this->can_choose_accountmanager()) {
             return;
@@ -163,8 +169,8 @@ class accountmanager {
 
         $mform->addElement('select', 'accountmanager', get_string('accountmanager', 'local_edusupport'), $options);
         $mform->setDefault('accountmanager', 0);
-
     }
+
     /**
      * Deletes account manager from setting
      *
