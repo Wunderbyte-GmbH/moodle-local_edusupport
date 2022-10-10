@@ -91,7 +91,8 @@ class observer {
             if ($guestmode && strpos($discussion->name, 'Guestticket')) {
                 preg_match('/(?<=Guestticket: )(.*)(?=\])/', $discussion->name, $matches);
                 $mail = $matches[0];
-                $touser = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+                $guestuser = new guest_supportuser();
+                $touser = $guestuser->get_support_guestuser();
                 $touser->email = $mail;
                 $post->furtherquestions = get_string('furtherquestions', 'local_edusupport', ['sitename' => $CFG->wwwroot]);
 

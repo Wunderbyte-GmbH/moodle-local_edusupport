@@ -24,6 +24,7 @@
 namespace local_edusupport;
 
 use local_edusupport\task\reminder;
+use mod_forum\event\post_created;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
@@ -49,7 +50,8 @@ class lib {
         $user = $USER;
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
         if ($guestmode && isguestuser()) {
-            $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+            $guestuser = new guest_supportuser();
+            $user = $guestuser->get_support_guestuser();
         } else {
             $user = $USER;
         }
@@ -215,10 +217,10 @@ class lib {
     /**
      * Close an issue.
      *
-     * @param discussionid.
+     * @param int discussionid
      **/
-    public static function reopen_issue($discussionid) {
-        global $CFG, $DB, $USER;
+    public static function reopen_issue(int $discussionid): bool {
+        global $DB;
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         $issue = self::get_issue($discussionid);
 
@@ -242,13 +244,16 @@ class lib {
     /**
      * Enrols users to specific courses
      *
-     * @param courseids array containing courseid or a single courseid
-     * @param userids array containing userids or a single userid
-     * @param roleid roleid to assign, or -1 if wants to unenrol
-     * @return true or false
-     **/
-    public static function course_manual_enrolments($courseids, $userids, $roleid) {
-        global $CFG, $DB;
+     * @param array $courseids containing courseids or a single courseid
+     * @param array $userids containing userids or a single userid
+     * @param int $roleid roleid to assign, or -1 if wants to unenrolroleid to assign, or -1 if wants to unenrol
+     * @return bool
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public static function course_manual_enrolments(array $courseids, array $userids,int $roleid): bool {
+        global $DB;
         if (!is_array($courseids)) {
             $courseids = array($courseids);
         }
@@ -266,7 +271,6 @@ class lib {
         foreach ($courseids as $courseid) {
             // Check if course exists.
             $course = $DB->get_record('course', array('id' => $courseid), '*', IGNORE_MISSING);
-            //$course = get_course($courseid);
             if (empty($course->id)) {
                 continue;
             }
@@ -291,21 +295,22 @@ class lib {
     }
 
     /**
-     * Answer to the original discussion post of a discussion.
+     * Answer to the original discussion post of a discussion
      *
-     * @param discussionid.
-     * @param text as content.
-     * @param subject subject for post, if not given first 30 chars of text are used.
+     * @param int $discussionid
+     * @param string $text as cpmtent
+     * @param string $subject subject for post, if not given first 30 chars of text are used
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
      */
-    public static function create_post($discussionid, $text, $subject = "") {
+    public static function create_post(int $discussionid,string $text,string $subject = ""): void {
         global $DB, $USER;
-
-        $guestmodeenabled = false;
 
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
         if ($guestmode && isguestuser()) {
-            $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
-            $guestmodeenabled = true;
+            $guestuser = new guest_supportuser();
+            $user = $guestuser->get_support_guestuser();
         } else {
             $user = $USER;
         }
@@ -339,7 +344,7 @@ class lib {
             ),
         );
 
-        $event = \mod_forum\event\post_created::create($eventparams);
+        $event = post_created::create($eventparams);
         $event->add_record_snapshot('forum_posts', $post);
         $event->trigger();
     }
@@ -347,11 +352,10 @@ class lib {
     /**
      * Clones an object to reveal private fields.
      *
-     * @param object.
-     * @return object.
+     * @param array $object
+     * @return array
      */
-    public static function expose_properties($object = array()) {
-        global $CFG;
+    public static function expose_properties(array $object = []): array {
         $object = (array) $object;
         $keys = array_keys($object);
         foreach ($keys as $key) {
@@ -453,7 +457,9 @@ class lib {
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
         if (empty($userid)) {
             if ($guestmode && isguestuser()) {
-                $userid = (get_config('local_edusupport', 'guestuserid'));
+                $guestuser = new guest_supportuser();
+                $guestsupportuser = $guestuser->get_support_guestuser();
+                $userid = $guestsupportuser->user->id;
             } else {
                 $userid = $USER->id;
             }

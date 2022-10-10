@@ -22,6 +22,8 @@
  */
 
 use local_edusupport;
+use local_edusupport\guest_supportuser;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . "/externallib.php");
@@ -94,7 +96,8 @@ class local_edusupport_external extends external_api {
         $guestmodeenabled = false;
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
         if ($guestmode && isset($guestmail) && isguestuser()) {
-            $user = \core_user::get_user(get_config('local_edusupport', 'guestuserid'));
+            $guestuser = new guest_supportuser();
+            $user = $guestuser->get_support_guestuser();
             $guestmodeenabled = true;
         } else {
             $user = $USER;

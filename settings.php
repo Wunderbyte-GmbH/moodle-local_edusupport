@@ -155,7 +155,7 @@ if ($hassiteconfig) {
         )
     );
 
-    // Prepage before form
+    // Prepage before form.
     $settings->add(
         new admin_setting_configcheckbox(
             'local_edusupport/firstlvlgroupmode',
