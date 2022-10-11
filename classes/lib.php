@@ -47,9 +47,8 @@ class lib {
      */
     public static function before_popup() {
         global $CFG, $DB, $USER;
-        $user = $USER;
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
-        if ($guestmode && isguestuser()) {
+        if ($guestmode && (isguestuser() || !isloggedin())) {
             $guestuser = new guest_supportuser();
             $user = $guestuser->get_support_guestuser();
         } else {
@@ -459,7 +458,7 @@ class lib {
             if ($guestmode && isguestuser()) {
                 $guestuser = new guest_supportuser();
                 $guestsupportuser = $guestuser->get_support_guestuser();
-                $userid = $guestsupportuser->user->id;
+                $userid = $guestsupportuser->id;
             } else {
                 $userid = $USER->id;
             }

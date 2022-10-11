@@ -129,15 +129,15 @@ class issue_create_form extends moodleform {
             $mform->addRule('subject', get_string('subject_missing', 'local_edusupport'), 'required', null, 'server');
         }
 
-        if(!$disablephonefield) {
+        if (!$disablephonefield) {
             $mform->addElement('text', 'contactphone', get_string('contactphone', 'local_edusupport'), array('style' => 'width: 100%;'));
-            $mform->setType('contactphone', PARAM_TEXT);
         }
         else {
             $mform->addElement('hidden', 'contactphone', '');
-            $mform->setType('contactphone', PARAM_TEXT);
         }
-        if (isguestuser() && $guestuserallowed) {
+        $mform->setType('contactphone', PARAM_TEXT);
+
+        if ((isguestuser() || !isloggedin()) && $guestuserallowed) {
             $mform->addElement('text', 'guestmail', get_string('guestmail', 'local_edusupport'), array('style' => 'width: 100%;'));
             $mform->setType('guestmail', PARAM_EMAIL);
             $mform->addRule('guestmail', get_string('mail_missing', 'local_edusupport'), 'required', null, 'server');

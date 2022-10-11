@@ -44,6 +44,11 @@ class guest_supportuser {
      */
     protected $user;
 
+    /**
+     * Checks if dummy user has already been created, if not it will be created and is then available through
+     * get_support_guest_user
+     * @throws \dml_exception
+     */
     public function __construct() {
         global $CFG;
         $user = new stdClass();
@@ -53,6 +58,7 @@ class guest_supportuser {
         $user->lastname = "Ticket";
         $user->mnethostid = $CFG->mnet_localhost_id;
         $this->user = $user;
+        $this->check_guestuser_config();
     }
 
     /**
@@ -61,7 +67,6 @@ class guest_supportuser {
      * @return stdClass
      */
     public function get_support_guestuser(): stdClass {
-        $this->check_guestuser_config();
         return $this->user;
     }
 
@@ -72,11 +77,11 @@ class guest_supportuser {
      * @throws \dml_exception
      */
     protected function check_guestuser_config(): void {
-        if ($this->guestuser_exists() && $this->user->id === (int) get_config('local_edusupport', 'guestuserid')) {
+        $userid = get_config('local_edusupport', 'guestuserid');
+        if ($this->guestuser_exists() && (int) $this->user->id === (int) $userid) {
             return;
-        } else {
-            $this->create_guestuser_if_inextistant();
         }
+        $this->create_guestuser_if_inextistant();
     }
 
     /**
@@ -86,7 +91,6 @@ class guest_supportuser {
      * @throws \moodle_exception
      */
     public function create_guestuser_if_inextistant(): void {
-        global $CFG;
         if (!$this->guestuser_exists()) {
             require_once($CFG->dirroot . '/user/lib.php');
             $this->user->id = user_create_user($this->user, false, true);

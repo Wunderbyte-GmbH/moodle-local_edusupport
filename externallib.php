@@ -65,7 +65,8 @@ class local_edusupport_external extends external_api {
 
     /**
      * Create an issue in the targetforum.
-     * @return postid of created issue
+     *
+     * @return array $reply of created issue
      */
     public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone, $guestmail, $accountmanager = null) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
@@ -386,7 +387,7 @@ class local_edusupport_external extends external_api {
     }
     /**
      * Return definition.
-     * @return external_value
+     * @return external_single_structure
      */
     public static function create_issue_returns() {
         return new \external_single_structure(
@@ -419,7 +420,11 @@ class local_edusupport_external extends external_api {
 
     /**
      * Create an issue in the targetforum.
-     * @return postid of created issue
+     *
+     * @param $url
+     * @param $image
+     * @param $forumid
+     * @return string
      */
     public static function create_form($url, $image, $forumid) {
         global $CFG, $PAGE, $USER, $OUTPUT;
@@ -517,7 +522,7 @@ class local_edusupport_external extends external_api {
      * @throws dml_exception
      * @throws invalid_parameter_exception
      */
-    public static function set_archive(int $forumid) {
+    public static function set_archive(int $forumid): int {
         global $DB;
 
         $params = self::validate_parameters(self::set_archive_parameters(), array('forumid' => $forumid));
@@ -539,6 +544,10 @@ class local_edusupport_external extends external_api {
         }
         return 0;
     }
+
+    /**
+     * @return external_value
+     */
     public static function set_archive_returns() {
         return new external_value(PARAM_INT, 'Returns 1 if successful');
     }

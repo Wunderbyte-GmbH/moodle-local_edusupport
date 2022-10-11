@@ -40,6 +40,7 @@ $functions = array(
         'description' => 'Post an issue',
         'type'        => 'write',
         'ajax'        => 1,
+        'loginrequired' => false,
     ),
     'local_edusupport_create_form' => array(
         'classname'   => 'local_edusupport_external',
@@ -48,6 +49,7 @@ $functions = array(
         'description' => 'Create form to post an issue',
         'type'        => 'read',
         'ajax'        => 1,
+        'loginrequired' => false,
     ),
     'local_edusupport_get_potentialsupporters' => array(
         'classname'   => 'local_edusupport_external',

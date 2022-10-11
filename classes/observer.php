@@ -65,7 +65,7 @@ class observer {
             } else {
                 \local_edusupport\lib::set_status(ISSUE_STATUS_NOTSTARTED, $issue->id);
             }
-            // enhance post data.
+            // Enhance post data.
             $post->wwwroot = $CFG->wwwroot;
             $post->authorfullname = \fullname($author);
             $post->authorlink = $CFG->wwwroot . '/user/view.php?id=' . $author->id;
