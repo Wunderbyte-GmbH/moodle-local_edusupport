@@ -96,7 +96,7 @@ class local_edusupport_external extends external_api {
         $subjectprefixenabled = get_config('local_edusupport', 'predefined_subjects_prefix');
         $guestmodeenabled = false;
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
-        if ($guestmode && isset($guestmail) && isguestuser()) {
+        if ($guestmode && isset($guestmail) && (isguestuser() || !isloggedin())) {
             $guestuser = new guest_supportuser();
             $user = $guestuser->get_support_guestuser();
             $guestmodeenabled = true;
@@ -276,7 +276,6 @@ class local_edusupport_external extends external_api {
                     $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
                 }
 
-
                 if ($discussionid = forum_add_discussion($discussion ,null, null, $user->id)) {
                     $discussion->id = $discussionid;
 
@@ -385,6 +384,7 @@ class local_edusupport_external extends external_api {
             }
         }
     }
+
     /**
      * Return definition.
      * @return external_single_structure
@@ -419,7 +419,7 @@ class local_edusupport_external extends external_api {
     }
 
     /**
-     * Create an issue in the targetforum.
+     * Create the form for submitting support requests. The form will be displayed in a modal.
      *
      * @param $url
      * @param $image

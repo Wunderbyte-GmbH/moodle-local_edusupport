@@ -178,6 +178,7 @@ class lib {
      * Get the helpbutton menu from cache or generate it.
      */
     public static function get_supportmenu() {
+        global $OUTPUT;
         $cache = \cache::make('local_edusupport', 'supportmenu');
         if (!empty($cache->get('rendered'))) {
             return $cache->get('rendered');
@@ -206,7 +207,6 @@ class lib {
             }
         }
         $prepageenabled = get_config('local_edusupport', 'enableprepage');
-        global $OUTPUT;
         $nav = $OUTPUT->render_from_template('local_edusupport/helpbutton',
             array('extralinks' => $extralinks, 'hasextralinks' => count($extralinks) > 0, 'prepageenabled' => $prepageenabled));
         $cache->set('rendered', $nav);
@@ -307,7 +307,7 @@ class lib {
         global $DB, $USER;
 
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
-        if ($guestmode && isguestuser()) {
+        if ($guestmode && (isguestuser() || !isloggedin())) {
             $guestuser = new guest_supportuser();
             $user = $guestuser->get_support_guestuser();
         } else {
@@ -374,12 +374,18 @@ class lib {
      *
      * @return array of groups.
      **/
-    public static function get_groups_for_user($forumid) {
+    public static function get_groups_for_user(int $forumid): array {
         // Store rating if we are permitted to.
         global $CFG, $DB, $USER;
-
-        if (empty($USER->id) || isguestuser()) {
-            return;
+        $guestmode = get_config('local_edusupport', 'guestmodeenabled');
+        if ((empty($USER->id) || isguestuser()) && !$guestmode) {
+            return [];
+        }
+        if ($guestmode && (!isloggedin() || isguestuser())) {
+            $supportuser = new guest_supportuser();
+            $user = $supportuser->get_support_guestuser();
+        } else {
+            $user = $USER;
         }
 
         $forum = $DB->get_record('forum', array('id' => $forumid));
@@ -390,7 +396,7 @@ class lib {
         $groupmode = \groups_get_activity_groupmode($cm);
         // If we do not use groups in this forum, return without groups.
         if (empty($groupmode)) {
-            return;
+            return [];
         }
 
         // We do not use the function groups_get_user_groups, as it does not
@@ -398,32 +404,34 @@ class lib {
         // $_groups = \groups_get_user_groups($course->id);
         $_groups = $DB->get_records('groups', array('courseid' => $course->id));
         if (count($_groups) == 0) {
-            return;
+            return [];
         }
 
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
         $groups = array();
         foreach ($_groups as $k => $group) {
-            $ismember = $DB->get_record('groups_members', array('groupid' => $group->id, 'userid' => $USER->id));
+            $ismember = $DB->get_record('groups_members', array('groupid' => $group->id, 'userid' => $user->id));
             if (!empty($ismember->id)) {
                 //only allow the group generated for the user
-                if ($group->name == fullname($USER) . ' (' . $USER->id . ')') {
+                if ($group->name == fullname($user) . ' (' . $user->id . ')') {
                     $groups[$k] = $group;
                 }
             }
         }
-
         return $groups;
     }
 
     /**
      * Get the issue for this discussionid.
      *
-     * @param discussionid.
-     * @param createifnotexist (optional).
+     * @param int $discussionid
+     * @param bool $createifnotexist
+     * @param $keyvaluepair
+     * @return false|mixed|object|stdClass|void
+     * @throws \dml_exception
      */
-    public static function get_issue($discussionid, $createifnotexist = false, $keyvaluepair = null) {
+    public static function get_issue(int $discussionid, bool $createifnotexist = false, $keyvaluepair = null) {
         global $DB;
         if (empty($discussionid)) {
             return;
@@ -448,14 +456,14 @@ class lib {
     /**
      * Get potential targets of a user.
      *
-     * @param userid if empty will use current user.
+     * @param int $userid if empty will use current user.
      * @return array containing forums and their possible groups.
      */
-    public static function get_potentialtargets($userid = 0) {
+    public static function get_potentialtargets(int $userid = 0): array {
         global $DB, $USER;
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
         if (empty($userid)) {
-            if ($guestmode && isguestuser()) {
+            if ($guestmode && (isguestuser() || !isloggedin())) {
                 $guestuser = new guest_supportuser();
                 $guestsupportuser = $guestuser->get_support_guestuser();
                 $userid = $guestsupportuser->id;
@@ -495,7 +503,6 @@ class lib {
                 }
             }
         }
-
         return $forums;
     }
 
@@ -505,7 +512,6 @@ class lib {
      * @return array containing discussionids of closed and expired issues.
      */
     public static function get_expiredissues() {
-
         global $DB;
         $time = get_config('local_edusupport', 'deletethreshhold');
         $expirationtime = time() - $time;
@@ -698,7 +704,9 @@ class lib {
             $dedicated = $supporters[$keys[array_rand($keys)]];
         }
 
-        $DB->set_field('local_edusupport_issues', 'currentsupporter', $dedicated->userid, array('discussionid' => $discussion->id));
+        if (isset($dedicated) && !empty($dedicated->userid)) {
+            $DB->set_field('local_edusupport_issues', 'currentsupporter', $dedicated->userid, array('discussionid' => $discussion->id));
+        }
         self::subscription_add($discussionid, $dedicated->userid);
         $centralforumid = get_config('local_edusupport', 'centralforum');
         $forum = $DB->get_record('forum', array('id' => $discussion->forum));
@@ -743,11 +751,11 @@ class lib {
     /**
      * Used by 2nd-level support to assign an issue to a particular person from 3rd level.
      *
-     * @param discussionid.
-     * @param userid.
+     * @param int $discussionid.
+     * @param int $userid.
      * @return true on success.
      */
-    public static function set_current_supporter($discussionid, $userid): bool {
+    public static function set_current_supporter(int $discussionid, int $userid): bool {
         global $CFG, $DB, $USER, $PAGE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
@@ -811,7 +819,6 @@ class lib {
         $msg->component = 'local_edusupport';
         $msg->notification = 1;
         message_send($msg);
-
         return true;
     }
 
@@ -941,11 +948,11 @@ class lib {
     /**
      * Sets a forum as central support-forum.
      *
-     * @param forumid.
-     * @return forum as object on success.
+     * @param int $forumid.
+     * @return bool|object forum as object on success.
      **/
-    public static function supportforum_enablecentral($forumid) {
-        global $DB, $USER;
+    public static function supportforum_enablecentral(int $forumid) {
+        global $DB;
         if (!is_siteadmin()) {
             return false;
         }

@@ -54,8 +54,10 @@ class issue_create_form extends moodleform {
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
 
+        // TODO: Obsolete forumid remove in the future.
         $mform->addElement('hidden', 'forumid', '');
         $mform->setType('forumid', PARAM_INT);
+
         $mform->addElement('hidden', 'url', '');
         $mform->setType('url', PARAM_TEXT);
         $mform->addElement('hidden', 'image', ''); // base64 encoded image
@@ -96,8 +98,8 @@ class issue_create_form extends moodleform {
                 }
             }
         }
-        $supportuser = \core_user::get_support_user();
         if (count($potentialtargets) == 0) {
+            $supportuser = \core_user::get_support_user();
             $options['mail'] = get_string('email_to_xyz', 'local_edusupport', (object) array('email' => $supportuser->email));
         }
 
@@ -147,7 +149,6 @@ class issue_create_form extends moodleform {
         $am = new accountmanager;
         $am->prepare_accountmanager_for_form($mform);
 
-
         $mform->addElement('textarea', 'description', get_string('description', 'local_edusupport'), array('style' => 'width: 100%;', 'rows' => 10));
         $mform->setType('description', PARAM_RAW);
         $mform->addRule('description', get_string('description_missing', 'local_edusupport'), 'required', null, 'server');
@@ -167,41 +168,9 @@ class issue_create_form extends moodleform {
             '</div>'
         ];
         $mform->addElement('html', implode("\n", $fileupload));
-        /*
-        $html = array(
-            '<div id="screenshot_ok"  style="display: none;"><p>',
-            get_string('screenshot:generateinfo', 'local_edusupport'),
-            '</p><a href="#" onclick="var b = this; require([\'local_edusupport/main\'], function(M) { M.generateScreenshot(b); }); return false;" class="btn btn-primary btn-block">',
-            get_string('ok'),
-            '</a></div>'
-        );
-        $mform->addElement('checkbox', 'postscreenshot', get_string('screenshot', 'local_edusupport'),
-                                get_string('screenshot:description', 'local_edusupport') . implode("\n", $html),
-                                array('onclick' => 'var c = this; require(["local_edusupport/main"], function(M) { M.checkHasScreenshot(c); });')
-                        );
-        $mform->setType('postscreenshot', PARAM_BOOL);
-        $mform->setDefault('postscreenshot', 0);
-
-        $html = array(
-            '<div style="text-align: center;">',
-            '<img id="screenshot" src="" alt="Screenshot" style="max-width: 50%; display: none;"/>',
-            '</div>',
-            '<div id="screenshot_new" class="text-center m-2" style="display:none;">',
-            '<a href="#" onclick="var b = this; require([\'local_edusupport/main\'], function(M) { M.generateScreenshot(b); }); return false;" class="btn btn-primary">',
-            get_string('new'),
-            '</a></div>'
-        );
-        $mform->addElement('html', implode("\n", $html));
-        */
         $mform->addElement('html', '<script> setTimeout(function() { ' . implode('', $postto2ndlevel_hideshow) . ' }, 100);</script>');
 
         $mform->addElement('html','</div>');
-
-        /*
-        if ($prioritylvl) {
-            $mform->addElement('select', 'prioritylvl', get_string('prioritylvl', 'local_edusupport'), $this->return_priority_options());
-        }
-        */
     }
 
     //Custom validation should be added here

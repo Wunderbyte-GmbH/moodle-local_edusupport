@@ -79,15 +79,11 @@ class observer {
             $post->issuelink = $CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussion->id;
             $post->replylink = $CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussion->id . '&replyto=' . $post->id;
 
-            // Get all subscribers
-            $fromuser = \core_user::get_support_user();
+            // Get all subscribers.
             $subscribers = $DB->get_records('local_edusupport_subscr', array('discussionid' => $discussion->id));
-            if ($post->userid == get_config('local_edusupport', 'guestuserid')) {
-
-            }
             $guestmode = get_config('local_edusupport', 'guestmodeenabled');
 
-            // Write to Guestuser
+            // Write to Guestuser.
             if ($guestmode && strpos($discussion->name, 'Guestticket')) {
                 preg_match('/(?<=Guestticket: )(.*)(?=\])/', $discussion->name, $matches);
                 $mail = $matches[0];
@@ -114,7 +110,6 @@ class observer {
 
                 \email_to_user($touser, $author, $subject, $mailtext, $mailhtml, "", true);
             }
-
             return true;
         }
     }

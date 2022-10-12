@@ -359,7 +359,7 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
         return $vpost->get_id();
     }, array_merge([$vpost], array_values($replies)));
 
-    // we use the first admin account for rendering the forum page.
+    // We use the first admin account for rendering the forum page.
     $admins = explode(',', get_config('core', 'siteadmins'));
     $user = $DB->get_record('user', array('id' => $admins[0]));
     echo $discussionrenderer->render($user, $vpost, $replies);
