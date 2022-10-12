@@ -726,7 +726,8 @@ class lib {
             $PAGE->set_context(\context_system::instance());
         }
 
-        $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name;
+        $issueurl = (new \moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
+        $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name . " $issueurl";
         $postsubject = $discussion->name;
         $msg = new \core\message\message();
         $touser = $DB->get_record('user', array('id' => $dedicated->userid));
@@ -737,8 +738,7 @@ class lib {
         $msg->fullmessageformat = FORMAT_PLAIN;
         $msg->fullmessagehtml = $posthtml;
         $msg->smallmessage = $postsubject;
-        $msg->contexturl = (new \moodle_url('/local/edusupport/issue.php?d=' .
-            $discussion->id))->out(false); // A relevant URL for the notification
+        $msg->contexturl = $issueurl; // A relevant URL for the notification
         $msg->contexturlname = 'Issue'; // Link title explaining where users get to for the contexturl
         $msg->name = 'edusupport_issue';
         $msg->component = 'local_edusupport';
@@ -801,7 +801,9 @@ class lib {
             $PAGE->set_context(\context_system::instance());
         }
 
-        $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name;
+
+        $issueurl = (new \moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
+        $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name . " $issueurl";
         $postsubject = $discussion->name;
         $msg = new \core\message\message();
         $touser = $DB->get_record('user', array('id' => $userid));
@@ -812,8 +814,7 @@ class lib {
         $msg->fullmessageformat = FORMAT_PLAIN;
         $msg->fullmessagehtml = $posthtml;
         $msg->smallmessage = $postsubject;
-        $msg->contexturl = (new \moodle_url('/local/edusupport/issue.php?d=' .
-            $discussion->id))->out(false); // A relevant URL for the notification
+        $msg->contexturl = $issueurl; // A relevant URL for the notification
         $msg->contexturlname = 'Issue'; // Link title explaining where users get to for the contexturl
         $msg->name = 'edusupport_issue';
         $msg->component = 'local_edusupport';
