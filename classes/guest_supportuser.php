@@ -91,6 +91,7 @@ class guest_supportuser {
      * @throws \moodle_exception
      */
     public function create_guestuser_if_inextistant(): void {
+        global $CFG;
         if (!$this->guestuser_exists()) {
             require_once($CFG->dirroot . '/user/lib.php');
             $this->user->id = user_create_user($this->user, false, true);
