@@ -177,8 +177,8 @@ $string['toggle:central'] = 'Zentrales Supportforum';
 $string['guestmodeenabled'] = 'Gastmodus aktiv';
 $string['guestmodeenabled:description'] = 'Gäste können auch Supporttickets anlegen und werden dann per Mail benachrichtigt';
 $string['guestmail'] = 'Ihre E-Mail Adresse';
-$string['sendmsgonset2ndlvlenabled'] = 'Sende Nachricht an User wenn 2nd Lvl gesetzt wird';
-$string['sendmsgonset2ndlvlenabled:description'] = 'Sende Nachricht an User wenn 2nd Lvl gesetzt wird (2 Nachrichten werden versandt wenn autoforward aktiviert ist)';
+$string['sendmsgonset2ndlvl'] = 'Sende Nachricht an User wenn 2nd Lvl gesetzt wird';
+$string['sendmsgonset2ndlvl:description'] = 'Sende Nachricht an User wenn 2nd Lvl gesetzt wird (2 Nachrichten werden versandt wenn autoforward aktiviert ist)';
 
 $string['trackhost'] = 'Hostnamen angeben';
 $string['trackhost:description'] = 'Große Moodle-Sites nutzen möglicherweise eine Architektur mit mehreren Webhosts. Schalten Sie diese Option ein, damit der Hostname des aktiven Webhosts bei Problemen erfasst wird.';
