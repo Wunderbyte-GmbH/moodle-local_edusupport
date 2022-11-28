@@ -726,25 +726,27 @@ class lib {
             $PAGE->set_context(\context_system::instance());
         }
 
-        $issueurl = (new \moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
-        $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name . " $issueurl";
-        $postsubject = $discussion->name;
-        $msg = new \core\message\message();
-        $touser = $DB->get_record('user', array('id' => $dedicated->userid));
-        $msg->userfrom = $USER;
-        $msg->userto = $touser;
-        $msg->subject = $postsubject;
-        $msg->fullmessage = $posthtml;
-        $msg->fullmessageformat = FORMAT_PLAIN;
-        $msg->fullmessagehtml = $posthtml;
-        $msg->smallmessage = $postsubject;
-        $msg->contexturl = $issueurl; // A relevant URL for the notification
-        $msg->contexturlname = 'Issue'; // Link title explaining where users get to for the contexturl
-        $msg->name = 'edusupport_issue';
-        $msg->component = 'local_edusupport';
-        $msg->notification = 1;
-        message_send($msg);
-
+        // Send an email to user when setting is enabled.
+        if (get_config('local_edusupport', 'sendmsgonset2ndlvl')) {
+            $issueurl = (new \moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
+            $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name . " $issueurl";
+            $postsubject = $discussion->name;
+            $msg = new \core\message\message();
+            $touser = $DB->get_record('user', array('id' => $dedicated->userid));
+            $msg->userfrom = $USER;
+            $msg->userto = $touser;
+            $msg->subject = $postsubject;
+            $msg->fullmessage = $posthtml;
+            $msg->fullmessageformat = FORMAT_PLAIN;
+            $msg->fullmessagehtml = $posthtml;
+            $msg->smallmessage = $postsubject;
+            $msg->contexturl = $issueurl; // A relevant URL for the notification.
+            $msg->contexturlname = 'Issue'; // Link title explaining where users get to for the contexturl.
+            $msg->name = 'edusupport_issue';
+            $msg->component = 'local_edusupport';
+            $msg->notification = 1;
+            message_send($msg);
+        }
         return true;
     }
 
@@ -800,7 +802,6 @@ class lib {
         if (!isset($PAGE->context)) {
             $PAGE->set_context(\context_system::instance());
         }
-
 
         $issueurl = (new \moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
         $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name . " $issueurl";

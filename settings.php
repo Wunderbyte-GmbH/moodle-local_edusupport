@@ -117,6 +117,15 @@ if ($hassiteconfig) {
     );
 
     $settings->add(
+        new admin_setting_configcheckbox(
+            'local_edusupport/sendmsgonset2ndlvl',
+            get_string('sendmsgonset2ndlvl', 'local_edusupport'),
+            get_string('sendmsgonset2ndlvl:description', 'local_edusupport'),
+            0
+        )
+    );
+
+    $settings->add(
         new admin_setting_configtextarea(
             'local_edusupport/predefined_subjects',
             get_string('predefined_subjects', 'local_edusupport'),

@@ -176,6 +176,9 @@ $string['screenshot:upload:successful'] = 'File has been successfully prepared f
 $string['select_isselected'] = 'Currently selected';
 $string['select_unavailable'] = 'Unavailable';
 $string['send'] = 'Send';
+$string['sendmsgonset2ndlvlenabled'] = 'Send a message to user when 2nd level is set';
+$string['sendmsgonset2ndlvlenabled:description'] = 'Send a email to the user when 2nd level is set (two messages gets send when autoforward to 2ndlvl is enabled)';
+
 $string['spamprotection:exception'] = 'Sorry, maximum amount of issues exceeded. Try again in a few minutes.';
 $string['spamprotection:limit'] = 'Spamprotection > limit';
 $string['spamprotection:limit:description'] = 'The maximum amount of created issues within time range.';
