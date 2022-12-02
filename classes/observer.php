@@ -63,7 +63,7 @@ class observer {
                     \local_edusupport\lib::set_status(ISSUE_STATUS_ONGOING, $issue->id);
                 }
             } else {
-                \local_edusupport\lib::set_status(ISSUE_STATUS_NOTSTARTED, $issue->id);
+                \local_edusupport\lib::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
             }
             // Enhance post data.
             $post->wwwroot = $CFG->wwwroot;

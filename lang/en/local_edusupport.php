@@ -96,8 +96,18 @@ $string['issue:countother'] = 'Other issues';
 $string['issue:countclosed'] = 'Closed issues';
 $string['issue:assigned'] = 'You have been assigned to this issue:';
 $string['issue_assign'] = 'Assign issue';
-$string['issue_assign_3rdlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> has assigned this issue to <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a>.';
-$string['issue_assign_3rdlevel:postself'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> has taken responsibility for this issue.';
+$string['issue_assign_3rdlevel:post'] = '
+<p> We are happy to inform you that your support request has been assigned to <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> from the {$a->sitename} support team!</p>
+<p> You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution. </p>
+You are receiving this email because you asked the {$a->sitename} team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.
+<p> We wish you a great learning experience! </p>
+<p> Your {$a->sitename} team </p> ';
+$string['issue_assign_3rdlevel:postself'] = '
+<p> We are happy to inform you that <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> from the {$a->sitename} support team has taken responsability for this issue!</p>
+<p> You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution. </p>
+You are receiving this email because you asked the {$a->sitename} team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.
+<p> We wish you a great learning experience! </p>
+<p> Your {$a->sitename} team </p>';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
 $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
@@ -109,7 +119,6 @@ $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that you
 <p>Your {$a->sitename} team</p>';
 //$string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team';
 $string['issue_assigned:subject'] = 'Your support request has been assigned';
-$string['issue_assigned:text'] = 'The support issue was assigned to <a href="{$a->wwwroot}/user/view.php?id={$a->id}">{$a->firstname} {$a->lastname}</a>!';
 $string['issue_close'] = 'Close issue';
 $string['issue_closed:subject'] = 'Issue closed';
 $string['issue_closed:post'] = 'This issue closed was closed by <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a>. If you need further assistance please forward this issue again to the platform support team.';

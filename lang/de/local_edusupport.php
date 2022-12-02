@@ -86,13 +86,27 @@ $string['issue:countother'] = 'andere Tickets';
 $string['issue:countclosed'] = 'geschlossene Tickets';
 $string['issue:assigned'] = 'Sie wurden folgendem Ticket zugewiesen:';
 $string['issue_assign'] = 'Zuordnen';
-$string['issue_assign_3rdlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat dieses Ticket an <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> weitergeleitet.';
-$string['issue_assign_3rdlevel:postself'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat die Verantwortung für dieses Ticket übernommen.';
+$string['issue_assign_3rdlevel:post'] = '
+<p>Wir freuen uns, Ihnen mitteilen zu können, dass Ihre Support-Anfrage an <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> vom {$a->sitename} Support-Team weitergeleitet wurde!</p>
+<p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können. </p>
+Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
+<p>Wir wünschen Ihnen eine tolle Lernerfahrung! </p>
+<p>Ihr {$a->sitename} Team </p>';
+$string['issue_assign_3rdlevel:postself'] = '
+<p>Wir freuen uns, Ihnen mitteilen zu können, dass <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> vom {$a->sitename} Support-Team die Verantwortung für dieses Problem übernommen hat!</p>
+<p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können. </p>
+Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
+<p>Wir wünschen Ihnen eine tolle Lernerfahrung! </p>
+<p>Ihr {$a->sitename} Team </p>';
 $string['issue_assign_nextlevel'] = 'Dieses Ticket dem Plattform-Support zuweisen';
 $string['issue_assign_nextlevel:error'] = 'Entschuldigung, das Ticket konnte nicht dem Plattform Support Team zugewiesen werden.';
-$string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> hat dieses Ticket dem nächsthöheren Supportlevel zugewiesen!';
+$string['issue_assign_nextlevel:post'] = '
+<p>Wir freuen uns, Ihnen mitteilen zu können, dass Ihre Support-Anfrage an das {$a->sitename} Support-Team weitergeleitet wurde!</p>
+<p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können. </p>
+Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
+<p>Wir wünschen Ihnen eine tolle Lernerfahrung! </p>
+<p>Ihr {$a->sitename} Team </p>';
 $string['issue_assigned:subject'] = 'Supportanfrage zugeordnet';
-$string['issue_assigned:text'] = 'Die Supportanfrage wurde <a href="{$a->wwwroot}/user/view.php?id={$a->id}">{$a->firstname} {$a->lastname}</a> zugeordnet!';
 $string['issue_close'] = 'Anfrage schließen';
 $string['issue_closed:subject'] = 'Anfrage wurde geschlossen';
 $string['issue_closed:post'] = 'Dieses Ticket wurde von <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> geschlossen. Falls Sie weitere Unterstützung benötigen, fordern Sie bitte wieder das Plattform Support Team an!';

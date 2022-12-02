@@ -657,10 +657,10 @@ class lib {
     /**
      * Send an issue to 2nd level support.
      *
-     * @param discussionid.
+     * @param int $discussionid
      * @return true or false.
      */
-    public static function set_2nd_level($discussionid, $keyvaluepair = null): bool {
+    public static function set_2nd_level(int $discussionid, $keyvaluepair = null): bool {
         global $CFG, $DB, $USER, $PAGE, $SITE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
@@ -711,16 +711,23 @@ class lib {
         $centralforumid = get_config('local_edusupport', 'centralforum');
         $forum = $DB->get_record('forum', array('id' => $discussion->forum));
 
-        self::create_post($issue->discussionid,
-            get_string('issue_assign_nextlevel:post', 'local_edusupport', (object) array(
-                'fromuserfullname' => \fullname($USER),
-                'fromuserid' => $USER->id,
-                'wwwroot' => $CFG->wwwroot,
-                'sitename' => $SITE->fullname,
-                'supportforumname' => $forum->name
-            )),
-            get_string('issue_assigned:subject', 'local_edusupport')
-        );
+        if (get_config('local_edusupport', 'sendmsgonset2ndlvl')) {
+            self::create_post($issue->discussionid,
+                get_string('issue_assign_nextlevel:post', 'local_edusupport', (object) array(
+                    'fromuserfullname' => \fullname($USER),
+                    'fromuserid' => $USER->id,
+                    'touserfullname' => \fullname($touser),
+                    'touserid' => $userid,
+                    'tosupportlevel' => $supporter->supportlevel,
+                    'wwwroot' => $CFG->wwwroot,
+                    'sitename' => $CFG->fullname,
+                    'supportforumname' => $forum->name
+                )),
+                get_string('issue_assigned:subject', 'local_edusupport')
+            );
+        } else {
+            lib::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
+        }
 
         if (!isset($PAGE->context)) {
             $PAGE->set_context(\context_system::instance());
@@ -761,6 +768,7 @@ class lib {
         global $CFG, $DB, $USER, $PAGE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
+        $forum = $DB->get_record('forum', array('id' => $discussion->forum));
         $issue = self::get_issue($discussionid);
         if (!self::is_supportforum($discussion->forum)) {
             return -1;
@@ -794,6 +802,8 @@ class lib {
                     'touserid' => $userid,
                     'tosupportlevel' => $supporter->supportlevel,
                     'wwwroot' => $CFG->wwwroot,
+                    'sitename' => $CFG->fullname,
+                    'supportforumname' => $forum->name,
                 )
             ),
             get_string('issue_assigned:subject', 'local_edusupport')
@@ -1045,9 +1055,9 @@ class lib {
     /**
      * Checks for a forum, if all supportteam-members have the required role.
      *
-     * @param forumid.
+     * @param int forumid.
      */
-    public static function supportforum_rolecheck($forumid = 0) {
+    public static function supportforum_rolecheck(int $forumid = 0) {
         global $DB;
         if (empty($forumid)) {
             // We have to re-sync all supportforums.
@@ -1163,7 +1173,7 @@ class lib {
      *
      * @return void
      */
-    public static function set_status($status, $issueid) {
+    public static function set_status(int $status, int $issueid) {
         global $DB;
         $issue = new stdClass();
         $issue->id = $issueid;
