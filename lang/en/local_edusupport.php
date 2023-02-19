@@ -102,12 +102,6 @@ $string['issue_assign_3rdlevel:post'] = '
 You are receiving this email because you asked the {$a->sitename} team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.
 <p> We wish you a great learning experience! </p>
 <p> Your {$a->sitename} team </p> ';
-$string['issue_assign_3rdlevel:postself'] = '
-<p> We are happy to inform you that <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> from the {$a->sitename} support team has taken responsability for this issue!</p>
-<p> You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution. </p>
-You are receiving this email because you asked the {$a->sitename} team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.
-<p> We wish you a great learning experience! </p>
-<p> Your {$a->sitename} team </p>';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
 $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>

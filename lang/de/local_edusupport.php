@@ -92,12 +92,6 @@ $string['issue_assign_3rdlevel:post'] = '
 Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
 <p>Wir wünschen Ihnen eine tolle Lernerfahrung! </p>
 <p>Ihr {$a->sitename} Team </p>';
-$string['issue_assign_3rdlevel:postself'] = '
-<p>Wir freuen uns, Ihnen mitteilen zu können, dass <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> vom {$a->sitename} Support-Team die Verantwortung für dieses Problem übernommen hat!</p>
-<p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können. </p>
-Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
-<p>Wir wünschen Ihnen eine tolle Lernerfahrung! </p>
-<p>Ihr {$a->sitename} Team </p>';
 $string['issue_assign_nextlevel'] = 'Dieses Ticket dem Plattform-Support zuweisen';
 $string['issue_assign_nextlevel:error'] = 'Entschuldigung, das Ticket konnte nicht dem Plattform Support Team zugewiesen werden.';
 $string['issue_assign_nextlevel:post'] = '

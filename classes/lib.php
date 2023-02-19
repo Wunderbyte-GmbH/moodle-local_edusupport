@@ -792,8 +792,7 @@ class lib {
         }
         $touser = $DB->get_record('user', array('id' => $userid));
         self::create_post($discussionid,
-            get_string(
-                ($userid == $USER->id) ? 'issue_assign_3rdlevel:postself' : 'issue_assign_3rdlevel:post',
+            get_string('issue_assign_3rdlevel',
                 'local_edusupport',
                 (object) array(
                     'fromuserfullname' => \fullname($USER),
