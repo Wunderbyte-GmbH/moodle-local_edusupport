@@ -185,9 +185,12 @@ $string['toggle:central'] = 'Zentrales Supportforum';
 $string['guestmodeenabled'] = 'Gastmodus aktiv';
 $string['guestmodeenabled:description'] = 'Gäste können auch Supporttickets anlegen und werden dann per Mail benachrichtigt';
 $string['guestmail'] = 'Ihre E-Mail Adresse';
-$string['sendmsgonset2ndlvl'] = 'Sende Nachricht an User wenn 2nd Lvl gesetzt wird';
-$string['sendmsgonset2ndlvl:description'] = 'Sende Nachricht an User wenn 2nd Lvl gesetzt wird (2 Nachrichten werden versandt wenn autoforward aktiviert ist)';
-
+$string['sendmsgonset2ndlvl'] = 'Sende Nachricht an Nutzer/in wenn ein Tickket einem Support User zugewiesen wird';
+$string['sendmsgonset2ndlvl:description'] = 'Sende eine E-Mail an den/die Nutzer/in wenn ein Support-User zugewiesen wird oder geändert wird.';
+$string['sendoriginalrequest'] = 'Die ursprüngliche Supportanfrage an den/die Benutzer/in senden';
+$string['sendoriginalrequest:description'] = 'Den Forumsbeitrag der Supportanfrage an den Benutzer, der um Unterstützung gebeten hat senden';
+$string['sendsupporterassignments'] = 'Senden von Support-Benutzerzuweisungen an den Benutzer';
+$string['sendsupporterassignments:description'] = 'Benachrichtigen Sie den Benutzer per E-Mail, wenn ein Support-User der Anfrage zugewiesen wurde. Jedes Mal, wenn ein neuer Benutzer zugewiesen wird, wird eine E-Mail gesendet';
 $string['trackhost'] = 'Hostnamen angeben';
 $string['trackhost:description'] = 'Große Moodle-Sites nutzen möglicherweise eine Architektur mit mehreren Webhosts. Schalten Sie diese Option ein, damit der Hostname des aktiven Webhosts bei Problemen erfasst wird.';
 $string['userid'] = 'UserID';

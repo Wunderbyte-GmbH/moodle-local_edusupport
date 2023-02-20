@@ -117,15 +117,6 @@ if ($hassiteconfig) {
     );
 
     $settings->add(
-        new admin_setting_configcheckbox(
-            'local_edusupport/sendmsgonset2ndlvl',
-            get_string('sendmsgonset2ndlvl', 'local_edusupport'),
-            get_string('sendmsgonset2ndlvl:description', 'local_edusupport'),
-            0
-        )
-    );
-
-    $settings->add(
         new admin_setting_configtextarea(
             'local_edusupport/predefined_subjects',
             get_string('predefined_subjects', 'local_edusupport'),
@@ -244,6 +235,33 @@ if ($hassiteconfig) {
 
     $settings->add(new admin_setting_configduration('local_edusupport/timebeforereminder',
     get_string('timebeforereminder', 'local_edusupport'), '', 2, 86400));
+
+    $settings->add(new admin_setting_heading('local_edusupport_messaging', get_string('messagepreferences',
+            'message'), ''));
+    $settings->add(
+            new admin_setting_configcheckbox(
+                    'local_edusupport/sendmsgonset2ndlvl',
+                    get_string('sendmsgonset2ndlvl', 'local_edusupport'),
+                    get_string('sendmsgonset2ndlvl:description', 'local_edusupport'),
+                    0
+            )
+    );
+    $settings->add(
+            new admin_setting_configcheckbox(
+                    'local_edusupport/sendoriginalrequest',
+                    get_string('sendoriginalrequest', 'local_edusupport'),
+                    get_string('sendoriginalrequest:description', 'local_edusupport'),
+                    1
+            )
+    );
+    $settings->add(
+            new admin_setting_configcheckbox(
+                    'local_edusupport/sendsupporterassignments',
+                    get_string('sendsupporterassignments', 'local_edusupport'),
+                    get_string('sendsupporterassignments:description', 'local_edusupport'),
+                    1
+            )
+    );
 
     $actions = array(
         (object) array('name' => 'supporters', 'href' => 'choosesupporters.php'),

@@ -124,10 +124,11 @@ class accountmanager {
      */
     public function can_choose_accountmanager(): bool {
         global $DB, $USER;
-        if (empty(get_config('local_edusupport', 'capstocheck'))) {
+        $capability = get_config('local_edusupport', 'capstocheck');
+        if (empty($capability)) {
             return false;
         }
-        $capability = explode(',', get_config('local_edusupport', 'capstocheck'));
+        $capability = explode(',', $capability);
         $sql = '
             SELECT  c.id as cid
             FROM {role_assignments} ra
@@ -155,12 +156,15 @@ class accountmanager {
      */
     public function prepare_accountmanager_for_form(&$mform): void {
         global $CFG;
+        $accountmanagers = get_config('local_edusupport', 'accountmanagers');
+        if (empty($accountmanagers) || isguestuser()) {
+            return;
+        }
         require_once($CFG->dirroot . '/user/lib.php');
-        $users = \user_get_users_by_id(explode(',', get_config('local_edusupport', 'accountmanagers')));
+        $users = \user_get_users_by_id(explode(',', $accountmanagers));
         if (empty($users) || !$this->can_choose_accountmanager()) {
             return;
         }
-
         $options = array('0' => get_string('none', 'local_edusupport'));
 
         foreach ($users as $user) {

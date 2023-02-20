@@ -68,7 +68,8 @@ class local_edusupport_external extends external_api {
      *
      * @return array $reply of created issue
      */
-    public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url, $contactphone, $guestmail, $accountmanager = null) {
+    public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url,
+            $contactphone, $guestmail, $accountmanager = null): array {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
 
         $protecttime = get_config('local_edusupport','spamprotectionthreshold');
@@ -146,14 +147,13 @@ class local_edusupport_external extends external_api {
                 $filepath = $CFG->tempdir . '/edusupport-' . md5($user->id . date("Y-m-d H:i:s"));
                 file_put_contents($filepath, base64_decode($x[1]));
                 \core\antivirus\manager::scan_file($filepath, $filename, true);
-
                 foreach($recipients AS $recipient) {
-                    email_to_user($recipient, $fromuser, $subject, $messagetext, $messagehtml, $filepath, 'screenshot.' . $type);
+                    email_to_user($recipient, $fromuser, $subject, $messagetext, $messagehtml, $filepath, $filename);
                 }
                 if (file_exists($filepath)) unlink($filepath);
             } else {
                 foreach($recipients AS $recipient) {
-                    email_to_user($recipient, $fromuser, $subject, $messagetext, $messagehtml, "", true);
+                    email_to_user($recipient, $fromuser, $subject, $messagetext, $messagehtml);
                 }
             }
             $reply['discussionid'] = -999;
@@ -207,7 +207,7 @@ class local_edusupport_external extends external_api {
                         $group->id = groups_create_group($group, false);
                     }
                     if (!empty($group->id)) {
-                        // find supporters
+                        // Find support users.
                         $groupusers = \local_edusupport\lib::get_support_user_by_matching_customfield($forum->course, $cfn);
                         groups_add_member($group, $user);
                         if ($groupusers) {
@@ -326,6 +326,13 @@ class local_edusupport_external extends external_api {
                         $completion->update_state($cm, COMPLETION_COMPLETE);
                     }
 
+                    // Set the forum post as already mailed if the original request should not be sent to user.
+                    $sendemail = get_config('local_edusupport', 'sendoriginalrequest');
+                    if (!$sendemail) {
+                        $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid]);
+                        $DB->set_field('forum_posts', 'mailed', 1, ['id' => $discussion->firstpost]);
+                    }
+
                     $settings = new stdClass();
                     $settings->discussionsubscribe = $options['discussionsubscribe'];
                     forum_post_subscription($settings, $forum, $discussion);
@@ -426,7 +433,7 @@ class local_edusupport_external extends external_api {
      * @param $forumid
      * @return string
      */
-    public static function create_form($url, $image, $forumid) {
+    public static function create_form($url, $image, $forumid) : string {
         global $CFG, $PAGE, $USER, $OUTPUT;
 
         $params = self::validate_parameters(self::create_form_parameters(), array('url' => $url, 'image' => $image, 'forumid' => $forumid));

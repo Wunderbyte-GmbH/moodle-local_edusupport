@@ -179,9 +179,12 @@ $string['screenshot:upload:successful'] = 'File has been successfully prepared f
 $string['select_isselected'] = 'Currently selected';
 $string['select_unavailable'] = 'Unavailable';
 $string['send'] = 'Send';
-$string['sendmsgonset2ndlvl'] = 'Send a message to user when 2nd level is set';
-$string['sendmsgonset2ndlvl:description'] = 'Send a email to the user when 2nd level is set (two messages gets send when autoforward to 2ndlvl is enabled)';
-
+$string['sendmsgonset2ndlvl'] = 'Send a message to user when 2nd level support user is assigned';
+$string['sendmsgonset2ndlvl:description'] = 'Send a email to the user when whenever a support user is assigend or changed';
+$string['sendoriginalrequest'] = 'Send the original support request to user';
+$string['sendoriginalrequest:description'] = 'Send the forum post of the support request to the user who requested support';
+$string['sendsupporterassignments'] = 'Send support user assignments to the user';
+$string['sendsupporterassignments:description'] = 'Notify the user via emails when a support user has been assigned to the request. Everytime someone new is assigned an email is sent';
 $string['spamprotection:exception'] = 'Sorry, maximum amount of issues exceeded. Try again in a few minutes.';
 $string['spamprotection:limit'] = 'Spamprotection > limit';
 $string['spamprotection:limit:description'] = 'The maximum amount of created issues within time range.';

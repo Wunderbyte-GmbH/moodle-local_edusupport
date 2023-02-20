@@ -303,10 +303,11 @@ class lib {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function create_post(int $discussionid,string $text,string $subject = ""): void {
+    public static function create_post(int $discussionid, string $text, string $subject = ""): void {
         global $DB, $USER;
 
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
+        $sendemail = get_config('local_edusupport', 'sendsupporterassignments');
         if ($guestmode && (isguestuser() || !isloggedin())) {
             $guestuser = new guest_supportuser();
             $user = $guestuser->get_support_guestuser();
@@ -323,7 +324,7 @@ class lib {
         $post->userid = $user->id;
         $post->created = time();
         $post->modified = time();
-        $post->mailed = 0;
+        $post->mailed = ($sendemail) ? 0 : 1;
         $post->subject = $subject;
         $post->message = $text;
         $post->messageformat = 1;
@@ -701,7 +702,9 @@ class lib {
         } else {
             // Choose one supporter randomly.
             $keys = array_keys($supporters);
-            $dedicated = $supporters[$keys[array_rand($keys)]];
+            if (!empty($keys)) {
+                $dedicated = $supporters[$keys[array_rand($keys)]];
+            }
         }
 
         if (isset($dedicated) && !empty($dedicated->userid)) {
@@ -765,7 +768,7 @@ class lib {
      * @return true on success.
      */
     public static function set_current_supporter(int $discussionid, int $userid): bool {
-        global $CFG, $DB, $USER, $PAGE;
+        global $CFG, $DB, $USER, $PAGE, $SITE;
 
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         $forum = $DB->get_record('forum', array('id' => $discussion->forum));
@@ -792,7 +795,7 @@ class lib {
         }
         $touser = $DB->get_record('user', array('id' => $userid));
         self::create_post($discussionid,
-            get_string('issue_assign_3rdlevel',
+            get_string('issue_assign_3rdlevel:post',
                 'local_edusupport',
                 (object) array(
                     'fromuserfullname' => \fullname($USER),
@@ -801,7 +804,7 @@ class lib {
                     'touserid' => $userid,
                     'tosupportlevel' => $supporter->supportlevel,
                     'wwwroot' => $CFG->wwwroot,
-                    'sitename' => $CFG->fullname,
+                    'sitename' => $SITE->fullname,
                     'supportforumname' => $forum->name,
                 )
             ),
