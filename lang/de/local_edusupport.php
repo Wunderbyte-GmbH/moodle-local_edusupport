@@ -86,12 +86,12 @@ $string['issue:countother'] = 'andere Tickets';
 $string['issue:countclosed'] = 'geschlossene Tickets';
 $string['issue:assigned'] = 'Sie wurden folgendem Ticket zugewiesen:';
 $string['issue_assign'] = 'Zuordnen';
-$string['issue_assign_3rdlevel:post'] = '
-<p>Wir freuen uns, Ihnen mitteilen zu können, dass Ihre Support-Anfrage an <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> vom {$a->sitename} Support-Team weitergeleitet wurde!</p>
-<p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können. </p>
-Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
-<p>Wir wünschen Ihnen eine tolle Lernerfahrung! </p>
-<p>Ihr {$a->sitename} Team </p>';
+$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been submitted.</p>
+
+<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.
+You are receiving this email because you asked the team for help via a support request. You can find all your requests under atingi Support Forum on {$a->sitename} .
+We wish you a great learning experience!
+Your {$a->sitename} support team</p>';
 $string['issue_assign_nextlevel'] = 'Dieses Ticket dem Plattform-Support zuweisen';
 $string['issue_assign_nextlevel:error'] = 'Entschuldigung, das Ticket konnte nicht dem Plattform Support Team zugewiesen werden.';
 $string['issue_assign_nextlevel:post'] = '
@@ -191,6 +191,10 @@ $string['sendoriginalrequest'] = 'Die ursprüngliche Supportanfrage an den/die B
 $string['sendoriginalrequest:description'] = 'Den Forumsbeitrag der Supportanfrage an den Benutzer, der um Unterstützung gebeten hat senden';
 $string['sendsupporterassignments'] = 'Senden von Support-Benutzerzuweisungen an den Benutzer';
 $string['sendsupporterassignments:description'] = 'Benachrichtigen Sie den Benutzer per E-Mail, wenn ein Support-User der Anfrage zugewiesen wurde. Jedes Mal, wenn ein neuer Benutzer zugewiesen wird, wird eine E-Mail gesendet';
+$string['sendissueclosed'] = 'Eine E-Mail an den User schicken, wenn der Support-Ticketstatus auf "Erledigt" gestetzt wurde';
+$string['sendissueclosed:description'] = 'Zusätztlich zum Eintrag im Support-Forum eine E-Mail an den/die Benutzer/in schicken, wenn das Support-Ticket auf Status "Erledigt" gesetzt wurde';
+$string['sendrequestreceived'] = 'Senden einer E-Mail zur Bestätigung, dass die Supportanfrage eingegangen ist';
+$string['sendrequestreceived:description'] = 'Benachrichtigen Sie den/die Benutzer/in ausschließlich per E-Mail (und nicht im Support-Forum), dass die Anfrage eingegangen ist. Dies dient nur der Information des Benutzers und ist für die Dokumentation des Verlaufs der Anfrage im Support-Forum nicht relevant.';
 $string['trackhost'] = 'Hostnamen angeben';
 $string['trackhost:description'] = 'Große Moodle-Sites nutzen möglicherweise eine Architektur mit mehreren Webhosts. Schalten Sie diese Option ein, damit der Hostname des aktiven Webhosts bei Problemen erfasst wird.';
 $string['userid'] = 'UserID';

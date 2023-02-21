@@ -121,7 +121,6 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
             'subscribe' => 0,
             'thresholdwarning' => $thresholdwarning,
             'edit' => $edit,
-
             ), 'post', '', array('id' => 'mformforum')
         );
 

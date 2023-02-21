@@ -72,8 +72,8 @@ class local_edusupport_external extends external_api {
             $contactphone, $guestmail, $accountmanager = null): array {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
 
-        $protecttime = get_config('local_edusupport','spamprotectionthreshold');
-        $protectamount = get_config('local_edusupport','spamprotectionlimit');
+        $protecttime = get_config('local_edusupport', 'spamprotectionthreshold');
+        $protectamount = get_config('local_edusupport', 'spamprotectionlimit');
 
         $cache = \cache::make('local_edusupport', 'spamprotect');
         $timeoffset = time() - $protecttime;
@@ -105,10 +105,13 @@ class local_edusupport_external extends external_api {
             $user = $USER;
         }
 
-        $params = self::validate_parameters(self::create_issue_parameters(), array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group, 'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url, 'contactphone' => $contactphone, 'guestmail' => $guestmail, 'accountmanager' => $accountmanager));
+        $params = self::validate_parameters(self::create_issue_parameters(),
+                array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group,
+                        'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url,
+                        'contactphone' => $contactphone, 'guestmail' => $guestmail, 'accountmanager' => $accountmanager));
         $reply = array(
-            'discussionid' => 0,
-            'responsibles' => array(),
+                'discussionid' => 0,
+                'responsibles' => array(),
         );
         if (!empty(get_config('local_edusupport', 'trackhost'))) {
             $params['webhost'] = gethostname();
@@ -116,7 +119,8 @@ class local_edusupport_external extends external_api {
         $params['description'] = nl2br($params['description']);
 
         $tmp = explode('_', $forum_group);
-        $forumid = 0; $groupid = 0;
+        $forumid = 0;
+        $groupid = 0;
         if (count($tmp) == 2) {
             $forumid = $tmp[0];
             $groupid = $tmp[1];
@@ -134,9 +138,9 @@ class local_edusupport_external extends external_api {
             $supportuser = \core_user::get_support_user();
             $recipients = array($supportuser);
             $reply['responsibles'][] = array(
-                'userid' => $supportuser->id,
-                'name' => \fullname($supportuser),
-                'email' => $supportuser->email,
+                    'userid' => $supportuser->id,
+                    'name' => \fullname($supportuser),
+                    'email' => $supportuser->email,
             );
             $fromuser = $user;
 
@@ -147,12 +151,14 @@ class local_edusupport_external extends external_api {
                 $filepath = $CFG->tempdir . '/edusupport-' . md5($user->id . date("Y-m-d H:i:s"));
                 file_put_contents($filepath, base64_decode($x[1]));
                 \core\antivirus\manager::scan_file($filepath, $filename, true);
-                foreach($recipients AS $recipient) {
+                foreach ($recipients as $recipient) {
                     email_to_user($recipient, $fromuser, $subject, $messagetext, $messagehtml, $filepath, $filename);
                 }
-                if (file_exists($filepath)) unlink($filepath);
+                if (file_exists($filepath)) {
+                    unlink($filepath);
+                }
             } else {
-                foreach($recipients AS $recipient) {
+                foreach ($recipients as $recipient) {
                     email_to_user($recipient, $fromuser, $subject, $messagetext, $messagehtml);
                 }
             }
@@ -172,9 +178,9 @@ class local_edusupport_external extends external_api {
                 $coursesupporters = \local_edusupport\lib::get_course_supporters($forum);
                 foreach ($coursesupporters as $coursesupporter) {
                     $reply['responsibles'][] = array(
-                        'userid' => $coursesupporter->id,
-                        'name' => \fullname($coursesupporter),
-                        'email' => $coursesupporter->email,
+                            'userid' => $coursesupporter->id,
+                            'name' => \fullname($coursesupporter),
+                            'email' => $coursesupporter->email,
                     );
                 }
 
@@ -183,26 +189,27 @@ class local_edusupport_external extends external_api {
 
                 // Validate options.
                 $options = array(
-                    'discussionsubscribe' => true,
-                    'discussionpinned' => false,
-                    'inlineattachmentsid' => 0,
-                    'attachmentsid' => null
+                        'discussionsubscribe' => true,
+                        'discussionpinned' => false,
+                        'inlineattachmentsid' => 0,
+                        'attachmentsid' => null
                 );
 
                 // create group for user id firstlvlgroupmode is active
-                if (get_config('local_edusupport', 'firstlvlgroupmode') && $cfn = get_config('local_edusupport', 'customfieldname')) {
+                if (get_config('local_edusupport', 'firstlvlgroupmode') &&
+                        $cfn = get_config('local_edusupport', 'customfieldname')) {
                     require_once("$CFG->dirroot/group/lib.php");
                     $groupname = fullname($user) . ' (' . $user->id . '-coursesupport)';
                     $group = $DB->get_record('groups', array('courseid' => $forum->course, 'name' => $groupname));
                     if (empty($group->id)) {
                         // create a group for this user.
                         $group = (object) array(
-                            'courseid' => $forum->course,
-                            'name' => $groupname,
-                            'description' => '',
-                            'descriptionformat' => 1,
-                            'timecreated' => time(),
-                            'timemodified' => time(),
+                                'courseid' => $forum->course,
+                                'name' => $groupname,
+                                'description' => '',
+                                'descriptionformat' => 1,
+                                'timecreated' => time(),
+                                'timemodified' => time(),
                         );
                         $group->id = groups_create_group($group, false);
                     }
@@ -214,7 +221,8 @@ class local_edusupport_external extends external_api {
                             $responsibles = array();
                             foreach ($groupusers as $user) {
                                 groups_add_member($group, $user->userid);
-                                $responsibles[] = "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$user->userid}\" target=\"_blank\">{$user->firstname} {$user->lastname}</a>";
+                                $responsibles[] =
+                                        "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$user->userid}\" target=\"_blank\">{$user->firstname} {$user->lastname}</a>";
                             }
                         } else {
                             $postto2ndlevel = true;
@@ -264,7 +272,6 @@ class local_edusupport_external extends external_api {
                     $discussion->name = $discussion->subject;
                 }
 
-
                 $discussion->timestart = 0;
                 $discussion->timeend = 0;
                 $discussion->timelocked = 0;
@@ -276,7 +283,7 @@ class local_edusupport_external extends external_api {
                     $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
                 }
 
-                if ($discussionid = forum_add_discussion($discussion ,null, null, $user->id)) {
+                if ($discussionid = forum_add_discussion($discussion, null, null, $user->id)) {
                     $discussion->id = $discussionid;
 
                     if (!empty($params['image'])) {
@@ -294,27 +301,27 @@ class local_edusupport_external extends external_api {
                         $fr = new stdClass;
                         $fr->component = 'mod_forum';
                         $fr->contextid = $context->id;
-                        $fr->userid    = $user->id;
-                        $fr->filearea  = 'attachment';
-                        $fr->filename  = $filename;
-                        $fr->filepath  = '/';
-                        $fr->itemid    = $discussion->firstpost;
-                        $fr->license   = $CFG->sitedefaultlicense;
-                        $fr->author    = fullname($user);
-                        $fr->source    = serialize((object)array('source' => $filename));
+                        $fr->userid = $user->id;
+                        $fr->filearea = 'attachment';
+                        $fr->filename = $filename;
+                        $fr->filepath = '/';
+                        $fr->itemid = $discussion->firstpost;
+                        $fr->license = $CFG->sitedefaultlicense;
+                        $fr->author = fullname($user);
+                        $fr->source = serialize((object) array('source' => $filename));
 
                         $fs->create_file_from_pathname($fr, $filepath);
-                        $DB->set_field('forum_posts', 'attachment', 1, array('id'=>$discussion->firstpost));
+                        $DB->set_field('forum_posts', 'attachment', 1, array('id' => $discussion->firstpost));
                     }
 
                     // Trigger events and completion.
 
                     $evparams = array(
-                        'context' => $context,
-                        'objectid' => $discussion->id,
-                        'other' => array(
-                            'forumid' => $forum->id,
-                        )
+                            'context' => $context,
+                            'objectid' => $discussion->id,
+                            'other' => array(
+                                    'forumid' => $forum->id,
+                            )
                     );
                     $event = \mod_forum\event\discussion_created::create($evparams);
                     $event->add_record_snapshot('forum_discussions', $discussion);
@@ -344,14 +351,11 @@ class local_edusupport_external extends external_api {
                     }
                     if ($postto2ndlevel && get_config('local_edusupport', 'firstlvlgroupmode')) {
                         \local_edusupport\lib::set_2nd_level($discussion->id, $keyvaluepair);
-                    }
-                    else if ($canpostto2ndlevel && !empty($postto2ndlevel)) {
+                    } else if ($canpostto2ndlevel && !empty($postto2ndlevel)) {
                         \local_edusupport\lib::set_2nd_level($discussion->id, $keyvaluepair);
-                    }
-                    else if (get_config('local_edusupport', 'auto2ndlvl')) {
+                    } else if (get_config('local_edusupport', 'auto2ndlvl')) {
                         \local_edusupport\lib::set_2nd_level($discussion->id, $keyvaluepair);
-                    }
-                    else {
+                    } else {
                         // Post answer containing the reponsibles.
                         $managers = array_values(\local_edusupport\lib::get_course_supporters($forum));
 
@@ -359,21 +363,23 @@ class local_edusupport_external extends external_api {
 
                             $responsibles = array();
                             foreach ($managers as $manager) {
-                                $responsibles[] = "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$manager->id}\" target=\"_blank\">{$manager->firstname} {$manager->lastname}</a>";
+                                $responsibles[] =
+                                        "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$manager->id}\" target=\"_blank\">{$manager->firstname} {$manager->lastname}</a>";
                             }
                         }
                         $forum = $DB->get_record('forum', array('id' => $discussion->forum));
                         \local_edusupport\lib::create_post($discussion->id,
-                            get_string(
-                                'issue_responsibles:post',
-                                'local_edusupport',
-                                array(
-                                    'responsibles' => implode(', ', $responsibles),
-                                    'sitename' => $SITE->fullname,
-                                    'supportforumname' => $forum->name
-                                )
-                            ),
-                            get_string('issue_responsibles:subject', 'local_edusupport')
+                                get_string(
+                                    'issue_responsibles:post',
+                                    'local_edusupport',
+                                    [
+                                        'responsibles' => implode(', ', $responsibles),
+                                        'sitename' => $SITE->fullname,
+                                        'supportforumname' => $forum->name
+                                    ]
+                                ),
+                                get_string('issue_responsibles:subject', 'local_edusupport'),
+                                get_config('local_edusupport', 'sendsupporterassignments')
                         );
                     }
 

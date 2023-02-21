@@ -262,6 +262,22 @@ if ($hassiteconfig) {
                     1
             )
     );
+    $settings->add(
+            new admin_setting_configcheckbox(
+                    'local_edusupport/sendissueclosed',
+                    get_string('sendissueclosed', 'local_edusupport'),
+                    get_string('sendissueclosed:description', 'local_edusupport'),
+                    1
+            )
+    );
+    $settings->add(
+            new admin_setting_configcheckbox(
+                    'local_edusupport/sendrequestreceived',
+                    get_string('sendrequestreceived', 'local_edusupport'),
+                    get_string('sendrequestreceived:description', 'local_edusupport'),
+                    1
+            )
+    );
 
     $actions = array(
         (object) array('name' => 'supporters', 'href' => 'choosesupporters.php'),

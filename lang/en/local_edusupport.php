@@ -96,14 +96,14 @@ $string['issue:countother'] = 'Other issues';
 $string['issue:countclosed'] = 'Closed issues';
 $string['issue:assigned'] = 'You have been assigned to this issue:';
 $string['issue_assign'] = 'Assign issue';
-$string['issue_assign_3rdlevel:post'] = '
-<p> We are happy to inform you that your support request has been assigned to <a href="{$a->wwwroot}/user/view.php?id={$a->touserid}">{$a->touserfullname}</a> from the {$a->sitename} support team!</p>
-<p> You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution. </p>
-You are receiving this email because you asked the {$a->sitename} team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.
-<p> We wish you a great learning experience! </p>
-<p> Your {$a->sitename} team </p> ';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
+$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been submitted.</p>
+
+<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.
+You are receiving this email because you asked the team for help via a support request. You can find all your requests under atingi Support Forum on {$a->sitename} .
+We wish you a great learning experience!
+Your {$a->sitename} support team</p>';
 $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
 
 <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
@@ -160,7 +160,6 @@ $string['predefined_subjects'] = 'Define predefined subjects here';
 $string['predefined_subjects:description'] = 'When submitting a support request you can define a list of subjects to choose from instead of a text input field. Leave empty if you want to use text input. One subject per line if you want to provide predefined subjects';
 $string['predefined_subjects_prefix'] = 'Enable prefix';
 $string['predefined_subjects_prefix:description'] = 'Enable prefix (name can be changed in language customisation subject_prefix e.g. Other:)';
-
 $string['subject_prefix'] = 'Support request with following topic: ';
 $string['privacy:metadata'] = 'This plugin does not store any personal data as it uses a forum as target.';
 $string['priority'] = 'set priority';
@@ -185,6 +184,10 @@ $string['sendoriginalrequest'] = 'Send the original support request to user';
 $string['sendoriginalrequest:description'] = 'Send the forum post of the support request to the user who requested support';
 $string['sendsupporterassignments'] = 'Send support user assignments to the user';
 $string['sendsupporterassignments:description'] = 'Notify the user via emails when a support user has been assigned to the request. Everytime someone new is assigned an email is sent';
+$string['sendissueclosed'] = 'Send e-mail when issue is closed';
+$string['sendissueclosed:description'] = 'Notify the user via emails when the issue is closed. In any case, the "issue is closed message" will be posted in the support forum';
+$string['sendrequestreceived'] = 'Send e-mail notification that the request has been received';
+$string['sendrequestreceived:description'] = 'An e-mail is sent to the user submitting a support request. The e-mail confirms the receipt of the request but is not part of the ticket specific thread in the support forum';
 $string['spamprotection:exception'] = 'Sorry, maximum amount of issues exceeded. Try again in a few minutes.';
 $string['spamprotection:limit'] = 'Spamprotection > limit';
 $string['spamprotection:limit:description'] = 'The maximum amount of created issues within time range.';

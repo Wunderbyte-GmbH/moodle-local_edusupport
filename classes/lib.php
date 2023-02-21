@@ -134,7 +134,8 @@ class lib {
                     'wwwroot' => $CFG->wwwroot,
                 )
             ),
-            get_string('issue_closed:subject', 'local_edusupport')
+            get_string('issue_closed:subject', 'local_edusupport'),
+            get_config('local_edusupport', 'sendissueclosed')
         );
 
         // 3.) remove all supporters from the abo-list
@@ -299,15 +300,15 @@ class lib {
      * @param int $discussionid
      * @param string $text as cpmtent
      * @param string $subject subject for post, if not given first 30 chars of text are used
+     * @param int $sendemail 0 do not send, 1 send e-mail.
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function create_post(int $discussionid, string $text, string $subject = ""): void {
+    public static function create_post(int $discussionid, string $text, string $subject = "", int $sendemail = 1): void {
         global $DB, $USER;
 
         $guestmode = get_config('local_edusupport', 'guestmodeenabled');
-        $sendemail = get_config('local_edusupport', 'sendsupporterassignments');
         if ($guestmode && (isguestuser() || !isloggedin())) {
             $guestuser = new guest_supportuser();
             $user = $guestuser->get_support_guestuser();
@@ -643,7 +644,8 @@ class lib {
                     'wwwroot' => $CFG->wwwroot,
                 )
             ),
-            get_string('issue_revoke:subject', 'local_edusupport')
+            get_string('issue_revoke:subject', 'local_edusupport'),
+            get_config('local_edusupport', 'sendissueclosed')
         );
 
         // 3.) remove all supporters from the abo-list
@@ -726,7 +728,8 @@ class lib {
                     'sitename' => $CFG->fullname,
                     'supportforumname' => $forum->name
                 )),
-                get_string('issue_assigned:subject', 'local_edusupport')
+                get_string('issue_assigned:subject', 'local_edusupport'),
+                get_config('local_edusupport', 'sendsupporterassignments')
             );
         } else {
             lib::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
@@ -795,7 +798,7 @@ class lib {
         }
         $touser = $DB->get_record('user', array('id' => $userid));
         self::create_post($discussionid,
-            get_string('issue_assign_3rdlevel:post',
+            get_string('issue_assign_nextlevel:post',
                 'local_edusupport',
                 (object) array(
                     'fromuserfullname' => \fullname($USER),
@@ -808,7 +811,8 @@ class lib {
                     'supportforumname' => $forum->name,
                 )
             ),
-            get_string('issue_assigned:subject', 'local_edusupport')
+            get_string('issue_assigned:subject', 'local_edusupport'),
+            get_config('local_edusupport', 'sendsupporterassignments')
         );
 
         if (!isset($PAGE->context)) {
