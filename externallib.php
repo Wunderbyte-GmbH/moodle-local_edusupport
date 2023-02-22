@@ -301,7 +301,7 @@ class local_edusupport_external extends external_api {
                         $fr = new stdClass;
                         $fr->component = 'mod_forum';
                         $fr->contextid = $context->id;
-                        $fr->userid = c->id;
+                        $fr->userid = $user->id;
                         $fr->filearea = 'attachment';
                         $fr->filename = $filename;
                         $fr->filepath = '/';

@@ -72,7 +72,7 @@ function local_edusupport_before_standard_html_head(){
                                 OR path LIKE ?
                             )";
             $subcategories = $DB->get_records_sql($sql, array(CONTEXT_COURSECAT, $coursecatcontext->path, $coursecatcontext->path . '/%'));
-            foreach ($subcategories AS $subcategory) {
+            foreach ($subcategories as $subcategory) {
                 $chkforforum = $DB->get_record('local_edusupport', array('categoryid' => $subcategory->instanceid));
                 if (!empty($chkforforum->id)) {
                     redirect(new \moodle_url('/local/edusupport/error.php', array('error' => 'coursecategorydeletion', 'categoryid' => $categoryid)));
