@@ -526,7 +526,7 @@ class local_edusupport_external extends external_api {
             if (!isset($reply['supporters'][$supporter->supportlevel])) {
                 $reply['supporters'][$supporter->supportlevel] = array();
             }
-            // TODO: $issue does not exist!!
+            // TODO: $issue does not exist!! - @David.
             if (empty($issue->currentsupporter) && $supporter->userid == $USER->id) {
                 $supporter->selected = true;
             } else if ($issue->currentsupporter == $supporter->userid) {

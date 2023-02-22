@@ -68,7 +68,7 @@ if (\local_edusupport\lib::can_config_course($course->id)) {
     $enrolled = get_enrolled_users($context, 'moodle/course:viewhiddenactivities');
     $potentialsupporters = array();
     foreach ($enrolled as &$potentialsupporter) {
-        // TODO: This function does not exist!!
+        // TODO: This function does not exist!! - @David.
         $potentialsupporter->supportlevel = local_edusupport::get_supporter_level($course->id, $potentialsupporter->id);
         $potentialsupporter->courseid = $COURSE->id;
         $potentialsupporters[] = $potentialsupporter;
