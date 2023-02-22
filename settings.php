@@ -18,8 +18,7 @@
  * @package    local_edusupport
  * @copyright  2018 Digital Education Society (http://www.dibig.at)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
-
+ */
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
@@ -135,7 +134,7 @@ if ($hassiteconfig) {
         )
     );
 
-    // Prepage before form
+    // Prepage before form.
     $settings->add(
         new admin_setting_configcheckbox(
             'local_edusupport/enableprepage',
@@ -283,9 +282,9 @@ if ($hassiteconfig) {
         (object) array('name' => 'supporters', 'href' => 'choosesupporters.php'),
         (object) array('name' => 'setaccountmanager', 'href' => 'accountmanager.php'),
     );
-    $links = "<div class=\"grid-eq-3\">";
-    foreach($actions AS $action) {
-        $links .= '<a class="btn btn-secondary" href="' . $CFG->wwwroot . '/local/edusupport/' . $action->href . '">' .
+    $links = "<div class='grid-eq-3'>";
+    foreach ($actions as $action) {
+        $links .= '<a class="btn btn-secondary mr-2 mb-3" href="' . $CFG->wwwroot . '/local/edusupport/' . $action->href . '">' .
                         '<i class="fa fa-users"></i> ' .
                         get_string($action->name, 'local_edusupport') .
                   '</a>';

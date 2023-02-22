@@ -68,9 +68,9 @@ $string['prepage:description'] = "content displayed before form e.g. faq";
 $string['extralinks'] = 'Extralinks';
 $string['extralinks:description'] = 'Wenn Sie hier Links eintragen, dann wird der "Hilfe"-Button zu einem Menü. Dieses wird den "Hilfe"-Button als ersten Menüeintrag anzeigen, und alle hier eingetragenen Links als zusätzliche Hilfeanlaufstellen. Geben Sie die Links zeilenweise in folgendem Format an: Linkname|URL|faicon|Target';
 $string['faqlink'] = 'FAQ-Link';
-$string['faqlink:description'] =  'Addresse zum FAQ';
+$string['faqlink:description'] = 'Addresse zum FAQ';
 $string['faqread'] = 'FAQ gelesen Toggler';
-$string['faqread:description'] =  'Ich bestätige hiermit die <a href="{$a}">FAQ</a> gelesen zu haben';
+$string['faqread:description'] = 'Ich bestätige hiermit die <a href="{$a}">FAQ</a> gelesen zu haben';
 $string['header'] = 'Hilfe in <i>{$a}</i> anfordern';
 $string['holidaymodeenabled'] = "Urlaubsmodus aktivieren";
 $string['holidaymodeenabled:description'] = "Urlaubsmodus: Supporter bekommen bis zu einem bestimmten Datum keine Tickets.";
@@ -87,17 +87,15 @@ $string['issue:countclosed'] = 'geschlossene Tickets';
 $string['issue:assigned'] = 'Sie wurden folgendem Ticket zugewiesen:';
 $string['issue_assign'] = 'Zuordnen';
 $string['issuereceived'] = '<p>Danke, dass Sie sich gemeldet haben. Ihre Supportanfrage ist eingelangt.</p>
-
 <p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Lösung einiger Probleme mehr Zeit beansprucht und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können.</p>
 <p>Sie erhalten diese E-Mail, weil Sie das Team über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen im <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">Support-Forum</a> auf {$a ->Sitename}.';
 $string['issue_assign_nextlevel'] = 'Dieses Ticket dem Plattform-Support zuweisen';
 $string['issue_assign_nextlevel:error'] = 'Entschuldigung, das Ticket konnte nicht dem Plattform Support Team zugewiesen werden.';
-$string['issue_assign_nextlevel:post'] = '
-<p>Wir freuen uns, Ihnen mitteilen zu können, dass Ihre Support-Anfrage an das {$a->sitename} Support-Team weitergeleitet wurde!</p>
-<p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können. </p>
-Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
-<p>Wir wünschen Ihnen eine tolle Lernerfahrung! </p>
-<p>Ihr {$a->sitename} Team </p>';
+$string['issue_assign_nextlevel:post'] = '<p>Wir freuen uns, Ihnen mitteilen zu können, dass Ihre Support-Anfrage an das {$a->sitename} Support-Team weitergeleitet wurde!</p>
+ <p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können.</p>
+ Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
+ <p>Wir wünschen Ihnen eine tolle Lernerfahrung!</p>
+ <p>Ihr {$a->sitename} Team </p>';
 $string['issue_assigned:subject'] = 'Supportanfrage zugeordnet';
 $string['issuereceived:subject'] = 'Ihre Supportanfrage wird bearbeitet';
 $string['issue_close'] = 'Anfrage schließen';
@@ -143,7 +141,7 @@ $string['postto2ndlevel:description'] = 'Direkt an den {$a->sitename}-Support we
 $string['privacy:metadata'] = 'Dieses Plugin speichert keine personenbezogenen Daten, da die Informationen in einem Forum abgelegt werden.';
 $string['priority'] = 'setze Priorität';
 $string['prioritylvl'] = 'Prioritäten erlauben';
-$string['prioritylvl:description'] =  'ermöglicht es in der Taskliste Prioritäten zu setzen';
+$string['prioritylvl:description'] = 'ermöglicht es in der Taskliste Prioritäten zu setzen';
 $string['prioritylvl:low'] = 'niedrige Priorität';
 $string['prioritylvl:mid'] = 'mittlere Priorität';
 $string['prioritylvl:high'] = 'hohe Priorität';
@@ -184,7 +182,7 @@ $string['toggle:central'] = 'Zentrales Supportforum';
 $string['guestmodeenabled'] = 'Gastmodus aktiv';
 $string['guestmodeenabled:description'] = 'Gäste können auch Supporttickets anlegen und werden dann per Mail benachrichtigt';
 $string['guestmail'] = 'Ihre E-Mail Adresse';
-$string['sendmsgonset2ndlvl'] = 'Sende Nachricht an Nutzer/in wenn ein Tickket einem Support User zugewiesen wird';
+$string['sendmsgonset2ndlvl'] = 'Sende Nachricht an Nutzer/in wenn ein Ticket einem Support User zugewiesen wird';
 $string['sendmsgonset2ndlvl:description'] = 'Sende eine E-Mail an den/die Nutzer/in wenn ein Support-User zugewiesen wird oder geändert wird.';
 $string['sendoriginalrequest'] = 'Die ursprüngliche Supportanfrage an den/die Benutzer/in senden';
 $string['sendoriginalrequest:description'] = 'Den Forumsbeitrag der Supportanfrage an den Benutzer, der um Unterstützung gebeten hat senden';
@@ -198,7 +196,7 @@ $string['trackhost'] = 'Hostnamen angeben';
 $string['trackhost:description'] = 'Große Moodle-Sites nutzen möglicherweise eine Architektur mit mehreren Webhosts. Schalten Sie diese Option ein, damit der Hostname des aktiven Webhosts bei Problemen erfasst wird.';
 $string['userid'] = 'UserID';
 $string['userlinks'] = 'Userlinks';
-$string['userlinks:description'] =  'zeige Userlinks in Taskliste';
+$string['userlinks:description'] = 'zeige Userlinks in Taskliste';
 $string['your_issues'] = 'Ihre Anfragen';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';

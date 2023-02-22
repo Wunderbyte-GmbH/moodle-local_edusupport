@@ -72,9 +72,9 @@ $string['prepage:description'] = "Content displayed before form e.g. faq";
 $string['extralinks'] = 'Extralinks';
 $string['extralinks:description'] = 'If you enter links here, the "help"-Button will be a menu instead of button. It will include the "help"-Button as first element, and all extra links as additional links. Enter links line by line in the following form: linkname|url|faicon|target';
 $string['faqlink'] = 'FAQ-link';
-$string['faqlink:description'] =  'link to FAQ';
+$string['faqlink:description'] = 'link to FAQ';
 $string['faqread'] = 'Please confirm, that you have read the FAQ';
-$string['faqread:description'] =  'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
+$string['faqread:description'] = 'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
 $string['guestmail'] = 'Your e-mail';
 
 $string['status'] = 'Status';
@@ -101,7 +101,7 @@ $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwar
 $string['issuereceived'] = '<p>Thank you for reaching out, your support request has been received.</p>
 
 <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
-<p>You are receiving this email because you asked the team for help via a support request. You can find all your requests in the  <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">support forum</a> on {$a->sitename}. </p>
+<p>You are receiving this email because you asked the team for help via a support request. You can find all your requests in the <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">support forum</a> on {$a->sitename}. </p>
 <p>We wish you a great learning experience!</p>
 <p>Your {$a->sitename} support team</p>';
 $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
@@ -111,20 +111,21 @@ $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that you
 <p>We wish you a great learning experience!</p>
 
 <p>Your {$a->sitename} team</p>';
-//$string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team';
+// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+/* $string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team'; */
 $string['issue_assigned:subject'] = 'Your support request has been assigned';
 $string['issue_close'] = 'Close issue';
 $string['issue_closed:subject'] = 'Issue closed';
 $string['issue_closed:post'] = 'This issue closed was closed by <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a>. If you need further assistance please forward this issue again to the platform support team.';
 $string['issue_responsibles:post'] = '<p>We are happy to inform you that your support request has been assigned to {$a->responsibles} from the {$a->sitename} support team!</p>
 
-    <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
+   <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
 
-    <p>You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.</p>
+   <p>You are receiving this email because you asked the atingi team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.</p>
 
-    <p>We wish you a great learning experience!</p>
+   <p>We wish you a great learning experience!</p>
 
-    <p>Your {$a->sitename} team</p>
+   <p>Your {$a->sitename} team</p>
 ';
 $string['issue_responsibles:subject'] = 'Your support request has been assigned';
 $string['issuereceived:subject'] = 'Your support request has been received';
@@ -165,7 +166,7 @@ $string['subject_prefix'] = 'Support request with following topic: ';
 $string['privacy:metadata'] = 'This plugin does not store any personal data as it uses a forum as target.';
 $string['priority'] = 'set priority';
 $string['prioritylvl'] = 'enable priorities';
-$string['prioritylvl:description'] =  'If enabled you can select priorities in the issues list';
+$string['prioritylvl:description'] = 'If enabled you can select priorities in the issues list';
 $string['prioritylvl:low'] = 'low priority';
 $string['prioritylvl:mid'] = 'mid priority';
 $string['prioritylvl:high'] = 'high priority';
@@ -219,7 +220,7 @@ $string['guestmodeenabled'] = 'Guestmode active';
 $string['guestmodeenabled:description'] = 'Guests can now also post supporttickets. These tickets get answered by mail';
 $string['userid'] = 'UserID';
 $string['userlinks'] = 'enable userlinks';
-$string['userlinks:description'] =  'show userlinks in issues list';
+$string['userlinks:description'] = 'show userlinks in issues list';
 $string['your_issues'] = 'Your issues';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';
