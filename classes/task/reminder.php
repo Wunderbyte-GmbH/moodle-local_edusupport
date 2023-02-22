@@ -23,8 +23,6 @@
 
 namespace local_edusupport\task;
 
-defined('MOODLE_INTERNAL') || die;
-
 class reminder extends \core\task\adhoc_task {
 
     public function get_name() {
@@ -91,12 +89,13 @@ class reminder extends \core\task\adhoc_task {
         global $CFG, $OUTPUT;
         if (!empty($supporter->id) && $supporter->id > 0 && count($reminders) > 0) {
             $subject = $this->get_name();
-            $mailhtml = $OUTPUT->render_from_template('local_edusupport/reminder_discussions', array('discussions' => $reminders, 'wwwroot' => $CFG->wwwroot));
+            $mailhtml = $OUTPUT->render_from_template('local_edusupport/reminder_discussions',
+                array('discussions' => $reminders, 'wwwroot' => $CFG->wwwroot));
             $mailtext = html_to_text($mailhtml);
 
             if ($debug) {
                 echo "# Mail to " . $supporter->email;
-                print_r($mailhtml);
+                debugging($mailhtml);
             }
 
             $fromuser = \core_user::get_support_user();

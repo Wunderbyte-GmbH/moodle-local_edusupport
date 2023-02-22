@@ -18,9 +18,7 @@
  * @package    local_edusupport
  * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
-
-defined('MOODLE_INTERNAL') || die;
+ */
 
 /**
  * Adds module specific settings to the settings block
@@ -31,11 +29,15 @@ defined('MOODLE_INTERNAL') || die;
  * $settings is unused, but API requires it. Suppress PHPMD warning.
  *
  */
-function local_edusupport_before_standard_html_head(){
+function local_edusupport_before_standard_html_head() {
     global $CFG, $DB, $OUTPUT, $PAGE, $SITE, $USER;
-    if (isloggedin() && !isguestuser()) {
 
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+    /*
+    if (isloggedin() && !isguestuser()) {
+        // TODO?
     }
+    */
 
     if (strpos($_SERVER["SCRIPT_FILENAME"], '/mod/forum/discuss.php') > 0) {
         $d = optional_param('d', 0, PARAM_INT);
@@ -48,7 +50,8 @@ function local_edusupport_before_standard_html_head(){
                         WHERE discussionid=? LIMIT 1 OFFSET 0";
             $chk = $DB->get_record_sql($sql, array($discussion->id));
 
-            $PAGE->requires->js_call_amd('local_edusupport/main', 'injectForwardButton', array($d, !empty($chk->id), $SITE->fullname));
+            $PAGE->requires->js_call_amd('local_edusupport/main', 'injectForwardButton',
+                array($d, !empty($chk->id), $SITE->fullname));
         }
         if (\local_edusupport\lib::is_supportforum($discussion->forum)) {
             $PAGE->requires->js_call_amd('local_edusupport/main', 'injectTest');
@@ -71,11 +74,13 @@ function local_edusupport_before_standard_html_head(){
                                 path LIKE ?
                                 OR path LIKE ?
                             )";
-            $subcategories = $DB->get_records_sql($sql, array(CONTEXT_COURSECAT, $coursecatcontext->path, $coursecatcontext->path . '/%'));
+            $subcategories = $DB->get_records_sql($sql, array(CONTEXT_COURSECAT, $coursecatcontext->path,
+                $coursecatcontext->path . '/%'));
             foreach ($subcategories as $subcategory) {
                 $chkforforum = $DB->get_record('local_edusupport', array('categoryid' => $subcategory->instanceid));
                 if (!empty($chkforforum->id)) {
-                    redirect(new \moodle_url('/local/edusupport/error.php', array('error' => 'coursecategorydeletion', 'categoryid' => $categoryid)));
+                    redirect(new \moodle_url('/local/edusupport/error.php',
+                        array('error' => 'coursecategorydeletion', 'categoryid' => $categoryid)));
                 }
             }
         }
@@ -88,11 +93,11 @@ function local_edusupport_before_standard_html_head(){
 
         // Check for any supportforum-courses that are should be contained by this coursecat.
         $supportforums = $DB->get_records('local_edusupport', array('categoryid' => $categoryid));
-        foreach ($supportforums AS $supportforum) {
-            // Check if the course is in place and the category
+        foreach ($supportforums as $supportforum) {
+            // Check if the course is in place and the category.
             $course = $DB->get_record('course', array('id' => $supportforum->id));
             if (!empty($course->id) && $course->category != $categoryid) {
-                // Update our database
+                // Update our database.
                 $DB->set_field('local_edusupport', 'categoryid', $categoryid, array('courseid' => $course->id));
             }
         }
@@ -106,7 +111,7 @@ function local_edusupport_before_standard_html_head(){
 function local_edusupport_extend_navigation($navigation) {
     if (\local_edusupport\lib::is_supportteam()) {
         $nodehome = $navigation->get('home');
-        if (empty($nodehome)){
+        if (empty($nodehome)) {
             $nodehome = $navigation;
         }
         $label = get_string('issues', 'local_edusupport');
@@ -119,9 +124,12 @@ function local_edusupport_extend_navigation($navigation) {
 
 function local_edusupport_extend_navigation_course($parentnode, $course, $context) {
     // If we allow support users on course level, we can remove the next line.
-    if (!is_siteadmin()) return;
-    //$coursecontext = \context_course::instance($course->id);
-    //if (!has_capability('local/edusupport:canforward2ndlevel', $coursecontext)) return;
+    if (!is_siteadmin()) {
+        return;
+    }
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+    /* $coursecontext = \context_course::instance($course->id);
+    if (!has_capability('local/edusupport:canforward2ndlevel', $coursecontext)) return; */
 
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
@@ -143,6 +151,7 @@ function local_edusupport_extend_navigation_course($parentnode, $course, $contex
             new pix_icon('i/marker', 'eduSupport'));
         $parentnode->add_node($node, $beforekey);
     }
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     /*
     // This is prepared for later use, if we allow support users on course level.
     $url = '/local/edusupport/choosesupporters.php';
@@ -177,25 +186,26 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
         return false;
     }
 
-    // instead of requiring course login we check if the current user is support user of this discussion!
-    //require_course_login($course, true, $cm);
+    // Instead of requiring course login we check if the current user is support user of this discussion!
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+    /* require_course_login($course, true, $cm); */
     if (!\local_edusupport\lib::is_supportteam($USER->id, $course->id)) {
         return false;
     }
 
     $postid = (int)array_shift($args);
-    if (!$post = $DB->get_record('forum_posts', array('id'=>$postid))) {
+    if (!$post = $DB->get_record('forum_posts', array('id' => $postid))) {
         return false;
     }
 
     $areas = \forum_get_file_areas($course, $cm, $context);
 
-    // filearea must contain a real area
+    // Filearea must contain a real area.
     if (!isset($areas[$filearea])) {
         return false;
     }
 
-    if (!$discussion = $DB->get_record('forum_discussions', array('id'=>$post->discussion))) {
+    if (!$discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
         return false;
     }
 
@@ -206,12 +216,13 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
     $fs = \get_file_storage();
     $relativepath = implode('/', $args);
     $fullpath = "/$context->id/mod_forum/$filearea/$postid/$relativepath";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
         return false;
     }
 
     // We skip this check, we already checked, that we belong to the supportteam and have access.
-    // Make sure groups allow this user to see this file
+    // Make sure groups allow this user to see this file.
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     /*
     if ($discussion->groupid > 0) {
         $groupmode = \groups_get_activity_groupmode($cm, $course);
@@ -225,14 +236,15 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // We skip this check, we already checked, that we belong to the supportteam and have access.
     // Make sure we're allowed to see it...
+    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     /*
     if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
         return false;
     }
     */
 
-    // finally send the file
-    send_stored_file($file, 0, 0, true, $options); // download MUST be forced - security!
+    // Finally send the file.
+    send_stored_file($file, 0, 0, true, $options); // Download MUST be forced - security!
 }
 
 /**
@@ -241,8 +253,8 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
  */
 function local_edusupport_pre_course_category_delete($category) {
     global $DB;
-    $courses = $DB->get_records('course', array('category' =>  $category->id));
-    foreach ($courses AS $course) {
+    $courses = $DB->get_records('course', array('category' => $category->id));
+    foreach ($courses as $course) {
         local_edusupport_pre_course_delete($course);
     }
 }
@@ -254,7 +266,7 @@ function local_edusupport_pre_course_category_delete($category) {
 function local_edusupport_pre_course_delete($course) {
     global $DB;
     $supportforums = $DB->get_records('local_edusupport', array('courseid' => $course->id));
-    foreach ($supportforums AS $supportforum) {
+    foreach ($supportforums as $supportforum) {
         \local_edusupport\lib::supportforum_disable($supportforum->id);
     }
 }

@@ -30,15 +30,12 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use context_user;
 
-defined('MOODLE_INTERNAL') || die;
-
 class provider implements
-\core_privacy\local\metadata\provider,
-\core_privacy\local\request\core_userlist_provider,
-\core_privacy\local\request\plugin\provider 
-{
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\plugin\provider {
 
-	public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         // Table edusuport subscribers.
         $collection->add_database_table(
@@ -51,6 +48,7 @@ class provider implements
             ],
             'privacy:metadata:edusupport:subscr'
             );
+
         // Table edusuport supporters.
         $collection->add_database_table(
             'local_edusupport_supporters',
@@ -62,6 +60,7 @@ class provider implements
             ],
             'privacy:metadata:edusupport:supporters'
             );
+
         // Table edusuport issues.
         $collection->add_database_table(
             'local_edusupport_issues',
@@ -79,41 +78,41 @@ class provider implements
 
 
 
-  /**
+    /**
      * Get the list of contexts that contain user information for the specified user.
      *
      * @param int $userid the userid.
      * @return contextlist the list of contexts containing user info for the user.
      */
-  public static function get_contexts_for_userid(int $userid) : contextlist  {
-    $contextlist = new contextlist();
-    $params = [
-    'contextlevel' => CONTEXT_USER,
-    'userid'       => $userid
-    ];   
-    $sql = "SELECT ctx.id
-    FROM {context} ctx
-    JOIN {local_edusupport_subscr} esc ON ctx.instanceid = esc.userid AND ctx.contextlevel = :contextlevel
-    WHERE esc.userid = :userid
-    ";
+    public static function get_contexts_for_userid (int $userid): contextlist {
+        $contextlist = new contextlist();
+        $params = [
+        'contextlevel' => CONTEXT_USER,
+        'userid'       => $userid
+        ];
+        $sql = "SELECT ctx.id
+        FROM {context} ctx
+        JOIN {local_edusupport_subscr} esc ON ctx.instanceid = esc.userid AND ctx.contextlevel = :contextlevel
+        WHERE esc.userid = :userid
+        ";
 
-    $contextlist->add_from_sql($sql, $params);
+        $contextlist->add_from_sql($sql, $params);
 
-    $sql = "SELECT ctx.id
-    FROM {context} ctx
-    JOIN {local_edusupport_supporters} esc ON ctx.instanceid = esc.userid AND ctx.contextlevel = :contextlevel
-    WHERE esc.userid = :userid
-    ";
-    $contextlist->add_from_sql($sql, $params);
+        $sql = "SELECT ctx.id
+        FROM {context} ctx
+        JOIN {local_edusupport_supporters} esc ON ctx.instanceid = esc.userid AND ctx.contextlevel = :contextlevel
+        WHERE esc.userid = :userid
+        ";
+        $contextlist->add_from_sql($sql, $params);
 
-    $sql = "SELECT ctx.id
-    FROM {context} ctx
-    JOIN {local_edusupport_issues} esc ON ctx.instanceid = esc.currentsupporter AND ctx.contextlevel = :contextlevel
-    WHERE esc.currentsupporter = :userid
-    ";  
-    $contextlist->add_from_sql($sql, $params); 
+        $sql = "SELECT ctx.id
+        FROM {context} ctx
+        JOIN {local_edusupport_issues} esc ON ctx.instanceid = esc.currentsupporter AND ctx.contextlevel = :contextlevel
+        WHERE esc.currentsupporter = :userid
+        ";
+        $contextlist->add_from_sql($sql, $params);
 
-    return $contextlist;
+        return $contextlist;
     }
 
 
@@ -127,13 +126,13 @@ class provider implements
         $params = [
         'contextlevel' => CONTEXT_USER,
         'contextid'       => $context->id
-        ];   
+        ];
+
         $sql = "SELECT esc.userid
         FROM {context} ctx
         JOIN {local_edusupport_subscr} esc ON ctx.instanceid = esc.userid AND ctx.contextlevel = :contextlevel
         WHERE ctx.id = :contextid
         ";
-
         $userlist->add_from_sql('userid', $sql, $params);
 
         $sql = "SELECT esc.userid
@@ -141,33 +140,27 @@ class provider implements
         JOIN {local_edusupport_supporters} esc ON ctx.instanceid = esc.userid AND ctx.contextlevel = :contextlevel
         WHERE ctx.id = :contextid
         ";
-        $params = [
-        'contextlevel' => CONTEXT_USER,
-        'userid'       => $userid
-        ];   
-        $userlist->add_from_sql($sql, $params);
+
+        $userlist->add_from_sql('userid', $sql, $params);
 
         $sql = "SELECT esc.currentsupporter
         FROM {context} ctx
         JOIN {local_edusupport_issues} esc ON ctx.instanceid = esc.currentsupporter AND ctx.contextlevel = :contextlevel
         WHERE ctx.id = :contextid
         ";
-        $params = [
-        'contextlevel' => CONTEXT_USER,
-        'userid'       => $userid
-        ];   
-        $userlist->add_from_sql($sql, $params);
+
+        $userlist->add_from_sql('userid', $sql, $params);
 
         return $userlist;
-    } 
+    }
 
 
      /**
-     * Export all user data for the specified user, in the specified contexts.
-     *
-     * @param   approved_contextlist $contextlist The approved contexts to export information for.
-     */
-     public static function export_user_data(approved_contextlist $contextlist) {
+      * Export all user data for the specified user, in the specified contexts.
+      *
+      * @param   approved_contextlist $contextlist The approved contexts to export information for.
+      */
+    public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
         if (!$contextlist->count()) {
             return;
@@ -187,14 +180,15 @@ class provider implements
             'userid' => $user->id]);
         foreach ($rs as $row) {
             $datasubscr[] = (object)[
-            'id' => $row->id,   
+            'id' => $row->id,
             'issueid' => $row->issueid,
             'discussionid' => $row->discussionid,
             'userid' => $row->userid
-            ];          
+            ];
         }
         writer::with_context($context)
-        ->export_data([get_string('pluginname', 'local_edusupport'),get_string('issue:countassigned','local_edusupport')], (object)$datasubscr);    
+        ->export_data([get_string('pluginname', 'local_edusupport'), get_string('issue:countassigned', 'local_edusupport')],
+            (object)$datasubscr);
 
         $sql = "SELECT ctx.id as cmid, esc.*
         FROM {context} ctx
@@ -205,15 +199,16 @@ class provider implements
             'userid' => $user->id]);
         foreach ($rs as $row) {
             $datasupport[] = (object)[
-            'id' => $row->id,    
-            'courseid' => $row->courseid,
-            'userid' => $row->userid,    
-            'supportlevel' => $row->supportlevel
-            ];               
+                'id' => $row->id,
+                'courseid' => $row->courseid,
+                'userid' => $row->userid,
+                'supportlevel' => $row->supportlevel
+            ];
 
-        }   
+        }
         writer::with_context($context)
-        ->export_data([get_string('pluginname', 'local_edusupport'),get_string('supporters', 'local_edusupport')], (object)$datasupport);    
+        ->export_data([get_string('pluginname', 'local_edusupport'), get_string('supporters', 'local_edusupport')],
+            (object)$datasupport);
         $sql = "SELECT ctx.id as cmid, esc.*
         FROM {context} ctx
         JOIN {local_edusupport_issues} esc ON ctx.instanceid = esc.currentsupporter AND ctx.contextlevel = :contextlevel
@@ -223,27 +218,29 @@ class provider implements
             'userid' => $user->id]);
         foreach ($rs as $row) {
             $dataissues[] = (object)[
-            'issueid' => $row->id,
-            'discussionid' => $row->discussionid,
-            'currentsupporter' => $row->currentsupporter, 
-            'priority' => $row->priority
-            ]; 
+                'issueid' => $row->id,
+                'discussionid' => $row->discussionid,
+                'currentsupporter' => $row->currentsupporter,
+                'priority' => $row->priority
+            ];
         }
         writer::with_context($context)
-        ->export_data([get_string('pluginname', 'local_edusupport'),get_string('your_issues', 'local_edusupport')], (object)$dataissues);    
+        ->export_data([get_string('pluginname', 'local_edusupport'), get_string('your_issues', 'local_edusupport')],
+            (object) $dataissues);
     }
 
-     /**
+    /**
      * Delete all user data for this context.
      *
      * @param  \context $context The context to delete data for.
      */
-     public static function delete_data_for_all_users_in_context(\context $context) {
+    public static function delete_data_for_all_users_in_context(\context $context) {
         if ($context->contextlevel != CONTEXT_USER) {
             return;
         }
         static::delete_user_data($context->instanceid);
     }
+
     /**
      * Delete multiple users within a single context.
      *
@@ -265,13 +262,11 @@ class provider implements
         foreach ($contextlist as $context) {
             // Check what context we've been delivered.
             if ($context instanceof \context_user) {
-              static::delete_user_data($context->instanceid);
-              static::alter_currentsupporter($context->instanceid);
-          }
-      }   
-
-
-  }
+                static::delete_user_data($context->instanceid);
+                static::alter_currentsupporter($context->instanceid);
+            }
+        }
+    }
 
     /**
      * Delete data from $tablename with the IDs returned by $sql query.
@@ -283,14 +278,13 @@ class provider implements
         global $DB;
 
         $params = [
-        'userid' => $userid,
+            'userid' => $userid,
         ];
-        $sql = "UPDATE {local_edusupport_issues} 
-        SET currentsupporter = '-1'
-        WHERE currentsupporter = :userid";
+        $sql = "UPDATE {local_edusupport_issues}
+            SET currentsupporter = '-1'
+            WHERE currentsupporter = :userid";
         $DB->execute($sql, $params);
-        
-    }  
+    }
 
     /**
      * Delete data from $tablename with the IDs returned by $sql query.
@@ -303,6 +297,5 @@ class provider implements
 
         $DB->delete_records('local_edusupport_supporters', ['userid' => $userid]);
         $DB->delete_records('local_edusupport_subscr', ['userid' => $userid]);
-        
-    }       
+    }
 }

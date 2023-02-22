@@ -24,6 +24,7 @@
 namespace local_edusupport;
 
 use local_edusupport\task\reminder;
+use local_edusupport\guest_supportuser;
 use mod_forum\event\post_created;
 use stdClass;
 
@@ -37,7 +38,6 @@ define("ISSUE_STATUS_AWAITING_USER_REPLY", 2);
 define("ISSUE_STATUS_ONGOING", 3);
 define("ISSUE_STATUS_AWAITING_SUPPORT_ACTION", 4);
 define("ISSUE_STATUS_CLOSED", 5);
-
 
 class lib {
     const SYSTEM_COURSE_ID = 1;
@@ -67,7 +67,7 @@ class lib {
                 $groupname = fullname($user) . ' (' . $user->id . ')';
                 $group = $DB->get_record('groups', array('courseid' => $forum->course, 'name' => $groupname));
                 if (empty($group->id)) {
-                    // create a group for this user.
+                    // Create a group for this user.
                     $group = (object) array(
                         'courseid' => $forum->course,
                         'name' => $groupname,
@@ -167,9 +167,9 @@ class lib {
 
         $issue = $DB->get_record('local_edusupport_issues', array('discussionid' => $discussionid));
         if (!empty($issue->id)) {
-            // remove all supporters from the abo-list
+            // Remove all supporters from the abo-list.
             $DB->delete_records('local_edusupport_subscr', array('discussionid' => $discussionid));
-            // delete issue.
+            // Delete issue.
             $DB->delete_records('local_edusupport_issues', array('discussionid' => $discussionid));
         }
         return true;
@@ -185,12 +185,12 @@ class lib {
             return $cache->get('rendered');
         }
 
-        $_extralinks = get_config('local_edusupport', 'extralinks');
+        $extralinksfromconfig = get_config('local_edusupport', 'extralinks');
         $extralinks = array();
-        if (!empty($_extralinks)) {
-            $_extralinks = explode("\n", $_extralinks);
-            for ($a = 0; $a < count($_extralinks); $a++) {
-                $tmp = explode('|', $_extralinks[$a]);
+        if (!empty($extralinksfromconfig)) {
+            $extralinksfromconfig = explode("\n", $extralinksfromconfig);
+            for ($a = 0; $a < count($extralinksfromconfig); $a++) {
+                $tmp = explode('|', $extralinksfromconfig[$a]);
                 $extralink = (object) array('id' => $a);
                 if (!empty($tmp[0])) {
                     $extralink->name = $tmp[0];
@@ -252,7 +252,7 @@ class lib {
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public static function course_manual_enrolments(array $courseids, array $userids,int $roleid): bool {
+    public static function course_manual_enrolments(array $courseids, array $userids, int $roleid): bool {
         global $DB;
         if (!is_array($courseids)) {
             $courseids = array($courseids);
@@ -403,19 +403,20 @@ class lib {
 
         // We do not use the function groups_get_user_groups, as it does not
         // return groups that don't have members!!
-        // $_groups = \groups_get_user_groups($course->id);
-        $_groups = $DB->get_records('groups', array('courseid' => $course->id));
-        if (count($_groups) == 0) {
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* $groupsfromdb = \groups_get_user_groups($course->id); */
+        $groupsfromdb = $DB->get_records('groups', array('courseid' => $course->id));
+        if (count($groupsfromdb) == 0) {
             return [];
         }
 
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
         $groups = array();
-        foreach ($_groups as $k => $group) {
+        foreach ($groupsfromdb as $k => $group) {
             $ismember = $DB->get_record('groups_members', array('groupid' => $group->id, 'userid' => $user->id));
             if (!empty($ismember->id)) {
-                //only allow the group generated for the user
+                // Only allow the group generated for the user.
                 if ($group->name == fullname($user) . ' (' . $user->id . ')') {
                     $groups[$k] = $group;
                 }
@@ -445,7 +446,7 @@ class lib {
                 'currentsupporter' => 0,
                 'created' => time(),
             );
-            if(isset($keyvaluepair)) {
+            if (isset($keyvaluepair)) {
                 $issue->{$keyvaluepair->key} = $keyvaluepair->value;
             }
             $issue->timecreated = time();
@@ -483,9 +484,9 @@ class lib {
                             AND be.forumid=f.id
                             AND c.id IN ($courseids)
                         ORDER BY c.fullname ASC, f.name ASC";
-            $_forums = $DB->get_records_sql($sql, array());
+            $forumsfromdb = $DB->get_records_sql($sql, array());
             $delimiter = ' > ';
-            foreach ($_forums as &$forum) {
+            foreach ($forumsfromdb as &$forum) {
                 $course = $DB->get_record('course', array('id' => $forum->course), 'id,fullname');
                 $coursecontext = \context_course::instance($forum->course);
                 if (empty($coursecontext->id)) {
@@ -673,7 +674,7 @@ class lib {
         }
         // Check if holidaymode is enabled.
         $holidaymode = get_config('local_edusupport', 'holidaymodeenabled') ? "AND holidaymode < ? " : " ";
-        // @TODO Only subscribe 1 person and make it responsible!
+        // TODO: Only subscribe 1 person and make it responsible!
         $supportforum = $DB->get_record('local_edusupport', array('forumid' => $discussion->forum));
         $sql = "SELECT *
                     FROM {local_edusupport_supporters}
@@ -684,7 +685,7 @@ class lib {
                             OR
                             courseid = ?
                         )";
-        $supporters = $DB->get_records_sql($sql, array(time(), \local_edusupport\lib::SYSTEM_COURSE_ID, $discussion->course));
+        $supporters = $DB->get_records_sql($sql, array(time(), self::SYSTEM_COURSE_ID, $discussion->course));
 
         if (count($supporters) == 0) {
             // Fall back without holidaymode.
@@ -696,7 +697,7 @@ class lib {
                                 OR
                                 courseid = ?
                             )";
-            $supporters = $DB->get_records_sql($sql, array(\local_edusupport\lib::SYSTEM_COURSE_ID, $discussion->course));
+            $supporters = $DB->get_records_sql($sql, array(self::SYSTEM_COURSE_ID, $discussion->course));
         }
 
         if (!empty($supportforum->dedicatedsupporter) && !empty($supporters[$supportforum->dedicatedsupporter]->id)) {
@@ -710,7 +711,8 @@ class lib {
         }
 
         if (isset($dedicated) && !empty($dedicated->userid)) {
-            $DB->set_field('local_edusupport_issues', 'currentsupporter', $dedicated->userid, array('discussionid' => $discussion->id));
+            $DB->set_field('local_edusupport_issues', 'currentsupporter', $dedicated->userid,
+                array('discussionid' => $discussion->id));
             self::subscription_add($discussionid, $dedicated->userid);
         }
         $centralforumid = get_config('local_edusupport', 'centralforum');
@@ -721,18 +723,15 @@ class lib {
                 get_string('issue_assign_nextlevel:post', 'local_edusupport', (object) array(
                     'fromuserfullname' => \fullname($USER),
                     'fromuserid' => $USER->id,
-                    'touserfullname' => \fullname($touser),
-                    'touserid' => $userid,
-                    'tosupportlevel' => $supporter->supportlevel,
                     'wwwroot' => $CFG->wwwroot,
-                    'sitename' => $CFG->fullname,
+                    'sitename' => $SITE->fullname,
                     'supportforumname' => $forum->name
                 )),
                 get_string('issue_assigned:subject', 'local_edusupport'),
                 get_config('local_edusupport', 'sendsupporterassignments')
             );
         } else {
-            lib::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
+            self::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
         }
 
         if (!isset($PAGE->context)) {
@@ -831,8 +830,8 @@ class lib {
         $msg->fullmessageformat = FORMAT_PLAIN;
         $msg->fullmessagehtml = $posthtml;
         $msg->smallmessage = $postsubject;
-        $msg->contexturl = $issueurl; // A relevant URL for the notification
-        $msg->contexturlname = 'Issue'; // Link title explaining where users get to for the contexturl
+        $msg->contexturl = $issueurl; // A relevant URL for the notification.
+        $msg->contexturlname = 'Issue'; // Link title explaining where users get to for the contexturl.
         $msg->name = 'edusupport_issue';
         $msg->component = 'local_edusupport';
         $msg->notification = 1;
@@ -910,12 +909,12 @@ class lib {
         global $DB;
         $DB->delete_records('local_edusupport', array('forumid' => $forumid));
         self::supportforum_managecaps($forumid, false);
-        \local_edusupport\lib::supportforum_rolecheck($forumid);
+        self::supportforum_rolecheck($forumid);
         $centralforum = get_config('local_edusupport', 'centralforum');
         if ($forumid == $centralforum) {
             self::supportforum_disablecentral();
         }
-        // @TODO shall we check for orphaned discussions too?
+        // TODO shall we check for orphaned discussions too?
     }
 
     /**
@@ -955,7 +954,7 @@ class lib {
         }
 
         self::supportforum_managecaps($forumid, true);
-        \local_edusupport\lib::supportforum_rolecheck($forumid);
+        self::supportforum_rolecheck($forumid);
         if (!empty($supportforum->id)) {
             return $supportforum;
         } else {
@@ -1092,7 +1091,7 @@ class lib {
                     $unassign = true;
                 } else {
                     $issupporter = self::is_supportteam($curmember, $forum->course);
-                    $unassign = empty($issupporter->id);
+                    $unassign = !$issupporter;
                 }
                 if ($unassign) {
                     role_unassign($roleid, $curmember, $ctx->id);
@@ -1162,7 +1161,8 @@ class lib {
                         JOIN {user} u ON u.id = ra.userid
                         LEFT JOIN {groups_members} gm ON u.id = gm.userid
                         LEFT JOIN {user_info_data} uid on u.id = uid.userid
-                        WHERE ic.id = :courseid AND u.id > 0 AND uid.fieldid = :fieldid And uid.data = :customfieldvalue And r.shortname = :role";
+                        WHERE ic.id = :courseid AND u.id > 0 AND uid.fieldid = :fieldid
+                        AND uid.data = :customfieldvalue AND r.shortname = :role";
         $supportusers = $DB->get_records_sql($sql, $params);
         if ($supportusers) {
             return $supportusers;
@@ -1217,7 +1217,8 @@ class lib {
                     'stateclass' => 'notstarted');
                 break;
             case ISSUE_STATUS_AWAITING_USER_REPLY:
-                return array('status' => get_string('status:awaitinguserreply', 'local_edusupport'), 'class' => 'badge badge-warning',
+                return array('status' => get_string('status:awaitinguserreply', 'local_edusupport'),
+                    'class' => 'badge badge-warning',
                     'stateclass' => 'awaiting');
                 break;
             case ISSUE_STATUS_ONGOING:
@@ -1225,7 +1226,8 @@ class lib {
                     'stateclass' => 'ongoing');
                 break;
             case ISSUE_STATUS_AWAITING_SUPPORT_ACTION:
-                return array('status' => get_string('status:awaitingsupportaction', 'local_edusupport'), 'class' => 'badge badge-warning',
+                return array('status' => get_string('status:awaitingsupportaction', 'local_edusupport'),
+                    'class' => 'badge badge-warning',
                     'stateclass' => 'awaitingsupportaction');
                 break;
             case ISSUE_STATUS_CLOSED:

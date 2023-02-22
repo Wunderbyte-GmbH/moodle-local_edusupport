@@ -23,6 +23,8 @@
 
 namespace local_edusupport;
 
+use moodle_url;
+
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
@@ -120,7 +122,7 @@ if (!is_siteadmin()) {
                     array(
                         'objectid' => $success,
                         'context' => $context,
-                        'relateduserid'	=> $userid,
+                        'relateduserid' => $userid,
                         'other' => array('supportuserid' => $userid, 'supportlevel' => $supportlevel)));
                 $event->trigger();
             }
@@ -133,9 +135,9 @@ if (!is_siteadmin()) {
                     // This supporter left the team. We remove all assignments.
                     $DB->delete_records('local_edusupport_subscr', array('userid' => $userid));
                 }
-            } elseif (empty($supportlevel)) {
+            } else if (empty($supportlevel)) {
                 $issues = $DB->get_records('local_edusupport_issues', array('currentsupporter' => 0));
-                foreach ($issues AS $issue) {
+                foreach ($issues as $issue) {
                     $DB->insert_record('local_edusupport_subscr', array(
                         'issueid' => $issue->id,
                         'discussionid' => $issue->discussionid,
@@ -156,7 +158,8 @@ if (!is_siteadmin()) {
                 AND u.deleted != 1
                 ORDER BY u.lastname ASC, u.firstname ASC, bes.supportlevel ASC";
     $supporters = array_values($DB->get_records_sql($sql, array()));
-    echo $OUTPUT->render_from_template('local_edusupport/choosesupporters', array('supporters' => $supporters, 'wwwroot' => $CFG->wwwroot));
+    echo $OUTPUT->render_from_template('local_edusupport/choosesupporters',
+        array('supporters' => $supporters, 'wwwroot' => $CFG->wwwroot));
 }
 
 echo $OUTPUT->footer();

@@ -24,7 +24,7 @@ require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $context = context_system::instance();
-// Must pass login
+// Must pass login.
 $PAGE->set_url('/local/edusupport/testreminder.php');
 require_login();
 $PAGE->set_context($context);
@@ -33,7 +33,7 @@ $PAGE->set_heading(get_string('cron:reminder:title', 'local_edusupport'));
 
 echo $OUTPUT->header();
 
-if (local_edusupport::is_admin()) {
+if (is_siteadmin()) {
     require_once($CFG->dirroot . '/local/edusupport/classes/task/reminder.php');
     $reminder = new \local_edusupport\task\reminder();
     $reminder->execute(true);

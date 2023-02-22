@@ -23,8 +23,6 @@
 
 namespace local_edusupport\task;
 
-defined('MOODLE_INTERNAL') || die;
-
 class delete extends \core\task\scheduled_task {
     public function get_name() {
         // Shown in admin screens.
@@ -33,7 +31,7 @@ class delete extends \core\task\scheduled_task {
 
     public function execute($debug=false) {
         $issues = \local_edusupport\lib::get_expiredissues();
-        foreach ($issues AS $issue) {
+        foreach ($issues as $issue) {
             \local_edusupport\lib::delete_issue($issue->discussionid);
         }
     }

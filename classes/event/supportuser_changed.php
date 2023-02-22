@@ -24,8 +24,6 @@
 
 namespace local_edusupport\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_forum discussion created event class.
  *
@@ -57,8 +55,9 @@ class supportuser_changed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has changed supporterid '" . $this->other['oldsupportuserid'] . "' to '" . $this->other['newsupportuserid'] .
-         ".' Supportlevel: '" . $this->other['oldsupportlevel'] . "' to '"  . $this->other['newsupportlevel'] . "'";
+        return "The user with id '$this->userid' has changed supporterid '" . $this->other['oldsupportuserid'] . "' to '" .
+            $this->other['newsupportuserid'] .
+            ".' Supportlevel: '" . $this->other['oldsupportlevel'] . "' to '"  . $this->other['newsupportlevel'] . "'";
     }
 
     /**

@@ -23,13 +23,12 @@
 
 namespace local_edusupport;
 
-defined('MOODLE_INTERNAL') || die;
-
 class observer {
     public static function event($event) {
         global $CFG, $DB, $OUTPUT;
 
-        //error_log("OBSERVER EVENT: " . print_r($event, 1));
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* error_log("OBSERVER EVENT: " . print_r($event, 1)); */
         $entry = (object)$event->get_data();
         if ($entry->eventname == '\core\event\user_deleted') {
             $conditions = array('id' => $event->relateduserid);
@@ -51,11 +50,14 @@ class observer {
             $forum = $DB->get_record("forum", array("id" => $discussion->forum));
             $course = $DB->get_record("course", array("id" => $forum->course));
             $issue = $DB->get_record('local_edusupport_issues', array('discussionid' => $discussion->id));
-            if (empty($issue->id)) return;
+            if (empty($issue->id)) {
+                return;
+            }
             \local_edusupport\lib::reopen_issue($discussion->id);
             $author = $DB->get_record('user', array('id' => $post->userid));
 
-            $morethanoneuser = $DB->get_record_sql('Select count(distinct userid) as count From {forum_posts} where discussion = ?', array($discussion->id));
+            $morethanoneuser = $DB->get_record_sql('Select count(distinct userid) as count From {forum_posts} where discussion = ?',
+                array($discussion->id));
             if ($morethanoneuser->count > 1) {
                 if ($post->userid == $discussion->userid) {
                     \local_edusupport\lib::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
@@ -92,21 +94,23 @@ class observer {
                 $touser->email = $mail;
                 $post->furtherquestions = get_string('furtherquestions', 'local_edusupport', ['sitename' => $CFG->wwwroot]);
 
-                $mailhtml =  $OUTPUT->render_from_template('local_edusupport/post_mailhtml_guest', $post);
-                $mailtext =  $OUTPUT->render_from_template('local_edusupport/post_mailtext_guest', $post);
+                $mailhtml = $OUTPUT->render_from_template('local_edusupport/post_mailhtml_guest', $post);
+                $mailtext = $OUTPUT->render_from_template('local_edusupport/post_mailtext_guest', $post);
                 $subject = $discussion->name;
                 \email_to_user($touser, $author, $subject, $mailtext, $mailhtml, "", true);
             }
-            foreach ($subscribers AS $subscriber) {
+            foreach ($subscribers as $subscriber) {
                 // We do not want to send to ourselves...
-                if ($subscriber->userid == $author->id) continue;
+                if ($subscriber->userid == $author->id) {
+                    continue;
+                }
 
                 $touser = $DB->get_record('user', array('id' => $subscriber->userid));
 
-                // Send notification
+                // Send notification.
                 $subject = $discussion->name;
-                $mailhtml =  $OUTPUT->render_from_template('local_edusupport/post_mailhtml', $post);
-                $mailtext =  $OUTPUT->render_from_template('local_edusupport/post_mailtext', $post);
+                $mailhtml = $OUTPUT->render_from_template('local_edusupport/post_mailhtml', $post);
+                $mailtext = $OUTPUT->render_from_template('local_edusupport/post_mailtext', $post);
 
                 \email_to_user($touser, $author, $subject, $mailtext, $mailhtml, "", true);
             }

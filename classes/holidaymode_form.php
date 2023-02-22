@@ -29,14 +29,14 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . "/formslib.php");
 
 class holidaymode_form extends \moodleform {
-    function definition() {
+    public function definition() {
         $mform = $this->_form;
         $mform->addElement('date_time_selector', 'holidaymode', '');
         $mform->disable_form_change_checker();
     }
 
-    //Custom validation should be added here
-    function validation($data, $files) {
+    // Custom validation should be added here.
+    public function validation($data, $files) {
         $errors = array();
         return $errors;
     }

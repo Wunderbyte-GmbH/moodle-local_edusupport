@@ -28,8 +28,6 @@ namespace local_edusupport;
 
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Class guest_supportuser: Creates a dummy user for anonymous support requests.
  *

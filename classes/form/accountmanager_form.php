@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,15 +23,13 @@
  * @copyright Thomas winkler
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 namespace local_edusupport\form;
-require_once($CFG->libdir . '/formslib.php');
-use moodleform;
-
-
 
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
+
+use moodleform;
 
 /**
  * Class to add an accountmanger in edusupport plugin.
@@ -42,17 +39,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class accountmanager_form extends moodleform {
-    
 
-    public function __construct() {
-        parent::__construct();
-    }
     /**
      * Form definition
      *
      * @return void
      */
-    function definition() {
+    public function definition() {
         global $CFG, $OUTPUT;
 
         $mform =& $this->_form;
@@ -62,9 +55,9 @@ class accountmanager_form extends moodleform {
             'multiple' => true,
             'noselectionstring' => get_string('none', 'local_edusupport'),
         ];
-        $mform->addElement('autocomplete', 'possiblemanagers', get_string('possiblemanagers', 'local_edusupport'), $possiblemanagers, $options);
+        $mform->addElement('autocomplete', 'possiblemanagers', get_string('possiblemanagers', 'local_edusupport'),
+            $possiblemanagers, $options);
         $mform->setAdvanced('autocomplete', true);
-
 
         $capstocheck = \local_edusupport\accountmanager::get_capabiltities_to_check();
 
@@ -76,7 +69,6 @@ class accountmanager_form extends moodleform {
         $mform->setAdvanced('autocomplete', true);
 
         $this->add_action_buttons();
-        
     }
 
     /**
@@ -86,7 +78,7 @@ class accountmanager_form extends moodleform {
      *
      * @return array of errors.
      */
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         return $errors;
     }

@@ -15,31 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* @package    local_edusupport
-* @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
-* @author     Robert Schrenk
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    local_edusupport
+ * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
+ * @author     Robert Schrenk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('../../config.php');
-//require_once($CFG->dirroot . '/local/edusupport/classes/lib.php');
 
 // We fake a forum discussion here.
 // This code is mainly taken from /mod/forum/discuss.php.
-$d = optional_param('d', 0, PARAM_INT); // discussionid.
-$discussion = optional_param('discussion', 0, PARAM_INT); // discussionid.
+$d = optional_param('d', 0, PARAM_INT); // Discussionid.
+$discussion = optional_param('discussion', 0, PARAM_INT); // Discussionid.
 $discussionid = $discussion | $d;
 $replyto = optional_param('replyto', 0, PARAM_INT);      // If set, we reply to this post.
 $parent = optional_param('parent', 0, PARAM_INT);        // If set, then display this post and all children.
-$mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread
-$move   = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum
+$mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread.
+$move   = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum.
 $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
 $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 $pin    = optional_param('pin', -1, PARAM_INT);          // If set, pin or unpin this discussion.
 $edit   = optional_param('edit', 0, PARAM_INT);
 $delete   = optional_param('delete', 0, PARAM_INT);
 
-$url = new moodle_url('/local/edusupport/issue.php', array('discussion'=>$discussionid, 'replyto' => $replyto, 'delete' => $delete));
+$url = new moodle_url('/local/edusupport/issue.php', array('discussion' => $discussionid,
+    'replyto' => $replyto, 'delete' => $delete));
 if ($parent !== 0) {
     $url->param('parent', $parent);
 }
@@ -106,21 +106,23 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
         throw new \moodle_exception('Unable to find forum with id ' . $vdiscussion->get_forum_id());
     }
 
-    $cm =  get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
+    $cm = get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
 
     if (!empty($replyto)) {
         require_once($CFG->dirroot . '/local/edusupport/classes/post_form.php');
         $thresholdwarning = forum_check_throttling($forum->id, $cm);
-        $mform_post = new \local_edusupport_post_form($CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussionid . '&replyto=' . $replyto, array(
-            'course' => $course,
-            'cm' => $cm,
-            'coursecontext' => $coursecontext,
-            'modcontext' => $modcontext,
-            'forum' => $forum,
-            'post' => '',
-            'subscribe' => 0,
-            'thresholdwarning' => $thresholdwarning,
-            'edit' => $edit,
+        $mformpost = new \local_edusupport_post_form($CFG->wwwroot . '/local/edusupport/issue.php?d=' .
+            $discussionid . '&replyto=' . $replyto,
+            array(
+                'course' => $course,
+                'cm' => $cm,
+                'coursecontext' => $coursecontext,
+                'modcontext' => $modcontext,
+                'forum' => $forum,
+                'post' => '',
+                'subscribe' => 0,
+                'thresholdwarning' => $thresholdwarning,
+                'edit' => $edit,
             ), 'post', '', array('id' => 'mformforum')
         );
 
@@ -138,40 +140,43 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
 
         $postid = empty($post->id) ? null : $post->id;
         $draftitemid = \file_get_submitted_draft_itemid('attachments');
-        //\file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', empty($post->id)?null:$post->id, \mod_forum_post_form::attachment_options($forum));
-        \file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', null, \local_edusupport_post_form::attachment_options($forum));
-        $draftid_editor = file_get_submitted_draft_itemid('message');
-        $currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_forum', 'post', $postid, \local_edusupport_post_form::editor_options($modcontext, $postid), $post->message);
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* \file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', empty($post->id) ? null : $post->id,
+            \mod_forum_post_form::attachment_options($forum)); */
+        \file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', null,
+            \local_edusupport_post_form::attachment_options($forum));
+        $draftideditor = file_get_submitted_draft_itemid('message');
+        $currenttext = file_prepare_draft_area($draftideditor, $modcontext->id, 'mod_forum', 'post', $postid,
+            \local_edusupport_post_form::editor_options($modcontext, $postid), $post->message);
 
-        $mform_post->set_data(
+        $mformpost->set_data(
             array(
-                'attachments'=>$draftitemid,
-                'general'=>$heading,
-                'subject'=> 'Re: ' . $post->subject,
-                'message'=>array(
-                    'text'  => '',
-                    'format'=> editors_get_preferred_format(),
-                    'itemid'=>$draftid_editor
+                'attachments' => $draftitemid,
+                'general' => $heading,
+                'subject' => 'Re: ' . $post->subject,
+                'message' => array(
+                    'text' => '',
+                    'format' => editors_get_preferred_format(),
+                    'itemid' => $draftideditor
                 ),
                 'discussionsubscribe' => 0,
-                'mailnow'=> 1,
-                'userid'=>$USER->id,
-                'parent'=>$replyto,
-                'discussion'=>$discussionid,
-                'course'=>$course->id,
+                'mailnow' => 1,
+                'userid' => $USER->id,
+                'parent' => $replyto,
+                'discussion' => $discussionid,
+                'course' => $course->id,
                 'forum' => $forum->id,
             )
-            // $page_params
-            +(isset($post->format) ? array('format'=>$post->format) : array())
-            +(isset($discussion->timestart)?array('timestart'=>$discussion->timestart):array())
-            +(isset($discussion->timeend)?array('timeend'=>$discussion->timeend):array())
-            +(isset($discussion->pinned) ? array('pinned' => $discussion->pinned):array())
-            +(isset($post->groupid)?array('groupid'=>$post->groupid):array())
-            +(isset($discussion->id)?array('discussion'=>$discussion->id):array())
+            + (isset($post->format) ? array('format' => $post->format) : array())
+            + (isset($discussion->timestart) ? array('timestart' => $discussion->timestart) : array())
+            + (isset($discussion->timeend) ? array('timeend' => $discussion->timeend) : array())
+            + (isset($discussion->pinned) ? array('pinned' => $discussion->pinned) : array())
+            + (isset($post->groupid) ? array('groupid' => $post->groupid) : array())
+            + (isset($discussion->id) ? array('discussion' => $discussion->id) : array())
         );
-        if ($mform_post->is_cancelled()) {
+        if ($mformpost->is_cancelled()) {
             redirect('/local/edusupport/issue.php?d=' . $discussion->id);
-        } else if ($fromform = $mform_post->get_data()) {
+        } else if ($fromform = $mformpost->get_data()) {
             $fromform->itemid        = $fromform->message['itemid'];
             $fromform->messageformat = $fromform->message['format'];
             $fromform->message       = $fromform->message['text'];
@@ -188,8 +193,8 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
                 unset($fromform->groupid);
                 $message = '';
                 $addpost = $fromform;
-                $addpost->forum=$forum->id;
-                if ($fromform->id = \forum_add_new_post($addpost, $mform_post)) {
+                $addpost->forum = $forum->id;
+                if ($fromform->id = \forum_add_new_post($addpost, $mformpost)) {
 
                     $fromform->deleted = 0;
                     $subscribemessage = \forum_post_subscription($fromform, $forum, $discussion);
@@ -217,11 +222,11 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
                     $event->add_record_snapshot('forum_discussions', $discussion);
                     $event->trigger();
 
-                    // Update completion state
+                    // Update completion state.
                     $completion = new \completion_info($course);
-                    if($completion->is_enabled($cm) &&
-                    ($forum->completionreplies || $forum->completionposts)) {
-                        $completion->update_state($cm,COMPLETION_COMPLETE);
+                    if ($completion->is_enabled($cm) &&
+                        ($forum->completionreplies || $forum->completionposts)) {
+                        $completion->update_state($cm, COMPLETION_COMPLETE);
                     }
 
                     $message = get_string("postaddedsuccess", "forum", fullname($USER));
@@ -235,7 +240,7 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
                     );
                 } else {
                     $errordestination = $CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussionid;
-                    print_error("couldnotadd", "forum", $errordestination);
+                    throw new moodle_exception("couldnotadd", "forum", $errordestination);
                 }
             }
         }
@@ -250,9 +255,11 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
         $user = $DB->get_record('user', array('id' => $supporter->userid));
 
         $options[] = array(
-            "title" => \fullname($user) . ' (' . (!empty($supporter->supportlevel) ? $supporter->supportlevel : get_string('label:2ndlevel', 'local_edusupport')) . ')',
+            "title" => \fullname($user) . ' (' . (!empty($supporter->supportlevel) ? $supporter->supportlevel :
+                get_string('label:2ndlevel', 'local_edusupport')) . ')',
             "class" => '',
-            //"icon" => 'i/checkpermissions',
+            // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+            /* "icon" => 'i/checkpermissions', */
             "href" => $CFG->wwwroot . '/user/view.php?id' . $supporter->id,
         );
     }
@@ -299,7 +306,7 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
             $postdatamapper = $legacydatamapperfactory->get_post_data_mapper();
             forum_delete_post(
                 $postdatamapper->to_legacy_object($postentity),
-                true, // capability
+                true, // Capability.
                 $vforum->get_course_record(),
                 $vforum->get_course_module_record(),
                 $forumdatamapper->to_legacy_object($vforum)
@@ -311,7 +318,7 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
         }
     }
 
-    $mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread
+    $mode   = optional_param('mode', 0, PARAM_INT); // If set, changes the layout of the thread.
     $saveddisplaymode = get_user_preferences('forum_displaymode', $CFG->forum_displaymode);
 
     if ($mode) {
@@ -335,8 +342,8 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
     }
 
     if ($parent) {
-        // If flat AND parent, then force nested display this time
-        if ($displaymode == FORUM_MODE_FLATOLDEST or $displaymode == FORUM_MODE_FLATNEWEST) {
+        // If flat AND parent, then force nested display this time.
+        if ($displaymode == FORUM_MODE_FLATOLDEST || $displaymode == FORUM_MODE_FLATNEWEST) {
             $displaymode = FORUM_MODE_NESTED;
         }
     } else {
@@ -345,7 +352,7 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
 
     $postvault = $vaultfactory->get_post_vault();
     if (!$vpost = $postvault->get_from_id($parent)) {
-        print_error("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f={$vforum->get_id()}");
+        throw new moodle_exception("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f={$vforum->get_id()}");
     }
 
     $post = $DB->get_record('forum_posts', array('id' => $parent));
@@ -373,24 +380,32 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
     $out = str_replace("class=\"next-discussion\"", "class=\"next-discussion\" style=\"display: none;\"", $out);
     $out = str_replace("class=\"prev-discussion\"", "class=\"prev-discussion\" style=\"display: none;\"", $out);
 
-    $out = str_replace($CFG->wwwroot . '/mod/forum/discuss.php', $CFG->wwwroot . '/local/edusupport/issue.php', $out);
-    $out = str_replace($CFG->wwwroot . '/mod/forum/post.php?reply=', $CFG->wwwroot . '/local/edusupport/issue.php?discussion=' . $discussionid . '&parent=', $out);
-    $out = str_replace($CFG->wwwroot . '/mod/forum/post.php?edit=', $CFG->wwwroot . '/local/edusupport/editpost.php?discussion=' . $discussionid . '&edit=', $out);
-    $out = str_replace($CFG->wwwroot . '/mod/forum/post.php?delete=', $CFG->wwwroot . '/local/edusupport/issue.php?discussion=' . $discussionid . '&delete=', $out);
+    $out = str_replace($CFG->wwwroot . '/mod/forum/discuss.php',
+        $CFG->wwwroot . '/local/edusupport/issue.php', $out);
+    $out = str_replace($CFG->wwwroot . '/mod/forum/post.php?reply=',
+        $CFG->wwwroot . '/local/edusupport/issue.php?discussion=' . $discussionid . '&parent=', $out);
+    $out = str_replace($CFG->wwwroot . '/mod/forum/post.php?edit=',
+        $CFG->wwwroot . '/local/edusupport/editpost.php?discussion=' . $discussionid . '&edit=', $out);
+    $out = str_replace($CFG->wwwroot . '/mod/forum/post.php?delete=',
+        $CFG->wwwroot . '/local/edusupport/issue.php?discussion=' . $discussionid . '&delete=', $out);
 
     $starts = array(
-        //'<div class="singleselect d-inline-block">',
-        //'<div class="discussion-nav clearfix">',
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* '<div class="singleselect d-inline-block">',
+        '<div class="discussion-nav clearfix">', */
         '<div class="commands">',
     );
     $ends = array(
-        //'</div>',
-        //'</div>',
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+        /* '</div>',
+        '</div>', */
         '</div>'
     );
     for ($a = 0; $a < count($starts); $a++) {
-        if (empty($starts[$a] || empty($ends[$a]))) continue;
-        while(($cutstart = strpos($out, $starts[$a])) > 0) {
+        if (empty($starts[$a] || empty($ends[$a]))) {
+            continue;
+        }
+        while (($cutstart = strpos($out, $starts[$a])) > 0) {
             $cutend = strpos($out, $ends[$a], $cutstart);
             $out1 = substr($out, 0, $cutstart);
             $out2 = substr($out, $cutend + strlen($ends[$a]));
@@ -398,15 +413,16 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
         }
     }
     $replacements = array(
-        array($CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/mod_forum/', $CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/local_edusupport/'),
+        array($CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/mod_forum/',
+            $CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/local_edusupport/'),
     );
-    foreach ($replacements AS $replacement) {
+    foreach ($replacements as $replacement) {
         $out = str_replace($replacement[0], $replacement[1], $out);
     }
     echo $out;
 
     if (!empty($replyto)) {
-        $mform_post->display();
+        $mformpost->display();
     }
 }
 

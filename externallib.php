@@ -21,7 +21,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_edusupport;
 use local_edusupport\guest_supportuser;
 
 defined('MOODLE_INTERNAL') || die;
@@ -51,15 +50,18 @@ class local_edusupport_external extends external_api {
     public static function create_issue_parameters() {
         return new external_function_parameters(array(
             'subject' => new external_value(PARAM_TEXT, 'subject of this issue'),
-            'description' => new external_value(PARAM_RAW, 'default for whole package otherwise channel name'), // We use PARAM_RAW here, as the editor can send HTML
+            'description' => new external_value(PARAM_RAW, 'default for whole package otherwise channel name'),
+                // We use PARAM_RAW here, as the editor can send HTML.
             'forum_group' => new external_value(PARAM_TEXT, 'Forum-ID and Group-ID to post to in format forumid_groupid.'),
             'postto2ndlevel' => new external_value(PARAM_INT, '1st level supporters can directly call the 2nd level support'),
             'image' => new external_value(PARAM_RAW, 'base64 encoded image as data url or empty string'),
             'screenshotname' => new external_value(PARAM_TEXT, 'the filename to use'),
-            'url' => new external_value(PARAM_TEXT, 'URL where the error happened'), // We use PARAM_TEXT, as any input by the user is valid.
-            'contactphone' => new external_value(PARAM_TEXT, 'Contactphone'), // We use PARAM_TEXT, was the user can enter any contact information.
-            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, NULL, NULL_ALLOWED),
-            'accountmanager' => new external_value(PARAM_INT, 'Accountmanager', VALUE_OPTIONAL, NULL, NULL_ALLOWED),
+            'url' => new external_value(PARAM_TEXT, 'URL where the error happened'),
+                // We use PARAM_TEXT, as any input by the user is valid.
+            'contactphone' => new external_value(PARAM_TEXT, 'Contactphone'),
+                // We use PARAM_TEXT, was the user can enter any contact information.
+            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, null, NULL_ALLOWED),
+            'accountmanager' => new external_value(PARAM_INT, 'Accountmanager', VALUE_OPTIONAL, null, NULL_ALLOWED),
         ));
     }
 
@@ -68,7 +70,7 @@ class local_edusupport_external extends external_api {
      *
      * @return array $reply of created issue
      */
-    public static function create_issue($subject, $description, $forum_group, $postto2ndlevel, $image, $screenshotname, $url,
+    public static function create_issue($subject, $description, $forumgroup, $postto2ndlevel, $image, $screenshotname, $url,
             $contactphone, $guestmail, $accountmanager = null): array {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER, $SITE;
 
@@ -106,7 +108,7 @@ class local_edusupport_external extends external_api {
         }
 
         $params = self::validate_parameters(self::create_issue_parameters(),
-                array('subject' => $subject, 'description' => $description, 'forum_group' => $forum_group,
+                array('subject' => $subject, 'description' => $description, 'forum_group' => $forumgroup,
                         'postto2ndlevel' => $postto2ndlevel, 'image' => $image, 'screenshotname' => $screenshotname, 'url' => $url,
                         'contactphone' => $contactphone, 'guestmail' => $guestmail, 'accountmanager' => $accountmanager));
         $reply = array(
@@ -118,7 +120,7 @@ class local_edusupport_external extends external_api {
         }
         $params['description'] = nl2br($params['description']);
 
-        $tmp = explode('_', $forum_group);
+        $tmp = explode('_', $forumgroup);
         $forumid = 0;
         $groupid = 0;
         if (count($tmp) == 2) {
@@ -128,8 +130,8 @@ class local_edusupport_external extends external_api {
 
         $PAGE->set_context(\context_system::instance());
 
-        if ($forum_group == 'mail' || empty($forumid)) {
-            // fallback and send by mail!
+        if ($forumgroup == 'mail' || empty($forumid)) {
+            // Fallback and send by mail!
             $subject = $params['subject'];
             $params['includeemail'] = $user->email;
             $messagehtml = $OUTPUT->render_from_template("local_edusupport/issue_template", $params);
@@ -146,7 +148,7 @@ class local_edusupport_external extends external_api {
 
             if (!empty($params['image'])) {
                 $filename = $params['screenshotname'];
-                // Write image to a temporary file
+                // Write image to a temporary file.
                 $x = explode(",", $params['image']);
                 $filepath = $CFG->tempdir . '/edusupport-' . md5($user->id . date("Y-m-d H:i:s"));
                 file_put_contents($filepath, base64_decode($x[1]));
@@ -168,7 +170,7 @@ class local_edusupport_external extends external_api {
             $potentialtargets = \local_edusupport\lib::get_potentialtargets();
             if (\local_edusupport\lib::is_supportforum($forumid) && !empty($potentialtargets[$forumid]->id)) {
                 $canpostto2ndlevel = $potentialtargets[$forumid]->postto2ndlevel;
-                // Mainly copied from mod/forum/externallib.php > add_discussion()
+                // Mainly copied from mod/forum/externallib.php > add_discussion().
                 $warnings = array();
 
                 // Request and permission validation.
@@ -185,7 +187,8 @@ class local_edusupport_external extends external_api {
                 }
 
                 $context = context_module::instance($cm->id);
-                // self::validate_context($context);
+                // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+                /* self::validate_context($context); */
 
                 // Validate options.
                 $options = array(
@@ -195,14 +198,14 @@ class local_edusupport_external extends external_api {
                         'attachmentsid' => null
                 );
 
-                // create group for user id firstlvlgroupmode is active
+                // Create group for user id firstlvlgroupmode is active.
                 if (get_config('local_edusupport', 'firstlvlgroupmode') &&
                         $cfn = get_config('local_edusupport', 'customfieldname')) {
                     require_once("$CFG->dirroot/group/lib.php");
                     $groupname = fullname($user) . ' (' . $user->id . '-coursesupport)';
                     $group = $DB->get_record('groups', array('courseid' => $forum->course, 'name' => $groupname));
                     if (empty($group->id)) {
-                        // create a group for this user.
+                        // Create a group for this user.
                         $group = (object) array(
                                 'courseid' => $forum->course,
                                 'name' => $groupname,
@@ -222,7 +225,8 @@ class local_edusupport_external extends external_api {
                             foreach ($groupusers as $user) {
                                 groups_add_member($group, $user->userid);
                                 $responsibles[] =
-                                        "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$user->userid}\" target=\"_blank\">{$user->firstname} {$user->lastname}</a>";
+                                    "<a href='{$CFG->wwwroot}/user/profile.php?id={$user->userid}' target='_blank'>" .
+                                        "{$user->firstname} {$user->lastname}</a>";
                             }
                         } else {
                             $postto2ndlevel = true;
@@ -241,6 +245,7 @@ class local_edusupport_external extends external_api {
                     }
                 }
 
+                // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
                 /* if (!forum_user_can_post_discussion($forum, $groupid, -1, $cm, $context)) {
                     throw new moodle_exception('cannotcreatediscussion', 'forum');
                 }*/
@@ -257,7 +262,9 @@ class local_edusupport_external extends external_api {
                 $discussion->message = $message;
                 $discussion->messageformat = FORMAT_HTML;   // Force formatting for now.
                 $discussion->messagetrust = trusttext_trusted($context);
-                $discussion->itemid = 0; //$options['inlineattachmentsid'];
+                $discussion->itemid = 0;
+                // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+                /* $options['inlineattachmentsid']; */
                 $discussion->groupid = $groupid;
                 $discussion->mailnow = 1;
                 if ($guestmodeenabled) {
@@ -375,7 +382,8 @@ class local_edusupport_external extends external_api {
                             $responsibles = array();
                             foreach ($managers as $manager) {
                                 $responsibles[] =
-                                        "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$manager->id}\" target=\"_blank\">{$manager->firstname} {$manager->lastname}</a>";
+                                        "<a href='{$CFG->wwwroot}/user/profile.php?id={$manager->id}' target='_blank'>" .
+                                            "{$manager->firstname} {$manager->lastname}</a>";
                             }
                         }
                         $forum = $DB->get_record('forum', array('id' => $discussion->forum));
@@ -416,7 +424,8 @@ class local_edusupport_external extends external_api {
     public static function create_issue_returns() {
         return new \external_single_structure(
             array(
-                'discussionid' => new \external_value(PARAM_INT, 'Returns the discussion id of the created issue, -999 when mail was sent, or -1 on error'),
+                'discussionid' => new \external_value(PARAM_INT,
+                    'Returns the discussion id of the created issue, -999 when mail was sent, or -1 on error'),
                 'responsibles' => new \external_multiple_structure(
                     new \external_single_structure(
                         array(
@@ -453,7 +462,8 @@ class local_edusupport_external extends external_api {
     public static function create_form($url, $image, $forumid) : string {
         global $CFG, $PAGE, $USER, $OUTPUT;
 
-        $params = self::validate_parameters(self::create_form_parameters(), array('url' => $url, 'image' => $image, 'forumid' => $forumid));
+        $params = self::validate_parameters(self::create_form_parameters(),
+            array('url' => $url, 'image' => $image, 'forumid' => $forumid));
 
         $PAGE->set_context(context_system::instance());
 
@@ -509,16 +519,17 @@ class local_edusupport_external extends external_api {
                         AND (s.courseid=1 OR s.courseid=?)
                     ORDER BY u.lastname ASC,u.firstname ASC";
         $supporters = $DB->get_records_sql($sql, array($discussion->course));
-        foreach($supporters AS $supporter) {
+        foreach ($supporters as $supporter) {
             if (empty($supporter->supportlevel)) {
                 $supporter->supportlevel = get_string('label:2ndlevel', 'local_edusupport');
             }
             if (!isset($reply['supporters'][$supporter->supportlevel])) {
                 $reply['supporters'][$supporter->supportlevel] = array();
             }
+            // TODO: $issue does not exist!!
             if (empty($issue->currentsupporter) && $supporter->userid == $USER->id) {
                 $supporter->selected = true;
-            } elseif ($issue->currentsupporter == $supporter->userid) {
+            } else if ($issue->currentsupporter == $supporter->userid) {
                 $supporter->selected = true;
             }
             $reply['supporters'][$supporter->supportlevel][] = $supporter;
@@ -552,9 +563,11 @@ class local_edusupport_external extends external_api {
         $params = self::validate_parameters(self::set_archive_parameters(), array('forumid' => $forumid));
 
         $forum = $DB->get_record('forum', array('id' => $params['forumid']));
-        if (empty($forum->id)) return -1;
+        if (empty($forum->id)) {
+            return -1;
+        }
 
-        if (\local_edusupport\lib::can_config_course($forum->course)){
+        if (\local_edusupport\lib::can_config_course($forum->course)) {
             $entry = $DB->get_record('local_edusupport', array('courseid' => $forum->course));
             if (!empty($entry->courseid)) {
                 $entry->forumid = !empty($entry->forumid) ? $entry->forumid : 0;
@@ -586,7 +599,8 @@ class local_edusupport_external extends external_api {
     }
     public static function set_currentsupporter($discussionid, $supporterid) {
         global $CFG, $DB, $USER;
-        $params = self::validate_parameters(self::set_currentsupporter_parameters(), array('discussionid' => $discussionid, 'supporterid' => $supporterid));
+        $params = self::validate_parameters(self::set_currentsupporter_parameters(),
+            array('discussionid' => $discussionid, 'supporterid' => $supporterid));
         return \local_edusupport\lib::set_current_supporter($params['discussionid'], $params['supporterid']);
     }
     public static function set_currentsupporter_returns() {
@@ -606,18 +620,20 @@ class local_edusupport_external extends external_api {
         $params = self::validate_parameters(self::set_default_parameters(), array('forumid' => $forumid, 'asglobal' => $asglobal));
 
         $forum = $DB->get_record('forum', array('id' => $params['forumid']));
-        if (empty($forum->id)) return -1;
+        if (empty($forum->id)) {
+            return -1;
+        }
         if ($params['asglobal']) {
             if (\local_edusupport\lib::can_config_global()) {
                 set_config('targetforum', $forum->id, 'local_edusupport');
             } else {
                 return -2;
             }
-        } elseif ($forum->id == get_config('local_edusupport', 'targetforum')) {
+        } else if ($forum->id == get_config('local_edusupport', 'targetforum')) {
             set_config('targetforum', 0, 'local_edusupport');
         }
 
-        if (\local_edusupport\lib::can_config_course($forum->course)){
+        if (\local_edusupport\lib::can_config_course($forum->course)) {
             $entry = $DB->get_record('local_edusupport', array('courseid' => $forum->course));
             if (!empty($entry->forumid)) {
                 $entry->forumid = $forum->id;
@@ -653,12 +669,16 @@ class local_edusupport_external extends external_api {
     public static function set_supporter(int $courseid, int $userid, string $supportlevel) {
         global $DB;
 
-        $params = self::validate_parameters(self::set_supporter_parameters(), array('courseid' => $courseid, 'userid' => $userid, 'supportlevel' => $supportlevel));
-        if (\local_edusupport\lib::can_config_course($params['courseid'])){
+        $params = self::validate_parameters(self::set_supporter_parameters(),
+            array('courseid' => $courseid, 'userid' => $userid, 'supportlevel' => $supportlevel));
+
+        if (\local_edusupport\lib::can_config_course($params['courseid'])) {
             if (empty($params['supportlevel'])) {
-                $DB->delete_records('local_edusupport_supporters', array('courseid' => $params['courseid'], 'userid' => $params['userid']));
+                $DB->delete_records('local_edusupport_supporters',
+                    array('courseid' => $params['courseid'], 'userid' => $params['userid']));
             } else {
-                $entry = $DB->get_record('local_edusupport_supporters', array('courseid' => $params['courseid'], 'userid' => $params['userid']));
+                $entry = $DB->get_record('local_edusupport_supporters',
+                    array('courseid' => $params['courseid'], 'userid' => $params['userid']));
                 if (!empty($entry->supportlevel)) {
                     $entry->supportlevel = $params['supportlevel'];
                     $DB->update_record('local_edusupport_supporters', $entry);
@@ -700,9 +720,8 @@ class local_edusupport_external extends external_api {
     public static function set_status(int $status, int $issueid) {
         global $USER;
         require_login();
-        //require_capability();
         $params = self::validate_parameters(self::set_status_parameters(), array('status' => $status, 'issueid' => $issueid));
-        if (\local_edusupport\lib::is_supportteam($USER->id) || \is_siteadmin()){
+        if (\local_edusupport\lib::is_supportteam($USER->id) || \is_siteadmin()) {
             \local_edusupport\lib::set_status($params['status'], $params['issueid']);
             return 1;
         }
@@ -715,6 +734,4 @@ class local_edusupport_external extends external_api {
     public static function set_status_returns() {
         return new external_value(PARAM_INT, 'Returns 1 if successful');
     }
-
-
 }

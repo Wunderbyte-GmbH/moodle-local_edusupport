@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -75,13 +74,13 @@ class local_edusupport_post_form extends moodleform {
         global $DB, $discussion;
         $dbforum = $DB->get_record('forum', array('id' => $discussion->forum));
 
-        // TODO: add max files and max size support
+        // TODO: add max files and max size support.
         $maxbytes = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes, $dbforum->maxbytes);
         return array(
             'maxfiles' => EDITOR_UNLIMITED_FILES,
             'maxbytes' => $maxbytes,
-            'trusttext'=> true,
-            'return_types'=> FILE_INTERNAL | FILE_EXTERNAL,
+            'trusttext' => true,
+            'return_types' => FILE_INTERNAL | FILE_EXTERNAL,
             'subdirs' => file_area_contains_subdirs($context, 'mod_forum', 'post', $postid)
         );
     }
@@ -91,7 +90,7 @@ class local_edusupport_post_form extends moodleform {
      *
      * @return void
      */
-    function definition() {
+    public function definition() {
         global $CFG, $OUTPUT;
 
         $mform =& $this->_form;
@@ -128,7 +127,8 @@ class local_edusupport_post_form extends moodleform {
         $mform->addRule('subject', get_string('required'), 'required', null, 'client');
         $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $mform->addElement('editor', 'message', get_string('message', 'forum'), null, self::editor_options($modcontext, (empty($post->id) ? null : $post->id)));
+        $mform->addElement('editor', 'message', get_string('message', 'forum'), null,
+            self::editor_options($modcontext, (empty($post->id) ? null : $post->id)));
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
 
@@ -153,7 +153,6 @@ class local_edusupport_post_form extends moodleform {
             $mform->setType('timeend', PARAM_INT);
             $mform->setConstants(array('timestart' => 0, 'timeend' => 0));
 
-
             if (core_tag_tag::is_enabled('mod_forum', 'forum_posts')) {
                 $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
 
@@ -162,9 +161,9 @@ class local_edusupport_post_form extends moodleform {
             }
         }
 
-        //-------------------------------------------------------------------------------
-        // buttons
-        if (isset($post->edit)) { // hack alert
+        // -------------------------------------------------------------------------------
+        // Buttons.
+        if (isset($post->edit)) { // Hack alert.
             $submitstring = get_string('savechanges');
         } else {
             $submitstring = get_string('posttoforum', 'forum');
@@ -222,9 +221,9 @@ class local_edusupport_post_form extends moodleform {
      * @param array $files files uploaded.
      * @return array of errors.
      */
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if (($data['timeend']!=0) && ($data['timestart']!=0) && $data['timeend'] <= $data['timestart']) {
+        if (($data['timeend'] != 0) && ($data['timestart'] != 0) && $data['timeend'] <= $data['timestart']) {
             $errors['timeend'] = get_string('timestartenderror', 'forum');
         }
         if (empty($data['message']['text'])) {

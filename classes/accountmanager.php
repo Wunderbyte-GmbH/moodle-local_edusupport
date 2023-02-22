@@ -25,8 +25,6 @@
 
 namespace local_edusupport;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Class accountmanager
  *

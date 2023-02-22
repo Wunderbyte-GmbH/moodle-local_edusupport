@@ -24,8 +24,6 @@
 
 namespace local_edusupport\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_forum discussion created event class.
  *

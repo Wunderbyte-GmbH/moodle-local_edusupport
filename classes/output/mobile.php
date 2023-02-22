@@ -25,9 +25,6 @@
 
 namespace local_edusupport\output;
 
-defined('MOODLE_INTERNAL') || die();
-
-
 /**
  * Ouput components to generate mobile app screens.
  */
@@ -39,9 +36,9 @@ class mobile {
         global $DB, $USER;
         $courseids = array();
         $allsupportforums = $DB->get_records('local_edusupport', array());
-        foreach ($allsupportforums AS $supportforum) {
+        foreach ($allsupportforums as $supportforum) {
             // If we are part of the support team of this forum, add the course.
-            if (!empty(\local_edusupport::get_supporter_level($supportforum->courseid, $USER->id))) {
+            if (\local_edusupport\lib::is_supportteam($USER->id, $supportforum->courseid)) {
                 $courseids[] = $supportforum->courseid;
             }
         }
@@ -50,8 +47,8 @@ class mobile {
             'restrict' => [
                 'courses' => $courseids
             ],
-            //'javascript' => file_get_contents($CFG->dirroot . '/blocks/news/appjs/news_init.js')
+            // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+            /* 'javascript' => file_get_contents($CFG->dirroot . '/blocks/news/appjs/news_init.js') */
         ];
     }
-
 }
