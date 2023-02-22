@@ -99,8 +99,8 @@ class accountmanager {
         }
         $sql .= " UNION select u.username as username, u.id as userid, u.firstname, u.lastname
         FROM {user} u
-        WHERE
-        u.id IN (SELECT value FROM {config} WHERE name = 'siteadmins') ";
+        WHERE " . $DB->sql_concat("','", "(SELECT value FROM {config} WHERE name = 'siteadmins')", "','") .
+        " LIKE " . $DB->sql_concat("'%,'", "u.id", "',%'");
         $sql .= "ORDER BY username";
 
         $users = $DB->get_records_sql($sql);
