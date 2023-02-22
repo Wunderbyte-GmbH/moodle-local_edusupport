@@ -711,8 +711,8 @@ class lib {
 
         if (isset($dedicated) && !empty($dedicated->userid)) {
             $DB->set_field('local_edusupport_issues', 'currentsupporter', $dedicated->userid, array('discussionid' => $discussion->id));
+            self::subscription_add($discussionid, $dedicated->userid);
         }
-        self::subscription_add($discussionid, $dedicated->userid);
         $centralforumid = get_config('local_edusupport', 'centralforum');
         $forum = $DB->get_record('forum', array('id' => $discussion->forum));
 

@@ -86,12 +86,10 @@ $string['issue:countother'] = 'andere Tickets';
 $string['issue:countclosed'] = 'geschlossene Tickets';
 $string['issue:assigned'] = 'Sie wurden folgendem Ticket zugewiesen:';
 $string['issue_assign'] = 'Zuordnen';
-$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been submitted.</p>
+$string['issuereceived'] = '<p>Danke, dass Sie sich gemeldet haben. Ihre Supportanfrage ist eingelangt.</p>
 
-<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.
-You are receiving this email because you asked the team for help via a support request. You can find all your requests under atingi Support Forum on {$a->sitename} .
-We wish you a great learning experience!
-Your {$a->sitename} support team</p>';
+<p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Lösung einiger Probleme mehr Zeit beansprucht und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können.</p>
+<p>Sie erhalten diese E-Mail, weil Sie das Team über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen im <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">Support-Forum</a> auf {$a ->Sitename}.';
 $string['issue_assign_nextlevel'] = 'Dieses Ticket dem Plattform-Support zuweisen';
 $string['issue_assign_nextlevel:error'] = 'Entschuldigung, das Ticket konnte nicht dem Plattform Support Team zugewiesen werden.';
 $string['issue_assign_nextlevel:post'] = '
@@ -101,6 +99,7 @@ Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Suppo
 <p>Wir wünschen Ihnen eine tolle Lernerfahrung! </p>
 <p>Ihr {$a->sitename} Team </p>';
 $string['issue_assigned:subject'] = 'Supportanfrage zugeordnet';
+$string['issuereceived:subject'] = 'Ihre Supportanfrage wird bearbeitet';
 $string['issue_close'] = 'Anfrage schließen';
 $string['issue_closed:subject'] = 'Anfrage wurde geschlossen';
 $string['issue_closed:post'] = 'Dieses Ticket wurde von <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> geschlossen. Falls Sie weitere Unterstützung benötigen, fordern Sie bitte wieder das Plattform Support Team an!';

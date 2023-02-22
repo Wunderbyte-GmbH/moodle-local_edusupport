@@ -65,10 +65,10 @@ $string['goto_tutorials'] = 'Documents & Tutorials';
 $string['goto_targetforum'] = 'Supportforum';
 $string['edusupport:manage'] = 'Manage';
 $string['email_to_xyz'] = 'Send mail to {$a->email}';
-$string['enableprepage'] = "enable Prepage";
-$string['enableprepage:description'] = "enables a site before form";
-$string['prepage'] = "prepage content";
-$string['prepage:description'] = "content displayed before form e.g. faq";
+$string['enableprepage'] = "Enable Prepage";
+$string['enableprepage:description'] = "Enables a site before form";
+$string['prepage'] = "Prepage content";
+$string['prepage:description'] = "Content displayed before form e.g. faq";
 $string['extralinks'] = 'Extralinks';
 $string['extralinks:description'] = 'If you enter links here, the "help"-Button will be a menu instead of button. It will include the "help"-Button as first element, and all extra links as additional links. Enter links line by line in the following form: linkname|url|faicon|target';
 $string['faqlink'] = 'FAQ-link';
@@ -98,12 +98,12 @@ $string['issue:assigned'] = 'You have been assigned to this issue:';
 $string['issue_assign'] = 'Assign issue';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
-$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been submitted.</p>
+$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been received.</p>
 
-<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.
-You are receiving this email because you asked the team for help via a support request. You can find all your requests under atingi Support Forum on {$a->sitename} .
-We wish you a great learning experience!
-Your {$a->sitename} support team</p>';
+<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
+<p>You are receiving this email because you asked the team for help via a support request. You can find all your requests in the  <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">support forum</a> on {$a->sitename}. </p>
+<p>We wish you a great learning experience!</p>
+<p>Your {$a->sitename} support team</p>';
 $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
 
 <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
@@ -127,6 +127,7 @@ $string['issue_responsibles:post'] = '<p>We are happy to inform you that your su
     <p>Your {$a->sitename} team</p>
 ';
 $string['issue_responsibles:subject'] = 'Your support request has been assigned';
+$string['issuereceived:subject'] = 'Your support request has been received';
 $string['issue_revoke'] = 'Revoke this issue from higher support level';
 $string['issue_revoke:error'] = 'Sorry, this issue could not be revoked from the higher support levels';
 $string['issue_revoke:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> revoked this issue from the higher support level';

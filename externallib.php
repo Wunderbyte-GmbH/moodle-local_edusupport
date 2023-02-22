@@ -301,7 +301,7 @@ class local_edusupport_external extends external_api {
                         $fr = new stdClass;
                         $fr->component = 'mod_forum';
                         $fr->contextid = $context->id;
-                        $fr->userid = $user->id;
+                        $fr->userid = c->id;
                         $fr->filearea = 'attachment';
                         $fr->filename = $filename;
                         $fr->filepath = '/';
@@ -323,6 +323,17 @@ class local_edusupport_external extends external_api {
                                     'forumid' => $forum->id,
                             )
                     );
+                    // Send email to user if configured.
+                    $a = new stdClass();
+                    $a->wwwroot = $CFG->wwwroot;
+                    $a->cmid = $cm->id;
+                    $a->sitename = $SITE->fullname;
+                    $subject = get_string('issuereceived:subject', 'local_edusupport');
+                    $mailhtml = get_string('issuereceived', 'local_edusupport', $a);
+                    $mailtext = format_text($mailhtml, FORMAT_PLAIN);
+                    if (get_config('local_edusupport', 'sendrequestreceived', $a)) {
+                        \email_to_user($user, $user, $subject, $mailtext, $mailhtml, "", true);
+                    }
                     $event = \mod_forum\event\discussion_created::create($evparams);
                     $event->add_record_snapshot('forum_discussions', $discussion);
                     $event->trigger();
