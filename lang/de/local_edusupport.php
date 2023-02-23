@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Hilfe';
+$string['pluginname'] = 'eduSupport';
 $string['edusupport:addinstance'] = 'eduSupport Block hinzufügen';
 $string['edusupport:manage'] = 'eduSupport Manage Capability';
 $string['edusupport:myaddinstance'] = 'eduSupport Block hinzufügen';
@@ -214,9 +214,9 @@ $string['rolename:description'] = 'Rollenname für den 1st Level Support (z.B. t
 
 /* Status */
 $string['status:notstarted'] = 'Noch nicht gestartet';
-$string['status:awaitinguserreply'] = 'Erwarte Antwort des Benutzers';
-$string['status:ongoing'] = 'In bearbeitung';
-$string['status:awaitingsupportaction'] = 'Erwarte Bearbeitung durch Supporter';
+$string['status:awaitinguserreply'] = 'Erwarte Antwort des/der Benutzer:in';
+$string['status:ongoing'] = 'In Bearbeitung';
+$string['status:awaitingsupportaction'] = 'Erwarte Bearbeitung durch Supporter:in';
 $string['status:closed'] = 'Abgeschlossen';
 
 $string['status'] = 'Status';
@@ -224,8 +224,6 @@ $string['changestatus'] = 'Status ändern';
 $string['startedby'] = 'Gestartet von';
 $string['invalidmail'] = 'Bitte tragen Sie eine richtige E-Mail Adresse ein.';
 
-$string['back'] = 'zurück';
-$string['continue'] = 'weiter';
 $string['firstlvlgroupmode'] = '1st level Support Gruppen Modus';
 $string['firstlvlgroupmode:description'] = 'Aktiviert den Gruppenmodus, so dass Nicht-Lehrer (andere Rollen) auf der Grundlage eines benutzerdefinierten Feldes verbunden werden und im Kursforum antworten können (stellen Sie sicher, dass Sie der Rolle "canforward2ndlevel" das Recht geben. Aktivieren Sie auch den Gruppenmodus im Kurs und aktivieren Sie getrennte Gruppen.';
 $string['customfieldname'] = 'Profilfeldname für den Gruppenmodus';
