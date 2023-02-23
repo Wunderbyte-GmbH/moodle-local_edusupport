@@ -56,13 +56,18 @@ class observer {
             \local_edusupport\lib::reopen_issue($discussion->id);
             $author = $DB->get_record('user', array('id' => $post->userid));
 
-            $morethanoneuser = $DB->get_record_sql('Select count(distinct userid) as count From {forum_posts} where discussion = ?',
-                array($discussion->id));
+            // Having more than one user in the discussion means that someone has already answered.
+            $morethanoneuser = $DB->get_record_sql(
+                "SELECT COUNT(DISTINCT userid) AS count
+                FROM {forum_posts}
+                WHERE discussion = :discussion", ['discussion' => $discussion->id]);
             if ($morethanoneuser->count > 1) {
                 if ($post->userid == $discussion->userid) {
+                    // If the user posted, we are waiting for a support action.
                     \local_edusupport\lib::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
                 } else {
-                    \local_edusupport\lib::set_status(ISSUE_STATUS_ONGOING, $issue->id);
+                    // If the supporter posted, we are waiting for a user reply.
+                    \local_edusupport\lib::set_status(ISSUE_STATUS_AWAITING_USER_REPLY, $issue->id);
                 }
             } else {
                 \local_edusupport\lib::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
