@@ -116,7 +116,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
         if (!empty($reopen) && $reopen == $issue->discussionid) {
             \local_edusupport\lib::reopen_issue($issue->discussionid);
             $issue->priority = "1";
-            $issue->status = ISSUE_STATUS_ONGOING;
+            $issue->status = ISSUE_STATUS_AWAITING_SUPPORT_ACTION;
             if (substr($issue->name, 0, strlen($prefix)) == $prefix) {
                 $issue->name = substr($issue->name, strlen($prefix));
             }

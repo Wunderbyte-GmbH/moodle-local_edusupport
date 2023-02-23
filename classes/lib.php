@@ -238,7 +238,7 @@ class lib {
         $issue = self::get_issue($discussionid);
 
         $issue->priority = 1;
-        $issue->status = ISSUE_STATUS_ONGOING;
+        $issue->status = ISSUE_STATUS_AWAITING_SUPPORT_ACTION;
         $issue->discussionid = $discussionid;
         $issue->timemodified = time();
 
