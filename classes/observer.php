@@ -23,12 +23,52 @@
 
 namespace local_edusupport;
 
+use cache_helper;
+use local_edusupport\event\supportuser_added;
+use local_edusupport\event\supportuser_changed;
+use local_edusupport\event\supportuser_deleted;
+
 class observer {
+
+    /**
+     * Observer for the supportuser_added event
+     *
+     * @param supportuser_added $event
+     */
+    public static function supportuser_added(supportuser_added $event) {
+        // When a support user gets added, changed or deleted, we need to purge the navbar menu cache.
+        // The navbar only shows issues if a user is a support user (or an admin).
+        cache_helper::purge_by_event('setbacksupportmenu');
+    }
+
+    /**
+     * Observer for the supportuser_changed event
+     *
+     * @param supportuser_changed $event
+     */
+    public static function supportuser_changed(supportuser_changed $event) {
+        // When a support user gets added, changed or deleted, we need to purge the navbar menu cache.
+        // The navbar only shows issues if a user is a support user (or an admin).
+        cache_helper::purge_by_event('setbacksupportmenu');
+    }
+
+    /**
+     * Observer for the supportuser_deleted event
+     *
+     * @param supportuser_deleted $event
+     */
+    public static function supportuser_deleted(supportuser_deleted $event) {
+        // When a support user gets added, changed or deleted, we need to purge the navbar menu cache.
+        // The navbar only shows issues if a user is a support user (or an admin).
+        cache_helper::purge_by_event('setbacksupportmenu');
+    }
+
     public static function event($event) {
+
+        // We should have separate functions for different event types for better readability!
+
         global $CFG, $DB, $OUTPUT;
 
-        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-        /* error_log("OBSERVER EVENT: " . print_r($event, 1)); */
         $entry = (object)$event->get_data();
         if ($entry->eventname == '\core\event\user_deleted') {
             $conditions = array('id' => $event->relateduserid);

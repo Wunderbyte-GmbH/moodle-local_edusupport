@@ -24,6 +24,9 @@
 defined('MOODLE_INTERNAL') || die;
 
 $observers = array();
+
+// We should have separate functions for different event types for cleaner code and better readability!
+
 $events = array(
     "\\mod_forum\\event\\discussion_created",
     "\\mod_forum\\event\\discussion_deleted",
@@ -31,10 +34,27 @@ $events = array(
     "\\core\\event\\user_deleted",
     "\\local\\edusupport\add_supportuser"
 );
-foreach ($events AS $event) {
+
+foreach ($events as $event) {
     $observers[] = array(
             'eventname' => $event,
             'callback' => '\local_edusupport\observer::event',
-            'priority' => 9999,
         );
 }
+
+// For new events, we do it separately.
+
+$observers[] = [
+    'eventname' => '\local_edusupport\event\supportuser_added',
+    'callback' => '\local_edusupport\observer::supportuser_added',
+];
+
+$observers[] = [
+    'eventname' => '\local_edusupport\event\supportuser_changed',
+    'callback' => '\local_edusupport\observer::supportuser_changed',
+];
+
+$observers[] = [
+    'eventname' => '\local_edusupport\event\supportuser_deleted',
+    'callback' => '\local_edusupport\observer::supportuser_deleted',
+];

@@ -674,16 +674,43 @@ class local_edusupport_external extends external_api {
 
         if (\local_edusupport\lib::can_config_course($params['courseid'])) {
             if (empty($params['supportlevel'])) {
-                $DB->delete_records('local_edusupport_supporters',
-                    array('courseid' => $params['courseid'], 'userid' => $params['userid']));
+                if ($DB->delete_records('local_edusupport_supporters',
+                    array('courseid' => $params['courseid'], 'userid' => $params['userid']))) {
+                    $event = \local_edusupport\event\supportuser_deleted::create(
+                        array(
+                            'objectid' => $params['courseid'],
+                            'relateduserid' => $params['userid'],
+                            'other' => array('supportuserid' => $params['userid'], 'supportlevel' => $params['supportlevel'])
+                        )
+                    );
+                    $event->trigger();
+                }
             } else {
                 $entry = $DB->get_record('local_edusupport_supporters',
                     array('courseid' => $params['courseid'], 'userid' => $params['userid']));
                 if (!empty($entry->supportlevel)) {
                     $entry->supportlevel = $params['supportlevel'];
-                    $DB->update_record('local_edusupport_supporters', $entry);
+                    if ($DB->update_record('local_edusupport_supporters', $entry)) {
+                        $event = \local_edusupport\event\supportuser_changed::create(
+                            array(
+                                'objectid' => $params['courseid'],
+                                'relateduserid' => $params['userid'],
+                                'other' => array('supportuserid' => $params['userid'], 'supportlevel' => $params['supportlevel'])
+                            )
+                        );
+                        $event->trigger();
+                    }
                 } else {
-                    $DB->insert_record('local_edusupport_supporters', (object) $params);
+                    if ($DB->insert_record('local_edusupport_supporters', (object) $params)) {
+                        $event = \local_edusupport\event\supportuser_added::create(
+                            array(
+                                'objectid' => $params['courseid'],
+                                'relateduserid' => $params['userid'],
+                                'other' => array('supportuserid' => $params['userid'], 'supportlevel' => $params['supportlevel'])
+                            )
+                        );
+                        $event->trigger();
+                    }
                 }
             }
             return 1;

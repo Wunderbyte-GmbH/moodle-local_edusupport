@@ -29,6 +29,7 @@ $definitions = [
         'mode' => cache_store::MODE_SESSION
     ],
     'supportmenu' => [
-        'mode' => cache_store::MODE_APPLICATION
+        'mode' => cache_store::MODE_APPLICATION,
+        'invalidationevents' => ['setbacksupportmenu'],
     ]
 ];

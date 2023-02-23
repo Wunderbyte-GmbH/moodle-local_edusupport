@@ -26,6 +26,7 @@ namespace local_edusupport;
 use local_edusupport\task\reminder;
 use local_edusupport\guest_supportuser;
 use mod_forum\event\post_created;
+use moodle_url;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
@@ -207,9 +208,21 @@ class lib {
                 $extralinks[] = $extralink;
             }
         }
+
+        $showissues = null;
+        $issuesurl = null;
+        // Check if the user is part of the support team or an admin.
+        if (is_siteadmin() || self::is_supportteam()) {
+            $showissues = true;
+            $issuesurl = new moodle_url('/local/edusupport/issues.php');
+        }
+
         $prepageenabled = get_config('local_edusupport', 'enableprepage');
         $nav = $OUTPUT->render_from_template('local_edusupport/helpbutton',
-            array('extralinks' => $extralinks, 'hasextralinks' => count($extralinks) > 0, 'prepageenabled' => $prepageenabled));
+            array('extralinks' => $extralinks, 'hasextralinks' => count($extralinks) > 0,
+                'prepageenabled' => $prepageenabled,
+                'showissues' => $showissues, 'issuesurl' => $issuesurl
+            ));
         $cache->set('rendered', $nav);
         return $nav;
     }
