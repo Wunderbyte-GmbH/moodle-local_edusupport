@@ -26,7 +26,7 @@ require_once('../../config.php');
 $context = \context_system::instance();
 $PAGE->set_context($context);
 require_login();
-$PAGE->set_url(new moodle_url('/local/edusupport/issues.php', array()));
+$PAGE->set_url(new moodle_url('/local/edusupport/issues.php'));
 $PAGE->requires->css('/local/edusupport/style/edusupport.css');
 $title = get_string('issues', 'local_edusupport');
 $PAGE->set_title($title);
@@ -35,11 +35,10 @@ $PAGE->set_heading($title);
 echo $OUTPUT->header();
 
 if (!\local_edusupport\lib::is_supportteam()) {
-    $tocmurl = new moodle_url('/course/view.php', array('id' => $courseid));
     echo $OUTPUT->render_from_template('local_edusupport/alert', array(
         'content' => get_string('missing_permission', 'local_edusupport'),
         'type' => 'danger',
-        'url' => $tocmurl->__toString(),
+        'url' => new moodle_url('/my'),
     ));
 } else {
     $assign = optional_param('assign', 0, PARAM_INT); // Discussion id we want to assign to.

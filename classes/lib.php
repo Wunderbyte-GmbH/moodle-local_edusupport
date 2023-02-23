@@ -244,6 +244,10 @@ class lib {
 
         // 4.) remove issue-link from database.
         $DB->update_record('local_edusupport_issues', $issue);
+
+        // We also want to send reminders when we re-open an issue.
+        self::send_reminder($issue->id);
+
         // Mark post as closed.
         $prefix = "[Closed] ";
         if (substr($discussion->name, 0, strlen($prefix)) == $prefix) {
@@ -1200,21 +1204,60 @@ class lib {
         $issue->timemodified = time();
 
         $DB->update_record('local_edusupport_issues', $issue);
+
         if ($status == ISSUE_STATUS_AWAITING_SUPPORT_ACTION && get_config('local_edusupport', 'sendreminders')) {
-            $taskdata = array(
-                'issueid' => $issueid,
-                'status' => $status,
-                'sendagain' => true
-            );
-
-            $task = new reminder();
-            $task->set_custom_data($taskdata);
-            $timebeforeminder = time() + (get_config('local_edusupport', 'timebeforeminder'));
-            $task->set_next_run_time($timebeforeminder);
-
-            // Now queue the task or reschedule it if it already exists (with matching data).
-            \core\task\manager::queue_adhoc_task($task);
+            self::send_reminder($issueid);
         }
+    }
+
+    /**
+     * Helper function to send reminder mails.
+     * @param int $issueid
+     */
+    public static function send_reminder(int $issueid) {
+
+        if (self::issue_already_has_reminder($issueid)) {
+            // There already are reminders in the future, so we do not create another one.
+            return;
+        }
+
+        $taskdata = array(
+            'issueid' => $issueid,
+            // No second reminders anymore.
+            // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+            /* 'sendagain' => true, */
+        );
+        $task = new reminder();
+        $task->set_custom_data($taskdata);
+        $timebeforereminder = time() + (get_config('local_edusupport', 'timebeforereminder'));
+        $task->set_next_run_time($timebeforereminder);
+
+        // Unfortunately, reschedule does not work because set_status is called at each loading of issues.php.
+        // So we need to use the normal queue function.
+        \core\task\manager::queue_adhoc_task($task);
+    }
+
+    /**
+     * Helper function to check if there already is a reminder to be sent in the future.
+     * @param int $issueid
+     */
+    public static function issue_already_has_reminder(int $issueid) {
+        global $DB;
+
+        $sql =
+            "SELECT COUNT(*) AS cnt
+            FROM {task_adhoc}
+            WHERE component = 'local_edusupport'
+            AND classname = '\\local_edusupport\\task\\reminder'
+            AND customdata LIKE '{_issueid_:" . $issueid . "}%'";
+
+        $record = $DB->get_record_sql($sql);
+        $futurereminderscount = $record->cnt;
+
+        if ($futurereminderscount > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**

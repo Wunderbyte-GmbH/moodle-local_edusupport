@@ -235,7 +235,7 @@ if ($hassiteconfig) {
     );
 
     $settings->add(new admin_setting_configduration('local_edusupport/timebeforereminder',
-    get_string('timebeforereminder', 'local_edusupport'), '', 2, 86400));
+        get_string('timebeforereminder', 'local_edusupport'), '', 2, 86400));
 
     $settings->add(new admin_setting_heading('local_edusupport_messaging', get_string('messagepreferences',
             'message'), ''));
