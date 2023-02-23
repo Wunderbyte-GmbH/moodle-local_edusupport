@@ -136,6 +136,9 @@ $string['no_such_issue'] = 'Dies ist kein offenes Ticket! Sie können die <a hre
 $string['only_you'] = 'Nur Sie und unser Team';
 $string['phonefield'] = 'Telefonfeld verbergen';
 $string['phonefield:description'] = 'Telefonfeld verbergen';
+$string['postmailinfolink'] = 'Dies ist die Kopie einer Nachricht, die in {$a->coursename} gepostet wurde.
+
+Klicken Sie hier, um zu antworten: {$a->replylink}';
 $string['postto2ndlevel'] = 'Plattform Support Team';
 $string['postto2ndlevel:description'] = 'Direkt an den {$a->sitename}-Support weiterleiten!';
 $string['privacy:metadata'] = 'Dieses Plugin speichert keine personenbezogenen Daten, da die Informationen in einem Forum abgelegt werden.';

@@ -48,7 +48,7 @@ $string['create_issue_mail_success_description'] = 'Your issue has been stored. 
 $string['create_issue_success_title'] = 'Success';
 $string['create_issue_success_description'] = 'Your issue has been stored. We will help you as soon as possible!';
 $string['create_issue_success_description_mail'] = 'Your issue has been sent by mail. We will help you as soon as possible!';
-$string['create_issue_success_goto'] = 'view issue';
+$string['create_issue_success_goto'] = 'View issue';
 $string['create_issue_success_responsibles'] = 'Contact person for this ticket is/are:';
 $string['create_issue_success_close'] = 'close';
 $string['cron:reminder:title'] = 'A user is waiting for your support';
@@ -142,7 +142,7 @@ $string['issues:assigned:none'] = 'Currently you do not have any issue subscript
 $string['issues:closed'] = 'Closed issues';
 
 $string['issues:current'] = 'My issues';
-$string['issues:current:none'] = 'Seems you deserve a break - no issue left for your!';
+$string['issues:current:none'] = 'Seems you deserve a break - no issue left for you!';
 $string['issues:other'] = 'Other issues';
 $string['issues:other:none'] = 'Great, there seem to be no more problems on that planet!';
 $string['issues:openmine'] = '{$a} for me';
@@ -156,6 +156,9 @@ $string['no_such_issue'] = 'This is not an open issue! You can navigate to the <
 $string['only_you'] = 'Only you and our team';
 $string['phonefield'] = 'disable phone field';
 $string['phonefield:description'] = 'Deactivate phone field in the form for creating issues';
+$string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
+
+To reply click on this link: {$a->replylink}';
 $string['postto2ndlevel'] = 'Submit to platform support team';
 $string['postto2ndlevel:description'] = 'Directly forward to the {$a->sitename}-Support!';
 $string['predefined_subjects'] = 'Define predefined subjects here';
