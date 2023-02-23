@@ -180,10 +180,10 @@ class lib {
      * Get the helpbutton menu from cache or generate it.
      */
     public static function get_supportmenu() {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
         $cache = \cache::make('local_edusupport', 'supportmenu');
-        if (!empty($cache->get('rendered'))) {
-            return $cache->get('rendered');
+        if (!empty($cache->get($USER->id))) {
+            return $cache->get($USER->id);
         }
 
         $extralinksfromconfig = get_config('local_edusupport', 'extralinks');
@@ -223,7 +223,7 @@ class lib {
                 'prepageenabled' => $prepageenabled,
                 'showissues' => $showissues, 'issuesurl' => $issuesurl
             ));
-        $cache->set('rendered', $nav);
+        $cache->set($USER->id, $nav);
         return $nav;
     }
 

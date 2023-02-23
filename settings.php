@@ -21,13 +21,15 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
+global $USER;
+
 if ($hassiteconfig) {
     $settings = new admin_settingpage( 'local_edusupport_settings', get_string('pluginname', 'local_edusupport'));
     $ADMIN->add('localplugins', $settings);
 
     // Possibly we changed the menu, therefore we delete the cache. We should find a better place for this.
     $cache = cache::make('local_edusupport', 'supportmenu');
-    $cache->delete('rendered');
+    $cache->delete($USER->id);
 
     $settings->add(
         new admin_setting_configtextarea(
