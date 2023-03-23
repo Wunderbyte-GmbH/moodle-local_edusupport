@@ -437,6 +437,10 @@ define(
                             MAIN.modal = modal;
 
                             MAIN.prepareBox();
+
+                            // We only hide footer when we create the modalthe first time.
+                            const footer = MAIN.modal.footer;
+                            footer.hide();
                         });
                     },
                     fail: NOTIFICATION.exception
