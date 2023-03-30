@@ -15,13 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* @package    local_edusupport
-* @copyright  2019 Digital Education Society (http://www.dibig.at)
-* @author     Robert Schrenk
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
-
-defined('MOODLE_INTERNAL') || die;
+ * @package    local_edusupport
+ * @copyright  2019 Digital Education Society (http://www.dibig.at)
+ * @author     Robert Schrenk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 function xmldb_local_edusupport_upgrade($oldversion) {
     global $DB, $CFG;
@@ -84,7 +82,6 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022091202, 'local', 'edusupport');
     }
 
-
     if ($oldversion < 2022091500) {
         $table = new xmldb_table('local_edusupport_issues');
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', true, null, null, time(), 'accountmanager');
@@ -102,13 +99,13 @@ function xmldb_local_edusupport_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Rename field
+        // Rename field.
         upgrade_plugin_savepoint(true, 2022091500, 'local', 'edusupport');
     }
 
     if ($oldversion < 2022092004) {
-        $records = $DB->get_records('local_edusupport_issues', ['status' => NULL]);
-        if(!empty($records)) {
+        $records = $DB->get_records('local_edusupport_issues', ['status' => null]);
+        if (!empty($records)) {
             foreach ($records as $record) {
                 $record->status = 1;
                 $DB->update_record('local_edusupport_issues', $record, true);
@@ -138,14 +135,14 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022092008, 'local', 'edusupport');
     }
     if ($oldversion < 2022100703) {
-        $sql = 'SELECT lei.* FROM {local_edusupport_issues} lei
+        $sql = "SELECT lei.* FROM {local_edusupport_issues} lei
                 JOIN {forum_discussions} fd
                 ON fd.id = lei.discussionid
                 WHERE lei.priority = 0
                 AND lei.status = 1
-                AND fd.name LIKE "[Closed%"';
+                AND fd.name LIKE '_Closed%'";
         $closedissues = $DB->get_records_sql($sql);
-        if(!empty($closedissues)) {
+        if (!empty($closedissues)) {
             foreach ($closedissues as $issue) {
                 $issue->status = 5; // ISSUE_STATUS_CLOSED.
                 $DB->update_record('local_edusupport_issues', $issue);
