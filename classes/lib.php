@@ -180,7 +180,7 @@ class lib {
      * Get the helpbutton menu from cache or generate it.
      */
     public static function get_supportmenu() {
-        global $OUTPUT, $USER;
+        global $CFG, $OUTPUT, $USER;
         $cache = \cache::make('local_edusupport', 'supportmenu');
         if (!empty($cache->get($USER->id))) {
             return $cache->get($USER->id);
@@ -212,17 +212,21 @@ class lib {
         $showissues = null;
         $issuesurl = null;
         // Check if the user is part of the support team or an admin.
-        if (is_siteadmin() || self::is_supportteam()) {
+        // We only show the "issues" navbar button starting from Moodle 4.0.
+        if ($CFG->version >= 2022041900 && (is_siteadmin() || self::is_supportteam())) {
             $showissues = true;
             $issuesurl = new moodle_url('/local/edusupport/issues.php');
         }
 
         $prepageenabled = get_config('local_edusupport', 'enableprepage');
         $nav = $OUTPUT->render_from_template('local_edusupport/helpbutton',
-            array('extralinks' => $extralinks, 'hasextralinks' => count($extralinks) > 0,
-                'prepageenabled' => $prepageenabled,
-                'showissues' => $showissues, 'issuesurl' => $issuesurl
-            ));
+        [
+            'extralinks' => $extralinks,
+            'hasextralinks' => count($extralinks) > 0,
+            'prepageenabled' => $prepageenabled,
+            'showissues' => $showissues,
+            'issuesurl' => $issuesurl,
+        ]);
         $cache->set($USER->id, $nav);
         return $nav;
     }
