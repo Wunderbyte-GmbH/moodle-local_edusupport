@@ -1278,7 +1278,7 @@ class lib {
                 break;
             case ISSUE_STATUS_AWAITING_USER_REPLY:
                 return array('status' => get_string('status:awaitinguserreply', 'local_edusupport'),
-                    'class' => 'badge badge-warning',
+                    'class' => 'badge badge-brown',
                     'stateclass' => 'awaiting');
                 break;
             case ISSUE_STATUS_ONGOING:
@@ -1287,7 +1287,7 @@ class lib {
                 break;
             case ISSUE_STATUS_AWAITING_SUPPORT_ACTION:
                 return array('status' => get_string('status:awaitingsupportaction', 'local_edusupport'),
-                    'class' => 'badge badge-warning',
+                    'class' => 'badge badge-orange',
                     'stateclass' => 'awaitingsupportaction');
                 break;
             case ISSUE_STATUS_CLOSED:
