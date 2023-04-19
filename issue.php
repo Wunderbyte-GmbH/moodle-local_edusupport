@@ -412,6 +412,8 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
             $out = $out1 . $out2;
         }
     }
+    // It gets save at /mod_forum/
+    /*
     $replacements = array(
         array($CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/mod_forum/',
             $CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/local_edusupport/'),
@@ -419,6 +421,7 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
     foreach ($replacements as $replacement) {
         $out = str_replace($replacement[0], $replacement[1], $out);
     }
+    */
     echo $out;
 
     if (!empty($replyto)) {
