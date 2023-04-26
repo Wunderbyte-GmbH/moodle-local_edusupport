@@ -412,7 +412,7 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
             $out = $out1 . $out2;
         }
     }
-    // It gets save at /mod_forum/
+    // It gets saved at /mod_forum/ Don t know why this line was needed.
     /*
     $replacements = array(
         array($CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/mod_forum/',
