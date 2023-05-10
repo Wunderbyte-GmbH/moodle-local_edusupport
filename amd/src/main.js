@@ -246,6 +246,12 @@ define(
             var contactphone = $('#local_edusupport_create_form #id_contactphone').val() || '';
             console.log(contactphone);
             var description = $('#local_edusupport_create_form #id_description').val();
+
+            description = addModuleAndSupplementToDescription(description);
+
+            // eslint-disable-next-line no-console
+            console.log('description', description);
+
             var forum_group = $('#local_edusupport_create_form #id_forum_group').val();
             var postto2ndlevel = $('#local_edusupport_create_form #id_postto2ndlevel').prop('checked') ? 1 : 0;
             var post_screenshot = true; // $('#local_edusupport_create_form #id_postscreenshot').prop('checked') ? 1 : 0;
@@ -547,7 +553,31 @@ function changeStatus() {
             console.log("ex:" + ex);
         },
     }]);
+}
 
+/**
+ *
+ * @param {*} description
+ */
+function addModuleAndSupplementToDescription(description) {
+
+    const moduleElement = document.querySelector('#local_edusupport_create_form #id_module');
+    const supplementElement = document.querySelector('#local_edusupport_create_form #id_supplement');
+
+    let dataset = '';
+    if (moduleElement) {
+        dataset += ' data-module="' + moduleElement.value + '" ';
+    }
+    if (supplementElement) {
+        dataset += ' data-supplement="' + supplementElement.value + '" ';
+    }
+
+    if (dataset.length > 0) {
+        description = "<span " + dataset + "</span>" +
+        description;
+    }
+
+    return description;
 
 }
 

@@ -23,6 +23,7 @@
  */
 
 use local_edusupport\accountmanager;
+use local_wb_faq\wb_faq;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -117,6 +118,10 @@ class issue_create_form extends moodleform {
         $mform->addElement('select', 'forum_group', get_string('to_group', 'local_edusupport'), $options,
             array('onchange' => implode("", $postto2ndlevelhideshow)));
         $mform->setType('forum_group', PARAM_INT);
+
+        if (class_exists('local_wb_faq\wb_faq')) {
+            wb_faq::add_form_elements($mform);
+        }
 
         if (!empty($usesubjects = get_config('local_edusupport', 'predefined_subjects'))) {
             $options = ['' => ''];
