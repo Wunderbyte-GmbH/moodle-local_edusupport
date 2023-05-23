@@ -311,7 +311,9 @@ define(
                     if (MAIN.debug > 0) console.log(result);
                     modal.hide();
 
-                    var responsibles = '';
+                    top.location.href = URL.fileUrl('/mod/forum', 'discuss.php?d=' + result.discussionid);
+
+                    /* var responsibles = '';
                     if (typeof result.responsibles !== 'undefined') {
                         responsibles += '<ul class="edusupport_responsible">';
                         for (var i = 0; i < result.responsibles.length; i++) {
@@ -365,7 +367,7 @@ define(
                                 NOTIFICATION.alert(s[0], s[1]);
                             }
                         ).fail(NOTIFICATION.exception);
-                    }
+                    } */
                     MAIN.is_sending = false;
                 },
                 fail: NOTIFICATION.exception
