@@ -7,3 +7,22 @@
     color: #fff;
     background-color: #876328;
 }
+.popover-region-toggle .tooltiptext {
+    position: absolute;
+    display: inline-block;
+    top: 2px;
+    padding: 5px;
+    border-radius: 5px;;
+    background-color: #81b622;
+    color: #fff;
+    border-bottom: 1px dotted #81b622;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 8000;
+}
+
+.popover-region-toggle:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
