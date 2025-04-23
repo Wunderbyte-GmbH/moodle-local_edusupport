@@ -182,6 +182,7 @@ $string['targetforum:core:description'] = 'Alle Nutzer/innen werden automatisch 
 $string['to_group'] = 'An';
 $string['toggle'] = 'Kurssupportforum';
 $string['toggle:central'] = 'Zentrales Supportforum';
+$string['tooltiptext'] = 'Kontakt- und Supportformular';
 $string['guestmodeenabled'] = 'Gastmodus aktiv';
 $string['guestmodeenabled:description'] = 'Gäste können auch Supporttickets anlegen und werden dann per Mail benachrichtigt';
 $string['guestmail'] = 'Ihre E-Mail Adresse';
