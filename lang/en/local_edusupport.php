@@ -217,6 +217,7 @@ $string['targetforum:core:description'] = 'All users will be automatically enrol
 $string['to_group'] = 'To';
 $string['toggle'] = 'Course Supportforum';
 $string['toggle:central'] = 'Central Supportforum';
+$string['tooltiptext'] = 'Support';
 $string['trackhost'] = 'Track host';
 $string['trackhost:description'] = 'Big moodle sites may use an architecture with multiple webhosts. If you enable this option, edusupport will add the hostname of the used webhost to the issue.';
 $string['guestmodeenabled'] = 'Guestmode active';
