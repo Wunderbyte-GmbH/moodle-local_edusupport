@@ -58,3 +58,8 @@ $observers[] = [
     'eventname' => '\local_edusupport\event\supportuser_deleted',
     'callback' => '\local_edusupport\observer::supportuser_deleted',
 ];
+
+$observers[] = [
+    'eventname' => '\core\event\user_deleted',
+    'callback' => '\local_edusupport\observer::user_deleted',
+];

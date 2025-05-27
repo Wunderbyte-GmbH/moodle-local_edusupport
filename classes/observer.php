@@ -162,4 +162,21 @@ class observer {
             return true;
         }
     }
+
+    /**
+     * Triggered when a user is deleted.
+     *
+     * @param \core\event\user_deleted $event
+     * @return void
+     */
+    public static function user_deleted(\core\event\user_deleted $event) {
+        global $DB;
+
+        $userid = $event->objectid;
+
+        // Delete the user from the local_edusupport_supporters table.
+        $DB->delete_records('local_edusupport_supporters', ['userid' => $userid]);
+
+        $DB->delete_records('local_edusupport_subscr', ['userid' => $userid]);
+    }
 }
