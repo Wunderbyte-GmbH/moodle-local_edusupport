@@ -26,7 +26,6 @@ function xmldb_local_edusupport_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2022082400) {
-
         // Define field status to be added to local_edusupport_issues.
         $table = new xmldb_table('local_edusupport_issues');
         $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'opened');
@@ -68,14 +67,14 @@ function xmldb_local_edusupport_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022091202) {
-        require_once($CFG->dirroot.'/user/lib.php');
+        require_once($CFG->dirroot . '/user/lib.php');
         $user = new stdClass();
         $user->username = "edusupport_guest_ticket";
         $user->firstname = "Guest";
         $user->lastname = "Ticket";
         $user->email = 'edusupport@example.com';
         $user->mnethostid = $CFG->mnet_localhost_id;
-        if (!$DB->record_exists('user', array('email' => $user->email))) {
+        if (!$DB->record_exists('user', ['email' => $user->email])) {
             $guestuserid = user_create_user($user, false, true);
             set_config('guestuserid', $guestuserid, 'local_edusupport');
         }

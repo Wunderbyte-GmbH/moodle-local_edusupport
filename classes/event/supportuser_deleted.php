@@ -17,7 +17,7 @@
 /**
  * The mod_forum discussion created event.
  *
- * @package    mod_forum
+ * @package    local_edusupport
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -101,7 +101,7 @@ class supportuser_deleted extends \core\event\base {
     }
 
     public static function get_other_mapping() {
-        $othermapped = array();
+        $othermapped = [];
         $othermapped['someid'] = \core\event\base::NOT_MAPPED;
         return $othermapped;
     }

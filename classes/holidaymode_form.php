@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    block_edupublisher
+ * @package    local_edusupport
  * @copyright  2018 Digital Education Society (http://www.dibig.at)
  * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
  * @author     Robert Schrenk
@@ -37,7 +37,7 @@ class holidaymode_form extends \moodleform {
 
     // Custom validation should be added here.
     public function validation($data, $files) {
-        $errors = array();
+        $errors = [];
         return $errors;
     }
 }

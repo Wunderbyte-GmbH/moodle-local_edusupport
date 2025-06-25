@@ -26,10 +26,10 @@ defined('MOODLE_INTERNAL') || die;
 
 $definitions = [
     'spamprotect' => [
-        'mode' => cache_store::MODE_SESSION
+        'mode' => cache_store::MODE_SESSION,
     ],
     'supportmenu' => [
         'mode' => cache_store::MODE_APPLICATION,
         'invalidationevents' => ['setbacksupportmenu'],
-    ]
+    ],
 ];

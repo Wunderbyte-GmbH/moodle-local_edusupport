@@ -32,10 +32,10 @@ class mobile {
     /**
      * Get the IDs of courses where the user should see the block.
      */
-    public static function edusupport_init(array $args) : array {
+    public static function edusupport_init(array $args): array {
         global $DB, $USER;
-        $courseids = array();
-        $allsupportforums = $DB->get_records('local_edusupport', array());
+        $courseids = [];
+        $allsupportforums = $DB->get_records('local_edusupport', []);
         foreach ($allsupportforums as $supportforum) {
             // If we are part of the support team of this forum, add the course.
             if (\local_edusupport\lib::is_supportteam($USER->id, $supportforum->courseid)) {
@@ -45,7 +45,7 @@ class mobile {
 
         return [
             'restrict' => [
-                'courses' => $courseids
+                'courses' => $courseids,
             ],
             // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
             /* 'javascript' => file_get_contents($CFG->dirroot . '/blocks/news/appjs/news_init.js') */

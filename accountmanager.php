@@ -62,12 +62,12 @@ $PAGE->navbar->add(get_string('pluginname', 'local_edusupport'), $url);
 $PAGE->navbar->add(get_string('supporters', 'local_edusupport'), $PAGE->url);
 
 if (!is_siteadmin()) {
-    $tourl = new moodle_url('/my', array());
-    echo $OUTPUT->render_from_template('local_edusupport/alert', array(
+    $tourl = new moodle_url('/my', []);
+    echo $OUTPUT->render_from_template('local_edusupport/alert', [
         'content' => get_string('missing_permission', 'local_edusupport'),
         'type' => 'danger',
         'url' => $tourl->__toString(),
-    ));
+    ]);
 }
 if ($mform->is_cancelled()) {
     redirect($url);

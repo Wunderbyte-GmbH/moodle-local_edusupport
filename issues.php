@@ -35,11 +35,11 @@ $PAGE->set_heading($title);
 echo $OUTPUT->header();
 
 if (!\local_edusupport\lib::is_supportteam()) {
-    echo $OUTPUT->render_from_template('local_edusupport/alert', array(
+    echo $OUTPUT->render_from_template('local_edusupport/alert', [
         'content' => get_string('missing_permission', 'local_edusupport'),
         'type' => 'danger',
         'url' => new moodle_url('/my'),
-    ));
+    ]);
 } else {
     $assign = optional_param('assign', 0, PARAM_INT); // Discussion id we want to assign to.
     $unassign = optional_param('unassign', 0, PARAM_INT); // Discussion id we want to unassign from.
@@ -50,15 +50,15 @@ if (!\local_edusupport\lib::is_supportteam()) {
     $prio = optional_param('prio', 0, PARAM_INT);
     $lvl = optional_param('lvl', 0, PARAM_INT);
     $sql = "SELECT id,discussionid FROM {local_edusupport_issues}";
-    $issues = $DB->get_records('local_edusupport_issues', array(), 'priority,id,discussionid,status');
+    $issues = $DB->get_records('local_edusupport_issues', [], 'priority,id,discussionid,status');
 
-    $params = array(
-        'current' => array(), // Issues the user is responsible for.
-        'assigned' => array(), // Issues the user receives notifications for.
-        'other' => array(), // All other issues.
+    $params = [
+        'current' => [], // Issues the user is responsible for.
+        'assigned' => [], // Issues the user receives notifications for.
+        'other' => [], // All other issues.
         'wwwroot' => $CFG->wwwroot,
-        'count' => array()
-    );
+        'count' => [],
+    ];
     $hasprio = get_config('local_edusupport', 'prioritylvl');
     $params['count']['current'] = 0;
     $params['count']['closed'] = 0;
@@ -70,25 +70,27 @@ if (!\local_edusupport\lib::is_supportteam()) {
     $prefix = "[Closed] ";
     foreach (array_reverse($issues) as $issue) {
         // Collect certain data about this issue.
-        $discussion = $DB->get_record('forum_discussions', array('id' => $issue->discussionid));
+        $discussion = $DB->get_record('forum_discussions', ['id' => $issue->discussionid]);
         $issue->name = $discussion->name;
         $issue->userid = $discussion->userid;
-        $postinguser = $DB->get_record('user', array('id' => $discussion->userid));
+        $postinguser = $DB->get_record('user', ['id' => $discussion->userid]);
         $issue->userfullname = \fullname($postinguser);
         $sql = "SELECT id,modified,userid FROM {forum_posts} WHERE discussion=? ORDER BY modified DESC LIMIT 1 OFFSET 0";
-        $lastpost = $DB->get_record_sql($sql, array($issue->discussionid));
+        $lastpost = $DB->get_record_sql($sql, [$issue->discussionid]);
         $issue->lastmodified = $issue->timemodified;
         $issue->lastpostuserid = $lastpost->userid;
-        $lastuser = $DB->get_record('user', array('id' => $issue->lastpostuserid));
+        $lastuser = $DB->get_record('user', ['id' => $issue->lastpostuserid]);
         $issue->lastpostuserfullname = fullname($lastuser);
-        $assigned = $DB->get_record('local_edusupport_subscr',
-            array('discussionid' => $issue->discussionid, 'userid' => $USER->id));
+        $assigned = $DB->get_record(
+            'local_edusupport_subscr',
+            ['discussionid' => $issue->discussionid, 'userid' => $USER->id]
+        );
         $issue->prio = "";
         $issue->priolow = "";
         $issue->priomid = "";
         $issue->priohigh = "";
         if (isset($issue->accountmanager)) {
-            $accountmanager = $DB->get_record('user', array('id' => $issue->accountmanager));
+            $accountmanager = $DB->get_record('user', ['id' => $issue->accountmanager]);
             $issue->accountmanagerfn = \fullname($accountmanager);
         }
         // Check for any actions.
@@ -136,7 +138,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
 
         // Now get the current supporter.
         if (!empty($issue->currentsupporter)) {
-            $supportuser = $DB->get_record('user', array('id' => $issue->currentsupporter));
+            $supportuser = $DB->get_record('user', ['id' => $issue->currentsupporter]);
             $issue->currentsupportername = \fullname($supportuser);
             $issue->currentsupporterid = $issue->currentsupporter;
         } else {
@@ -178,7 +180,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
         }
     }
 
-    $supporter = $DB->get_record('local_edusupport_supporters', array('userid' => $USER->id));
+    $supporter = $DB->get_record('local_edusupport_supporters', ['userid' => $USER->id]);
     // Check if holidaymode is enabled.
     $holidaymodeenabled = get_config('local_edusupport', 'holidaymodeenabled');
     if ($holidaymodeenabled) {
@@ -186,16 +188,20 @@ if (!\local_edusupport\lib::is_supportteam()) {
         if ($hm == -1) {
             // Disable holiday mode.
             $supporter->holidaymode = 0;
-            $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, array('userid' => $supporter->userid));
+            $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, ['userid' => $supporter->userid]);
         } else if (is_array($hm)) {
             $supporter->holidaymode = mktime($hm['hour'], $hm['minute'], 0, $hm['month'], $hm['day'], $hm['year']);
-            $DB->set_field('local_edusupport_supporters', 'holidaymode', $supporter->holidaymode,
-                array('userid' => $supporter->userid));
+            $DB->set_field(
+                'local_edusupport_supporters',
+                'holidaymode',
+                $supporter->holidaymode,
+                ['userid' => $supporter->userid]
+            );
         }
         if ($supporter->holidaymode < time()) {
             // Expired holidaymode - invalidate.
             $supporter->holidaymode = 0;
-            $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, array('userid' => $supporter->userid));
+            $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, ['userid' => $supporter->userid]);
         }
 
         require_once($CFG->dirroot . '/local/edusupport/classes/holidaymode_form.php');

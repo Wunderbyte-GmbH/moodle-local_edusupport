@@ -41,17 +41,22 @@ function local_edusupport_before_standard_html_head() {
 
     if (strpos($_SERVER["SCRIPT_FILENAME"], '/mod/forum/discuss.php') > 0) {
         $d = optional_param('d', 0, PARAM_INT);
-        $discussion = $DB->get_record('forum_discussions', array('id' => $d));
+        $discussion = $DB->get_record('forum_discussions', ['id' => $d]);
         $coursecontext = \context_course::instance($discussion->course);
-        if (has_capability('local/edusupport:canforward2ndlevel', $coursecontext)
-                && \local_edusupport\lib::is_supportforum($discussion->forum)) {
+        if (
+            has_capability('local/edusupport:canforward2ndlevel', $coursecontext)
+                && \local_edusupport\lib::is_supportforum($discussion->forum)
+        ) {
             $sql = "SELECT id
                         FROM {local_edusupport_subscr}
                         WHERE discussionid=? LIMIT 1 OFFSET 0";
-            $chk = $DB->get_record_sql($sql, array($discussion->id));
+            $chk = $DB->get_record_sql($sql, [$discussion->id]);
 
-            $PAGE->requires->js_call_amd('local_edusupport/main', 'injectForwardButton',
-                array($d, !empty($chk->id), $SITE->fullname));
+            $PAGE->requires->js_call_amd(
+                'local_edusupport/main',
+                'injectForwardButton',
+                [$d, !empty($chk->id), $SITE->fullname]
+            );
         }
         if (\local_edusupport\lib::is_supportforum($discussion->forum)) {
             $PAGE->requires->js_call_amd('local_edusupport/main', 'injectTest');
@@ -74,13 +79,15 @@ function local_edusupport_before_standard_html_head() {
                                 path LIKE ?
                                 OR path LIKE ?
                             )";
-            $subcategories = $DB->get_records_sql($sql, array(CONTEXT_COURSECAT, $coursecatcontext->path,
-                $coursecatcontext->path . '/%'));
+            $subcategories = $DB->get_records_sql($sql, [CONTEXT_COURSECAT, $coursecatcontext->path,
+                $coursecatcontext->path . '/%']);
             foreach ($subcategories as $subcategory) {
-                $chkforforum = $DB->get_record('local_edusupport', array('categoryid' => $subcategory->instanceid));
+                $chkforforum = $DB->get_record('local_edusupport', ['categoryid' => $subcategory->instanceid]);
                 if (!empty($chkforforum->id)) {
-                    redirect(new \moodle_url('/local/edusupport/error.php',
-                        array('error' => 'coursecategorydeletion', 'categoryid' => $categoryid)));
+                    redirect(new \moodle_url(
+                        '/local/edusupport/error.php',
+                        ['error' => 'coursecategorydeletion', 'categoryid' => $categoryid]
+                    ));
                 }
             }
         }
@@ -88,17 +95,17 @@ function local_edusupport_before_standard_html_head() {
         // Check if the coursecategory exists and is visible.
         $coursecat = \core_course_category::get($categoryid, MUST_EXIST, true);
         if (empty($coursecat->__get('visible'))) {
-            $coursecat->update(array('visible' => 1));
+            $coursecat->update(['visible' => 1]);
         }
 
         // Check for any supportforum-courses that are should be contained by this coursecat.
-        $supportforums = $DB->get_records('local_edusupport', array('categoryid' => $categoryid));
+        $supportforums = $DB->get_records('local_edusupport', ['categoryid' => $categoryid]);
         foreach ($supportforums as $supportforum) {
             // Check if the course is in place and the category.
-            $course = $DB->get_record('course', array('id' => $supportforum->id));
+            $course = $DB->get_record('course', ['id' => $supportforum->id]);
             if (!empty($course->id) && $course->category != $categoryid) {
                 // Update our database.
-                $DB->set_field('local_edusupport', 'categoryid', $categoryid, array('courseid' => $course->id));
+                $DB->set_field('local_edusupport', 'categoryid', $categoryid, ['courseid' => $course->id]);
             }
         }
     }
@@ -115,7 +122,7 @@ function local_edusupport_extend_navigation($navigation) {
             $nodehome = $navigation;
         }
         $label = get_string('issues', 'local_edusupport');
-        $link = new moodle_url('/local/edusupport/issues.php', array());
+        $link = new moodle_url('/local/edusupport/issues.php', []);
         $icon = new pix_icon('docs', '', '');
         $nodecreatecourse = $nodehome->add($label, $link, navigation_node::NODETYPE_LEAF, $label, 'edusupportissues', $icon);
         $nodecreatecourse->showinflatnavigation = true;
@@ -145,10 +152,14 @@ function local_edusupport_extend_navigation_course($parentnode, $course, $contex
 
     if (is_siteadmin()) {
         $url = '/local/edusupport/chooseforum.php';
-        $node = navigation_node::create(get_string('supportforum:choose', 'local_edusupport'),
-            new moodle_url($url, array('courseid' => $course->id)),
-            navigation_node::TYPE_SETTING, null, 'advancedsettings',
-            new pix_icon('i/marker', 'eduSupport'));
+        $node = navigation_node::create(
+            get_string('supportforum:choose', 'local_edusupport'),
+            new moodle_url($url, ['courseid' => $course->id]),
+            navigation_node::TYPE_SETTING,
+            null,
+            'advancedsettings',
+            new pix_icon('i/marker', 'eduSupport')
+        );
         $parentnode->add_node($node, $beforekey);
     }
     // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
@@ -177,7 +188,7 @@ function local_edusupport_extend_navigation_course($parentnode, $course, $contex
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $CFG, $DB, $USER;
     require_once($CFG->dirroot . '/local/edusupport/classes/lib.php');
     require_once($CFG->dirroot . '/mod/forum/lib.php');
@@ -194,7 +205,7 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
     }
 
     $postid = (int)array_shift($args);
-    if (!$post = $DB->get_record('forum_posts', array('id' => $postid))) {
+    if (!$post = $DB->get_record('forum_posts', ['id' => $postid])) {
         return false;
     }
 
@@ -205,7 +216,7 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
         return false;
     }
 
-    if (!$discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
+    if (!$discussion = $DB->get_record('forum_discussions', ['id' => $post->discussion])) {
         return false;
     }
 
@@ -253,7 +264,7 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
  */
 function local_edusupport_pre_course_category_delete($category) {
     global $DB;
-    $courses = $DB->get_records('course', array('category' => $category->id));
+    $courses = $DB->get_records('course', ['category' => $category->id]);
     foreach ($courses as $course) {
         local_edusupport_pre_course_delete($course);
     }
@@ -265,7 +276,7 @@ function local_edusupport_pre_course_category_delete($category) {
  */
 function local_edusupport_pre_course_delete($course) {
     global $DB;
-    $supportforums = $DB->get_records('local_edusupport', array('courseid' => $course->id));
+    $supportforums = $DB->get_records('local_edusupport', ['courseid' => $course->id]);
     foreach ($supportforums as $supportforum) {
         \local_edusupport\lib::supportforum_disable($supportforum->id);
     }
@@ -276,7 +287,7 @@ function local_edusupport_pre_course_delete($course) {
  */
 function local_edusupport_pre_course_module_delete($cm) {
     global $DB;
-    $forumtype = $DB->get_record('modules', array('name' => 'forum'));
+    $forumtype = $DB->get_record('modules', ['name' => 'forum']);
     if (!empty($forumtype->id) && !empty($cm->module) && $cm->module == $forumtype->id) {
         \local_edusupport\lib::supportforum_disable($cm->instance);
     }

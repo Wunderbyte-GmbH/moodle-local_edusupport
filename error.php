@@ -25,21 +25,20 @@ require_once('../../config.php');
 
 $error = required_param('error', PARAM_ALPHANUM);
 
-$urlparams = array(
-    'error' => $error
-);
-$errparams = array(
-    'type' => 'danger'
-);
+$urlparams = [
+    'error' => $error,
+];
+$errparams = [
+    'type' => 'danger',
+];
 
 switch ($error) {
     case 'coursecategorydeletion':
         $categoryid = required_param('categoryid', PARAM_INT);
         $urlparams['categoryid'] = $categoryid;
         $errparams['content'] = get_string('coursecategorydeletion', 'local_edusupport');
-        $errparams['url'] = new \moodle_url('/course/management.php', array('categoryid' => 15));
-    break;
-
+        $errparams['url'] = new \moodle_url('/course/management.php', ['categoryid' => 15]);
+        break;
 }
 
 $context = \context_system::instance();
