@@ -21,10 +21,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'eduSupport';
-$string['edusupport:addinstance'] = 'Add eduSupport block';
-$string['edusupport:myaddinstance'] = 'Add eduSupport block';
-
 $string['archive'] = 'Archive';
 $string['assigned'] = 'Assigned';
 $string['auto2ndlvl'] = 'Auto forward 2nd';
@@ -32,78 +28,67 @@ $string['auto2ndlvl:description'] = 'Automatically forward all tickets to 2nd le
 $string['autocreate_orggroup'] = 'Automatically create groups for eduvidual-Organizations';
 $string['autocreate_usergroup'] = 'Automatically create a private group for user';
 $string['be_more_accurate'] = 'Please be more accurate when describing your problem!';
-$string['edusupport:canforward2ndlevel'] = 'Can forward issues to platform support team';
 $string['cachedef_supportmenu'] = 'Cache for the supportmenu';
-$string['changes_saved_successfully'] = 'Changes saved successfully.';
 $string['changes_saved_fail'] = 'Changes could not be saved.';
+$string['changes_saved_successfully'] = 'Changes saved successfully.';
+$string['changestatus'] = 'Change status';
 $string['contactphone'] = 'Telephone';
 $string['contactphone_missing'] = 'Please enter your telephone number';
 $string['continue'] = 'continue';
 $string['coursecategorydeletion'] = 'You are trying to remove a category, that contains supportforums. Please ensure, that you disable the support forums first!';
 $string['courseconfig'] = 'Course config';
 $string['create_issue'] = 'Contact support';
-$string['create_issue_error_title'] = 'Error';
 $string['create_issue_error_description'] = 'Your issue could not be stored!';
+$string['create_issue_error_title'] = 'Error';
 $string['create_issue_mail_success_description'] = 'Your issue has been stored. We will help you as soon as possible!';
-$string['create_issue_success_title'] = 'Success';
+$string['create_issue_success_close'] = 'close';
 $string['create_issue_success_description'] = 'Your issue has been stored. We will help you as soon as possible!';
 $string['create_issue_success_description_mail'] = 'Your issue has been sent by mail. We will help you as soon as possible!';
 $string['create_issue_success_goto'] = 'View issue';
 $string['create_issue_success_responsibles'] = 'Contact person for this ticket is/are:';
-$string['create_issue_success_close'] = 'close';
-$string['cron:reminder:title'] = 'A user is waiting for your support';
-$string['cron:reminder:intro'] = 'This is a friendly reminder about an open issue, that is assigned to you as assigned supporter!';
+$string['create_issue_success_title'] = 'Success';
 $string['cron:deleteexpiredissues:title'] = 'delete expired issues';
+$string['cron:reminder:intro'] = 'This is a friendly reminder about an open issue, that is assigned to you as assigned supporter!';
+$string['cron:reminder:title'] = 'A user is waiting for your support';
 $string['dedicatedsupporter'] = 'Dedicated';
 $string['dedicatedsupporter:not_successfully_set'] = 'Dedicated supporter could not be set';
 $string['dedicatedsupporter:successfully_set'] = 'Successfully set dedicated supporter';
-$string['description'] = 'Describe the problem encountered including the link to the page/course where the problem occured';
-$string['description_missing'] = 'A detailed description of the problem is missing';
 $string['deletethreshhold'] = 'Delete closed issues after';
 $string['deletethreshhold:description'] = 'Set the threshhold for the deletion of closed issues in the issues view. This only affects the issues page, but not the forum posts. 0 means to keep closed issues forever (not yet recommended)';
-$string['goto_tutorials'] = 'Documents & Tutorials';
-$string['goto_targetforum'] = 'Supportforum';
+$string['description'] = 'Describe the problem encountered including the link to the page/course where the problem occured';
+$string['description_missing'] = 'A detailed description of the problem is missing';
+$string['edusupport:addinstance'] = 'Add eduSupport block';
+$string['edusupport:canforward2ndlevel'] = 'Can forward issues to platform support team';
 $string['edusupport:manage'] = 'Manage';
+$string['edusupport:myaddinstance'] = 'Add eduSupport block';
 $string['email_to_xyz'] = 'Send mail to {$a->email}';
 $string['enableprepage'] = "Enable Prepage";
 $string['enableprepage:description'] = "Enables a site before form";
-$string['prepage'] = "Prepage content";
-$string['prepage:description'] = "Content displayed before form e.g. faq";
 $string['extralinks'] = 'Extralinks';
 $string['extralinks:description'] = 'If you enter links here, the "help"-Button will be a menu instead of button. It will include the "help"-Button as first element, and all extra links as additional links. Enter links line by line in the following form: linkname|url|faicon|target';
 $string['faqlink'] = 'FAQ-link';
 $string['faqlink:description'] = 'link to FAQ';
 $string['faqread'] = 'Please confirm that you have read the FAQ';
 $string['faqread:description'] = 'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
+$string['goto_targetforum'] = 'Supportforum';
+$string['goto_tutorials'] = 'Documents & Tutorials';
 $string['guestmail'] = 'Your e-mail';
-
-$string['status'] = 'Status';
-$string['changestatus'] = 'Change status';
-$string['startedby'] = 'Started by';
-
 $string['header'] = 'Request for help in &nbsp;<i>{$a}</i>';
-$string['holidaymodeenabled'] = "Activate holidaymode";
-$string['holidaymodeenabled:description'] = "Holidaymode: Supportuser don't get tickets till a set date.";
 $string['holidaymode'] = 'Holidaymode';
+$string['holidaymode_end'] = 'End holidaymode';
 $string['holidaymode_is_on'] = 'Holidaymode is on';
 $string['holidaymode_is_on_descr'] = 'As long as you are on holidays, no new issues will be assigned to you.';
-$string['holidaymode_end'] = 'End holidaymode';
-$string['notasigned'] = 'No support user has been assigned yet';
+$string['holidaymodeenabled'] = "Activate holidaymode";
+$string['holidaymodeenabled:description'] = "Holidaymode: Supportuser don't get tickets till a set date.";
 $string['issue'] = 'Issue';
-$string['issue:countcurrent'] = 'Open issues';
-$string['issue:countassigned'] = 'Subscribed issues';
-$string['issue:countother'] = 'Other issues';
-$string['issue:countclosed'] = 'Closed issues';
 $string['issue:assigned'] = 'You have been assigned to this issue:';
+$string['issue:countassigned'] = 'Subscribed issues';
+$string['issue:countclosed'] = 'Closed issues';
+$string['issue:countcurrent'] = 'Open issues';
+$string['issue:countother'] = 'Other issues';
 $string['issue_assign'] = 'Assign issue';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
-$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been received.</p>
-
-<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
-<p>You are receiving this email because you asked the team for help via a support request. You can find all your requests in the <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">support forum</a> on {$a->sitename}. </p>
-<p>We wish you a great learning experience!</p>
-<p>Your {$a->sitename} support team</p>';
 $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
 
 <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
@@ -111,6 +96,21 @@ $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that you
 <p>We wish you a great learning experience!</p>
 
 <p>Your {$a->sitename} team</p>';
+$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been received.</p>
+
+<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
+<p>You are receiving this email because you asked the team for help via a support request. You can find all your requests in the <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">support forum</a> on {$a->sitename}. </p>
+<p>We wish you a great learning experience!</p>
+<p>Your {$a->sitename} support team</p>';
+$string['notasigned'] = 'No support user has been assigned yet';
+$string['pluginname'] = 'eduSupport';
+
+$string['prepage'] = "Prepage content";
+$string['prepage:description'] = "Content displayed before form e.g. faq";
+
+$string['startedby'] = 'Started by';
+$string['status'] = 'Status';
+
 // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 /* $string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team'; */
 $string['issue_assigned:subject'] = 'Your support request has been assigned';

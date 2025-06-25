@@ -33,7 +33,6 @@ namespace local_edusupport;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class accountmanager {
-
     public $userid;
 
     /**
@@ -41,7 +40,6 @@ class accountmanager {
      *
      */
     public function __construct() {
-
     }
 
     /**
@@ -64,12 +62,12 @@ class accountmanager {
      * @return array
      */
     public static function get_capabiltities_to_check() {
-        return array(
+        return [
             'moodle/course:manageactivities' => 'moodle/course:manageactivities',
             'moodle/course:viewhiddenactivities' => 'moodle/course:viewhiddenactivities',
             'moodle/category:manage' => 'moodle/category:manage',
             'enrol/category:config' => 'enrol/category:config',
-        );
+        ];
     }
 
     /**
@@ -163,7 +161,7 @@ class accountmanager {
         if (empty($users) || !$this->can_choose_accountmanager()) {
             return;
         }
-        $options = array('0' => get_string('none', 'local_edusupport'));
+        $options = ['0' => get_string('none', 'local_edusupport')];
 
         foreach ($users as $user) {
             $options[$user->id] = $user->firstname . ' ' . $user->lastname;

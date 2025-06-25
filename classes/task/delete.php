@@ -29,7 +29,7 @@ class delete extends \core\task\scheduled_task {
         return get_string('cron:deleteexpiredissues:title', 'local_edusupport');
     }
 
-    public function execute($debug=false) {
+    public function execute($debug = false) {
         $issues = \local_edusupport\lib::get_expiredissues();
         foreach ($issues as $issue) {
             \local_edusupport\lib::delete_issue($issue->discussionid);

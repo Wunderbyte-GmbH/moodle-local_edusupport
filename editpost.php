@@ -31,7 +31,7 @@ $discussionid = $discussion | $d;
 
 $edit   = required_param('edit', PARAM_INT);
 
-$url = new moodle_url('/local/edusupport/editpost.php', array('discussion' => $discussionid, 'edit' => $edit));
+$url = new moodle_url('/local/edusupport/editpost.php', ['discussion' => $discussionid, 'edit' => $edit]);
 $PAGE->set_url($url);
 
 $context = \context_system::instance();
@@ -39,35 +39,35 @@ $PAGE->set_context($context);
 require_login();
 
 $issue = \local_edusupport\lib::get_issue($discussionid);
-$discussion = $DB->get_record('forum_discussions', array('id' => $discussionid), '*', MUST_EXIST);
+$discussion = $DB->get_record('forum_discussions', ['id' => $discussionid], '*', MUST_EXIST);
 $PAGE->set_title($discussion->name);
 $PAGE->set_heading($discussion->name);
 
 if (!\local_edusupport\lib::is_supportteam()) {
     echo $OUTPUT->header();
-    $tocmurl = new moodle_url('/course/view.php', array('id' => $issue->courseid));
-    echo $OUTPUT->render_from_template('local_edusupport/alert', array(
+    $tocmurl = new moodle_url('/course/view.php', ['id' => $issue->courseid]);
+    echo $OUTPUT->render_from_template('local_edusupport/alert', [
         'content' => get_string('missing_permission', 'local_edusupport'),
         'type' => 'danger',
         'url' => $tocmurl->__toString(),
-    ));
+    ]);
 } else {
-    $course = $DB->get_record('course', array('id' => $discussion->course), '*', MUST_EXIST);
-    $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $discussion->course], '*', MUST_EXIST);
+    $forum = $DB->get_record('forum', ['id' => $discussion->forum], '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
-    $post = $DB->get_record('forum_posts', array('discussion' => $discussionid, 'parent' => 0));
+    $post = $DB->get_record('forum_posts', ['discussion' => $discussionid, 'parent' => 0]);
     $coursecontext = \context_course::instance($forum->course);
     $modcontext = \context_module::instance($cm->id);
 
-    $PAGE->set_title("$course->shortname: ".format_string($discussion->name));
+    $PAGE->set_title("$course->shortname: " . format_string($discussion->name));
     $PAGE->set_heading($course->fullname);
 
-    $options = array();
+    $options = [];
 
     $vaultfactory = \mod_forum\local\container::get_vault_factory();
     $discussionvault = $vaultfactory->get_discussion_vault();
     $vdiscussion = $discussionvault->get_from_id($discussionid);
-    $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
+    $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid]);
 
     if (!$vdiscussion) {
         throw new \moodle_exception('Unable to find discussion with id ' . $discussionid);
@@ -75,7 +75,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
 
     $forumvault = $vaultfactory->get_forum_vault();
     $vforum = $forumvault->get_from_id($vdiscussion->get_forum_id());
-    $forum = $DB->get_record('forum', array('id' => $vdiscussion->get_forum_id()));
+    $forum = $DB->get_record('forum', ['id' => $vdiscussion->get_forum_id()]);
 
     if (!$forum) {
         throw new \moodle_exception('Unable to find forum with id ' . $vdiscussion->get_forum_id());
@@ -93,12 +93,12 @@ if (!\local_edusupport\lib::is_supportteam()) {
     if (!$vpost = $postvault->get_from_id($edit)) {
         throw new moodle_exception("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f={$vforum->get_id()}");
     }
-    $post = $DB->get_record('forum_posts', array('id' => $edit));
+    $post = $DB->get_record('forum_posts', ['id' => $edit]);
 
     require_once($CFG->dirroot . '/local/edusupport/classes/post_form.php');
     $thresholdwarning = forum_check_throttling($vforum, $cm);
     $mformpost = new \local_edusupport_post_form($CFG->wwwroot . '/local/edusupport/editpost.php?d=' .
-        $discussionid . '&edit=' . $edit, array(
+        $discussionid . '&edit=' . $edit, [
             'course' => $course,
             'cm' => $cm,
             'coursecontext' => $coursecontext,
@@ -108,8 +108,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
             'subscribe' => 0,
             'thresholdwarning' => $thresholdwarning,
             'edit' => $edit,
-        ), 'post', '', array('id' => 'mformforum')
-    );
+        ], 'post', '', ['id' => 'mformforum']);
 
     $formheading = '';
     if (!empty($parent)) {
@@ -127,22 +126,35 @@ if (!\local_edusupport\lib::is_supportteam()) {
     // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     /* \file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment',
         empty($post->id)?null:$post->id, \mod_forum_post_form::attachment_options($forum)); */
-    \file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', $post->id,
-        \local_edusupport_post_form::attachment_options($forum));
+    \file_prepare_draft_area(
+        $draftitemid,
+        $modcontext->id,
+        'mod_forum',
+        'attachment',
+        $post->id,
+        \local_edusupport_post_form::attachment_options($forum)
+    );
 
     $draftideditor = file_get_submitted_draft_itemid('message');
-    $currenttext = file_prepare_draft_area($draftideditor, $modcontext->id, 'mod_forum', 'post', $post->id,
-        \local_edusupport_post_form::editor_options($modcontext, $post->id), $post->message);
+    $currenttext = file_prepare_draft_area(
+        $draftideditor,
+        $modcontext->id,
+        'mod_forum',
+        'post',
+        $post->id,
+        \local_edusupport_post_form::editor_options($modcontext, $post->id),
+        $post->message
+    );
     $mformpost->set_data(
-        array(
+        [
             'attachments' => $draftitemid,
             'general' => $heading,
             'subject' => 'Re: ' . $post->subject,
-            'message' => array(
+            'message' => [
                 'text' => $currenttext,
                 'format' => editors_get_preferred_format(),
-                'itemid' => $draftideditor
-            ),
+                'itemid' => $draftideditor,
+            ],
             'mailnow' => 1,
             'userid' => $post->userid,
             'parent' => $post->parent,
@@ -151,13 +163,13 @@ if (!\local_edusupport\lib::is_supportteam()) {
             'forum' => $forum->id,
             'edit' => $edit,
             'itemid' => 0,
-        )
-        + (isset($post->format) ? array('format' => $post->format) : array())
-        + (isset($discussion->timestart) ? array('timestart' => $discussion->timestart) : array())
-        + (isset($discussion->timeend) ? array('timeend' => $discussion->timeend) : array())
-        + (isset($discussion->pinned) ? array('pinned' => $discussion->pinned) : array())
-        + (isset($post->groupid) ? array('groupid' => $post->groupid) : array())
-        + (isset($discussion->id) ? array('discussion' => $discussion->id) : array())
+        ]
+        + (isset($post->format) ? ['format' => $post->format] : [])
+        + (isset($discussion->timestart) ? ['timestart' => $discussion->timestart] : [])
+        + (isset($discussion->timeend) ? ['timeend' => $discussion->timeend] : [])
+        + (isset($discussion->pinned) ? ['pinned' => $discussion->pinned] : [])
+        + (isset($post->groupid) ? ['groupid' => $post->groupid] : [])
+        + (isset($discussion->id) ? ['discussion' => $discussion->id] : [])
     );
     if ($mformpost->is_cancelled()) {
         redirect($CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussion->id);
@@ -183,10 +195,22 @@ if (!\local_edusupport\lib::is_supportteam()) {
         // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
         /* $currenttext = file_prepare_draft_area($draftideditor, $modcontext->id, 'mod_forum', 'post', $postid,
             \local_edusupport_post_form::editor_options($modcontext, $postid), $post->message); */
-        file_save_draft_area_files($fromform->attachments, $modcontext->id, 'mod_forum', 'attachment',
-                    $post->id, \local_edusupport_post_form::editor_options($modcontext, $post->id));
-        file_save_draft_area_files($fromform->attachments, $modcontext->id, 'mod_forum', 'post',
-                    $post->id, \local_edusupport_post_form::editor_options($modcontext, $post->id));
+        file_save_draft_area_files(
+            $fromform->attachments,
+            $modcontext->id,
+            'mod_forum',
+            'attachment',
+            $post->id,
+            \local_edusupport_post_form::editor_options($modcontext, $post->id)
+        );
+        file_save_draft_area_files(
+            $fromform->attachments,
+            $modcontext->id,
+            'mod_forum',
+            'post',
+            $post->id,
+            \local_edusupport_post_form::editor_options($modcontext, $post->id)
+        );
 
         forum_trigger_post_updated_event($post, $discussion, $modcontext, $forum);
 

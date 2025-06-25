@@ -30,11 +30,7 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use context_user;
 
-class provider implements
-    \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\core_userlist_provider,
-    \core_privacy\local\request\plugin\provider {
-
+class provider implements \core_privacy\local\request\core_userlist_provider, \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider {
     public static function get_metadata(collection $collection): collection {
 
         // Table edusuport subscribers.
@@ -47,7 +43,7 @@ class provider implements
             'userid' => 'privacy:metadata:edusupport:userid',
             ],
             'privacy:metadata:edusupport:subscr'
-            );
+        );
 
         // Table edusuport supporters.
         $collection->add_database_table(
@@ -59,7 +55,7 @@ class provider implements
             'supportlvl' => 'privacy:metadata:edusupport:supportlvl',
             ],
             'privacy:metadata:edusupport:supporters'
-            );
+        );
 
         // Table edusuport issues.
         $collection->add_database_table(
@@ -71,7 +67,7 @@ class provider implements
             'priority' => 'privacy:metadata:edusupport:priority',
             ],
             'privacy:metadata:edusupport:issues'
-            );
+        );
 
         return $collection;
     }
@@ -84,11 +80,11 @@ class provider implements
      * @param int $userid the userid.
      * @return contextlist the list of contexts containing user info for the user.
      */
-    public static function get_contexts_for_userid (int $userid): contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
         $params = [
         'contextlevel' => CONTEXT_USER,
-        'userid'       => $userid
+        'userid'       => $userid,
         ];
         $sql = "SELECT ctx.id
         FROM {context} ctx
@@ -125,7 +121,7 @@ class provider implements
 
         $params = [
         'contextlevel' => CONTEXT_USER,
-        'contextid'       => $context->id
+        'contextid'       => $context->id,
         ];
 
         $sql = "SELECT esc.userid
@@ -170,7 +166,7 @@ class provider implements
         $dataissues[] = null;
         $user = $contextlist->get_user();
         $context = context_user::instance($user->id);
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
         $sql = "SELECT ctx.id as cmid, esc.*
         FROM {context} ctx
         JOIN {local_edusupport_subscr} esc ON ctx.instanceid = esc.userid AND ctx.contextlevel = :contextlevel
@@ -183,12 +179,14 @@ class provider implements
             'id' => $row->id,
             'issueid' => $row->issueid,
             'discussionid' => $row->discussionid,
-            'userid' => $row->userid
+            'userid' => $row->userid,
             ];
         }
         writer::with_context($context)
-        ->export_data([get_string('pluginname', 'local_edusupport'), get_string('issue:countassigned', 'local_edusupport')],
-            (object)$datasubscr);
+        ->export_data(
+            [get_string('pluginname', 'local_edusupport'), get_string('issue:countassigned', 'local_edusupport')],
+            (object)$datasubscr
+        );
 
         $sql = "SELECT ctx.id as cmid, esc.*
         FROM {context} ctx
@@ -202,13 +200,14 @@ class provider implements
                 'id' => $row->id,
                 'courseid' => $row->courseid,
                 'userid' => $row->userid,
-                'supportlevel' => $row->supportlevel
+                'supportlevel' => $row->supportlevel,
             ];
-
         }
         writer::with_context($context)
-        ->export_data([get_string('pluginname', 'local_edusupport'), get_string('supporters', 'local_edusupport')],
-            (object)$datasupport);
+        ->export_data(
+            [get_string('pluginname', 'local_edusupport'), get_string('supporters', 'local_edusupport')],
+            (object)$datasupport
+        );
         $sql = "SELECT ctx.id as cmid, esc.*
         FROM {context} ctx
         JOIN {local_edusupport_issues} esc ON ctx.instanceid = esc.currentsupporter AND ctx.contextlevel = :contextlevel
@@ -221,12 +220,14 @@ class provider implements
                 'issueid' => $row->id,
                 'discussionid' => $row->discussionid,
                 'currentsupporter' => $row->currentsupporter,
-                'priority' => $row->priority
+                'priority' => $row->priority,
             ];
         }
         writer::with_context($context)
-        ->export_data([get_string('pluginname', 'local_edusupport'), get_string('your_issues', 'local_edusupport')],
-            (object) $dataissues);
+        ->export_data(
+            [get_string('pluginname', 'local_edusupport'), get_string('your_issues', 'local_edusupport')],
+            (object) $dataissues
+        );
     }
 
     /**

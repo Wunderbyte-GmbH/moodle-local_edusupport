@@ -39,7 +39,7 @@ $courseid = optional_param('courseid', \local_edusupport\lib::SYSTEM_COURSE_ID, 
 $context = \context_system::instance();
 $PAGE->set_context($context);
 require_login();
-$PAGE->set_url(new \moodle_url('/local/edusupport/choosesupporters.php', array('id' => $id, 'userid' => $userid)));
+$PAGE->set_url(new \moodle_url('/local/edusupport/choosesupporters.php', ['id' => $id, 'userid' => $userid]));
 
 $title = get_string('supporters', 'local_edusupport');
 $PAGE->set_title($title);
@@ -62,94 +62,95 @@ $PAGE->navbar->add(get_string('supporters', 'local_edusupport'), $PAGE->url);
 echo $OUTPUT->header();
 
 if (!is_siteadmin()) {
-    $tourl = new moodle_url('/my', array());
-    echo $OUTPUT->render_from_template('local_edusupport/alert', array(
+    $tourl = new moodle_url('/my', []);
+    echo $OUTPUT->render_from_template('local_edusupport/alert', [
         'content' => get_string('missing_permission', 'local_edusupport'),
         'type' => 'danger',
         'url' => $tourl->__toString(),
-    ));
+    ]);
 } else {
     if (!empty($userid)) {
         $success = false;
         if (!empty($id)) {
-            $record = $DB->get_record('local_edusupport_supporters', array('id' => $id));
+            $record = $DB->get_record('local_edusupport_supporters', ['id' => $id]);
             if (!empty($remove)) {
-                $success = $DB->delete_records('local_edusupport_supporters', array('id' => $id));
+                $success = $DB->delete_records('local_edusupport_supporters', ['id' => $id]);
                 if ($success) {
                     $event = \local_edusupport\event\supportuser_deleted::create(
-                        array(
+                        [
                             'objectid' => $id,
                             'context' => $context,
                             'relateduserid' => $record->userid,
-                            'other' => array('supportuserid' => $record->userid, 'supportlevel' => $record->supportlevel)
-                        )
+                            'other' => ['supportuserid' => $record->userid, 'supportlevel' => $record->supportlevel],
+                        ]
                     );
                     $event->trigger();
                 }
             } else {
-                $success = $DB->update_record('local_edusupport_supporters', array(
+                $success = $DB->update_record('local_edusupport_supporters', [
                     'id' => $id,
                     'courseid' => $courseid,
                     'userid' => $userid,
                     'supportlevel' => $supportlevel,
-                ));
+                ]);
                 if ($success) {
                     $event = \local_edusupport\event\supportuser_changed::create(
-                        array(
+                        [
                             'objectid' => $id,
                             'context' => $context,
                             'relateduserid' => $record->userid,
-                            'other' => array(
+                            'other' => [
                                 'oldsupportuserid' => $record->userid,
                                 'newsupportuserid' => $userid,
                                 'oldsupportlevel' => $record->supportlevel,
-                                'newsupportlevel' => $supportlevel
-                            )
-                        )
+                                'newsupportlevel' => $supportlevel,
+                            ],
+                        ]
                     );
                     $event->trigger();
                 }
-
             }
-        } else if (!$DB->record_exists('local_edusupport_supporters', array('courseid' => $courseid, 'userid' => $userid))) {
-            $success = $DB->insert_record('local_edusupport_supporters', array(
+        } else if (!$DB->record_exists('local_edusupport_supporters', ['courseid' => $courseid, 'userid' => $userid])) {
+            $success = $DB->insert_record('local_edusupport_supporters', [
                 'courseid' => $courseid,
                 'userid' => $userid,
                 'supportlevel' => $supportlevel,
-            ));
+            ]);
             if ($success) {
                 $event = \local_edusupport\event\supportuser_added::create(
-                    array(
+                    [
                         'objectid' => $success,
                         'context' => $context,
                         'relateduserid' => $userid,
-                        'other' => array('supportuserid' => $userid, 'supportlevel' => $supportlevel)));
+                    'other' => ['supportuserid' => $userid,
+                    'supportlevel' => $supportlevel]]
+                );
                 $event->trigger();
             }
         }
         if ($success) {
             \local_edusupport\lib::supportforum_rolecheck();
             if (!empty($remove)) {
-                $chk = $DB->get_record('local_edusupport_supporters', array('userid' => $userid));
+                $chk = $DB->get_record('local_edusupport_supporters', ['userid' => $userid]);
                 if (empty($chk->id)) {
                     // This supporter left the team. We remove all assignments.
-                    $DB->delete_records('local_edusupport_subscr', array('userid' => $userid));
+                    $DB->delete_records('local_edusupport_subscr', ['userid' => $userid]);
                 }
             } else if (empty($supportlevel)) {
-                $issues = $DB->get_records('local_edusupport_issues', array('currentsupporter' => 0));
+                $issues = $DB->get_records('local_edusupport_issues', ['currentsupporter' => 0]);
                 foreach ($issues as $issue) {
-                    $DB->insert_record('local_edusupport_subscr', array(
+                    $DB->insert_record('local_edusupport_subscr', [
                         'issueid' => $issue->id,
                         'discussionid' => $issue->discussionid,
                         'userid' => $userid,
-                    ));
+                    ]);
                 }
             }
         }
-        echo $OUTPUT->render_from_template('local_edusupport/alert', array(
+        echo $OUTPUT->render_from_template('local_edusupport/alert', [
             'content' => get_string(($success) ? 'changes_saved_successfully' : 'changes_saved_fail', 'local_edusupport'),
             'type' => ($success) ? 'success' : 'danger',
-        ));
+        ]);
     }
 
     $sql = "SELECT bes.*,u.firstname,u.lastname
@@ -157,9 +158,11 @@ if (!is_siteadmin()) {
                 WHERE u.id = bes.userid
                 AND u.deleted != 1
                 ORDER BY u.lastname ASC, u.firstname ASC, bes.supportlevel ASC";
-    $supporters = array_values($DB->get_records_sql($sql, array()));
-    echo $OUTPUT->render_from_template('local_edusupport/choosesupporters',
-        array('supporters' => $supporters, 'wwwroot' => $CFG->wwwroot));
+    $supporters = array_values($DB->get_records_sql($sql, []));
+    echo $OUTPUT->render_from_template(
+        'local_edusupport/choosesupporters',
+        ['supporters' => $supporters, 'wwwroot' => $CFG->wwwroot]
+    );
 }
 
 echo $OUTPUT->footer();

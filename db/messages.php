@@ -22,13 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$messageproviders = array(
+$messageproviders = [
 
-	// Message to issue assigned.
-    'edusupport_issue' =>  array (
-         'defaults' => array(
+    // Message to issue assigned.
+    'edusupport_issue' => [
+         'defaults' => [
             'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ),
-    ),
-);
+         ],
+    ],
+];

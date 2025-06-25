@@ -24,16 +24,16 @@
 defined('MOODLE_INTERNAL') || die;
 
 // We define the web service functions to install.
-$functions = array(
-    'local_edusupport_close_issue' => array(
+$functions = [
+    'local_edusupport_close_issue' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'close_issue',
         'classpath'   => 'local/edusupport/externallib.php',
         'description' => 'Close an issue',
         'type'        => 'write',
         'ajax'        => 1,
-    ),
-    'local_edusupport_create_issue' => array(
+    ],
+    'local_edusupport_create_issue' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'create_issue',
         'classpath'   => 'local/edusupport/externallib.php',
@@ -41,8 +41,8 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => 1,
         'loginrequired' => false,
-    ),
-    'local_edusupport_create_form' => array(
+    ],
+    'local_edusupport_create_form' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'create_form',
         'classpath'   => 'local/edusupport/externallib.php',
@@ -50,53 +50,53 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => 1,
         'loginrequired' => false,
-    ),
-    'local_edusupport_get_potentialsupporters' => array(
+    ],
+    'local_edusupport_get_potentialsupporters' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'get_potentialsupporters',
         'classpath'   => 'local/edusupport/externallib.php',
         'description' => 'Get potential supporters for a discussion.',
         'type'        => 'read',
         'ajax'        => 1,
-    ),
-    'local_edusupport_set_currentsupporter' => array(
+    ],
+    'local_edusupport_set_currentsupporter' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'set_currentsupporter',
         'classpath'   => 'local/edusupport/externallib.php',
         'description' => 'Set the current supporter of a discussion.',
         'type'        => 'write',
         'ajax'        => 1,
-    ),
-    'local_edusupport_set_archive' => array(
+    ],
+    'local_edusupport_set_archive' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'set_archive',
         'classpath'   => 'local/edusupport/externallib.php',
         'description' => 'Sets a forum as archive',
         'type'        => 'write',
         'ajax'        => 1,
-    ),
-    'local_edusupport_set_default' => array(
+    ],
+    'local_edusupport_set_default' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'set_default',
         'classpath'   => 'local/edusupport/externallib.php',
         'description' => 'Sets a forum as system default',
         'type'        => 'write',
         'ajax'        => 1,
-    ),
-    'local_edusupport_set_supporter' => array(
+    ],
+    'local_edusupport_set_supporter' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'set_supporter',
         'classpath'   => 'local/edusupport/externallib.php',
         'description' => 'Sets the supportlevel of a user',
         'type'        => 'write',
         'ajax'        => 1,
-    ),
-    'local_edusupport_set_status' => array(
+    ],
+    'local_edusupport_set_status' => [
         'classname'   => 'local_edusupport_external',
         'methodname'  => 'set_status',
         'classpath'   => 'local/edusupport/externallib.php',
         'description' => 'Sets the supportlevel of a user',
         'type'        => 'write',
         'ajax'        => 1,
-    ),
-);
+    ],
+];

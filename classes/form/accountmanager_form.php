@@ -19,7 +19,7 @@
  * THIS IS A CLONE OF THE STANDARD FORM, THAT IS MODIFIED A LITTLE
  * FOR THIS PLUGIN.
  *
- * @package   local_edusuport
+ * @package   local_edusupport
  * @copyright Thomas winkler
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +39,6 @@ use moodleform;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class accountmanager_form extends moodleform {
-
     /**
      * Form definition
      *
@@ -55,8 +54,13 @@ class accountmanager_form extends moodleform {
             'multiple' => true,
             'noselectionstring' => get_string('none', 'local_edusupport'),
         ];
-        $mform->addElement('autocomplete', 'possiblemanagers', get_string('possiblemanagers', 'local_edusupport'),
-            $possiblemanagers, $options);
+        $mform->addElement(
+            'autocomplete',
+            'possiblemanagers',
+            get_string('possiblemanagers', 'local_edusupport'),
+            $possiblemanagers,
+            $options
+        );
         $mform->setAdvanced('autocomplete', true);
 
         $capstocheck = \local_edusupport\accountmanager::get_capabiltities_to_check();
@@ -91,5 +95,4 @@ class accountmanager_form extends moodleform {
         $defaults->capstocheck = $currentcaps;
         return parent::set_data($defaults);
     }
-
 }

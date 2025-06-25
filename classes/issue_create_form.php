@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    block_edupublisher
+ * @package    local_edusupport
  * @copyright  2018 Digital Education Society (http://www.dibig.at)
  * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
  * @author     Robert Schrenk
@@ -43,9 +43,9 @@ class issue_create_form extends moodleform {
         $disablephonefield = get_config('local_edusupport', 'phonefield');
         $guestuserallowed = true; // Do we need 'guestuserallowed' from get_config?
 
-        $editoroptions = array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 0,
+        $editoroptions = ['subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 0,
                                'changeformat' => 0, 'context' => null, 'noclean' => 0,
-                               'trusttext' => 0, 'enable_filemanagement' => false);
+                               'trusttext' => 0, 'enable_filemanagement' => false];
 
         $mform = $this->_form;
 
@@ -78,10 +78,10 @@ class issue_create_form extends moodleform {
 
         $potentialtargets = \local_edusupport\lib::get_potentialtargets();
 
-        $hideifs = array('mail');
+        $hideifs = ['mail'];
 
         // If there are not potentialtargets we don't care. We will send a mail to the Moodle default support contact.
-        $options = array();
+        $options = [];
         foreach ($potentialtargets as $pt) {
             if (empty($pt->potentialgroups) || count($pt->potentialgroups) == 0) {
                 $options[$pt->id . '_0'] = $pt->name;
@@ -99,7 +99,7 @@ class issue_create_form extends moodleform {
         }
         if (count($potentialtargets) == 0) {
             $supportuser = \core_user::get_support_user();
-            $options['mail'] = get_string('email_to_xyz', 'local_edusupport', (object) array('email' => $supportuser->email));
+            $options['mail'] = get_string('email_to_xyz', 'local_edusupport', (object) ['email' => $supportuser->email]);
         }
 
         $hideifs = '["' . implode('","', $hideifs) . '"]';
@@ -112,52 +112,77 @@ class issue_create_form extends moodleform {
                 'var pt2 = $(\'#id_postto2ndlevel\');',
                 '$(pt2).prop(\'checked\', false);',
                 '$(pt2).closest(\'div.form-group\').css(\'display\', hide ? \'none\' : \'block\');',
-            '});'
+            '});',
         ];
-        $mform->addElement('select', 'forum_group', get_string('to_group', 'local_edusupport'), $options,
-            array('onchange' => implode("", $postto2ndlevelhideshow)));
+        $mform->addElement(
+            'select',
+            'forum_group',
+            get_string('to_group', 'local_edusupport'),
+            $options,
+            ['onchange' => implode("", $postto2ndlevelhideshow)]
+        );
         $mform->setType('forum_group', PARAM_INT);
 
         if (!empty($usesubjects = get_config('local_edusupport', 'predefined_subjects'))) {
             $options = ['' => ''];
             $options += explode(PHP_EOL, $usesubjects);
             $options = array_combine($options, $options);
-            $mform->addElement('select', 'subject', get_string('subject', 'local_edusupport'), $options,
-                array('style' => 'width: 100%;'));
+            $mform->addElement(
+                'select',
+                'subject',
+                get_string('subject', 'local_edusupport'),
+                $options,
+                ['style' => 'width: 100%;']
+            );
             $mform->setType('subject', PARAM_TEXT);
             $mform->addRule('subject', get_string('subject_missing', 'local_edusupport'), 'required', null, 'server');
         } else {
-            $mform->addElement('text', 'subject', get_string('subject', 'local_edusupport'),
-                array('style' => 'width: 100%;', 'type' => 'tel'));
+            $mform->addElement(
+                'text',
+                'subject',
+                get_string('subject', 'local_edusupport'),
+                ['style' => 'width: 100%;', 'type' => 'tel']
+            );
             $mform->setType('subject', PARAM_TEXT);
             $mform->addRule('subject', get_string('subject_missing', 'local_edusupport'), 'required', null, 'server');
         }
 
         if (!$disablephonefield) {
-            $mform->addElement('text', 'contactphone', get_string('contactphone', 'local_edusupport'),
-                array('style' => 'width: 100%;'));
+            $mform->addElement(
+                'text',
+                'contactphone',
+                get_string('contactphone', 'local_edusupport'),
+                ['style' => 'width: 100%;']
+            );
         } else {
             $mform->addElement('hidden', 'contactphone', '');
         }
         $mform->setType('contactphone', PARAM_TEXT);
 
         if ((isguestuser() || !isloggedin()) && $guestuserallowed) {
-            $mform->addElement('text', 'guestmail', get_string('guestmail', 'local_edusupport'), array('style' => 'width: 100%;'));
+            $mform->addElement('text', 'guestmail', get_string('guestmail', 'local_edusupport'), ['style' => 'width: 100%;']);
             $mform->setType('guestmail', PARAM_EMAIL);
             $mform->addRule('guestmail', get_string('mail_missing', 'local_edusupport'), 'required', null, 'server');
         }
 
         // Accountmanager select.
-        $am = new accountmanager;
+        $am = new accountmanager();
         $am->prepare_accountmanager_for_form($mform);
 
-        $mform->addElement('textarea', 'description', get_string('description', 'local_edusupport'),
-            array('style' => 'width: 100%;', 'rows' => 10));
+        $mform->addElement(
+            'textarea',
+            'description',
+            get_string('description', 'local_edusupport'),
+            ['style' => 'width: 100%;', 'rows' => 10]
+        );
         $mform->setType('description', PARAM_RAW);
         $mform->addRule('description', get_string('description_missing', 'local_edusupport'), 'required', null, 'server');
 
-        $mform->addElement('checkbox', 'postto2ndlevel', '', get_string('postto2ndlevel:description', 'local_edusupport',
-            array('sitename' => $SITE->fullname)));
+        $mform->addElement('checkbox', 'postto2ndlevel', '', get_string(
+            'postto2ndlevel:description',
+            'local_edusupport',
+            ['sitename' => $SITE->fullname]
+        ));
         $mform->setType('postto2ndlevel', PARAM_BOOL);
         $mform->setDefault('postto2ndlevel', 0);
 
@@ -170,7 +195,7 @@ class issue_create_form extends moodleform {
             '  <div class="alert alert-success hidden">' . get_string('screenshot:upload:successful', 'local_edusupport') .
                 '</div>',
             ' </div>',
-            '</div>'
+            '</div>',
         ];
         $mform->addElement('html', implode("\n", $fileupload));
         $mform->addElement('html', '<script> setTimeout(function() { ' . implode('', $postto2ndlevelhideshow) .
@@ -181,7 +206,7 @@ class issue_create_form extends moodleform {
 
     // Custom validation should be added here.
     public function validation($data, $files) {
-        $errors = array();
+        $errors = [];
         return $errors;
     }
 

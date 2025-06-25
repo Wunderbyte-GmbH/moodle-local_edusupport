@@ -29,7 +29,6 @@ use local_edusupport\event\supportuser_changed;
 use local_edusupport\event\supportuser_deleted;
 
 class observer {
-
     /**
      * Observer for the supportuser_added event
      *
@@ -71,7 +70,7 @@ class observer {
 
         $entry = (object)$event->get_data();
         if ($entry->eventname == '\core\event\user_deleted') {
-            $conditions = array('id' => $event->relateduserid);
+            $conditions = ['id' => $event->relateduserid];
             \local_edusupport\accountmanager::delete_account_manager($event->relateduserid);
             return $DB->delete_records('local_edusupport_supporters', $conditions);
         }
@@ -80,27 +79,29 @@ class observer {
             return \local_edusupport\lib::delete_issue($discussionid);
         } else {
             if (substr($entry->eventname, 0, strlen("\\mod_forum\\event\\post_")) == "\\mod_forum\\event\\post_") {
-                $post = $DB->get_record("forum_posts", array("id" => $entry->objectid));
-                $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion));
+                $post = $DB->get_record("forum_posts", ["id" => $entry->objectid]);
+                $discussion = $DB->get_record("forum_discussions", ["id" => $post->discussion]);
             } else {
-                $discussion = $DB->get_record("forum_discussions", array("id" => $entry->objectid));
-                $post = $DB->get_record("forum_posts", array("discussion" => $discussion->id, "parent" => 0));
+                $discussion = $DB->get_record("forum_discussions", ["id" => $entry->objectid]);
+                $post = $DB->get_record("forum_posts", ["discussion" => $discussion->id, "parent" => 0]);
             }
 
-            $forum = $DB->get_record("forum", array("id" => $discussion->forum));
-            $course = $DB->get_record("course", array("id" => $forum->course));
-            $issue = $DB->get_record('local_edusupport_issues', array('discussionid' => $discussion->id));
+            $forum = $DB->get_record("forum", ["id" => $discussion->forum]);
+            $course = $DB->get_record("course", ["id" => $forum->course]);
+            $issue = $DB->get_record('local_edusupport_issues', ['discussionid' => $discussion->id]);
             if (empty($issue->id)) {
                 return;
             }
             \local_edusupport\lib::reopen_issue($discussion->id);
-            $author = $DB->get_record('user', array('id' => $post->userid));
+            $author = $DB->get_record('user', ['id' => $post->userid]);
 
             // Having more than one user in the discussion means that someone has already answered.
             $morethanoneuser = $DB->get_record_sql(
                 "SELECT COUNT(DISTINCT userid) AS count
                 FROM {forum_posts}
-                WHERE discussion = :discussion", ['discussion' => $discussion->id]);
+                WHERE discussion = :discussion",
+                ['discussion' => $discussion->id]
+            );
             if ($morethanoneuser->count > 1) {
                 if ($post->userid == $discussion->userid) {
                     // If the user posted, we are waiting for a support action.
@@ -116,7 +117,7 @@ class observer {
             $post->wwwroot = $CFG->wwwroot;
             $post->authorfullname = \fullname($author);
             $post->authorlink = $CFG->wwwroot . '/user/view.php?id=' . $author->id;
-            $post->authorpicture = $OUTPUT->user_picture($author, array('size' => 40));
+            $post->authorpicture = $OUTPUT->user_picture($author, ['size' => 40]);
             $post->postdate = strftime('%d. %B %Y, %H:%m', $post->created);
 
             $post->coursename = $course->fullname;
@@ -127,7 +128,7 @@ class observer {
             $post->replylink = $CFG->wwwroot . '/local/edusupport/issue.php?d=' . $discussion->id . '&replyto=' . $post->id;
 
             // Get all subscribers.
-            $subscribers = $DB->get_records('local_edusupport_subscr', array('discussionid' => $discussion->id));
+            $subscribers = $DB->get_records('local_edusupport_subscr', ['discussionid' => $discussion->id]);
             $guestmode = get_config('local_edusupport', 'guestmodeenabled');
 
             // Write to Guestuser.
@@ -150,7 +151,7 @@ class observer {
                     continue;
                 }
 
-                $touser = $DB->get_record('user', array('id' => $subscriber->userid));
+                $touser = $DB->get_record('user', ['id' => $subscriber->userid]);
 
                 // Send notification.
                 $subject = $discussion->name;
