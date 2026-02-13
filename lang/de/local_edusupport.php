@@ -91,6 +91,13 @@ $string['issue:countother'] = 'andere Tickets';
 $string['issue_assign'] = 'Zuordnen';
 $string['issue_assign_nextlevel'] = 'Dieses Ticket dem Plattform-Support zuweisen';
 $string['issue_assign_nextlevel:error'] = 'Entschuldigung, das Ticket konnte nicht dem Plattform Support Team zugewiesen werden.';
+$string['issue_assign_nextlevel:msgtosupporter'] = '<p>Ihnen wurde ein neuer Support-Request zugewiesen. Die folgende Nachricht wurde NICHT an den Benutzer gesendet,
+der die Support-Anfrage gestellt hat, da die Plugin-Einstellung "Senden von Support-Benutzerzuweisungen an den Benutzer" deaktiviert ist:</p>
+<p>Wir freuen uns, Ihnen mitteilen zu können, dass Ihre Support-Anfrage an das {$a->sitename} Support-Team weitergeleitet wurde!</p>
+ <p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können.</p>
+ Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
+ <p>Wir wünschen Ihnen eine tolle Lernerfahrung!</p>
+ <p>Ihr {$a->sitename} Team </p>';
 $string['issue_assign_nextlevel:post'] = '<p>Wir freuen uns, Ihnen mitteilen zu können, dass Ihre Support-Anfrage an das {$a->sitename} Support-Team weitergeleitet wurde!</p>
  <p>Sie werden in Kürze eine Antwort auf Ihre Frage erhalten. Bitte haben Sie Verständnis dafür, dass die Beantwortung mancher Fragen länger dauert und es einige Tage dauern kann, bis wir Ihnen eine Lösung anbieten können.</p>
  Sie erhalten diese E-Mail, weil Sie das Team von {$a->sitename} über eine Support-Anfrage um Hilfe gebeten haben. Sie finden alle Ihre Anfragen unter {$a->supportforumname} auf {$a->sitename}.
