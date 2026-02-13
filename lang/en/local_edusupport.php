@@ -89,6 +89,24 @@ $string['issue:countother'] = 'Other issues';
 $string['issue_assign'] = 'Assign issue';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
+$string['issue_assign_nextlevel:msgtosupporter'] = '<p>You have been assigned a new support request. The following message has NOT been sent to the user who made the support request
+because the plugin setting "Senden von Support-Benutzerzuweisungen an den Benutzer" is disabled:</p>
+<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
+
+<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
+<p>You are receiving this email because you asked the support team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.</p>
+<p>We wish you a great learning experience!</p>
+
+<p>Your {$a->sitename} team</p>';
+$string['issue_assign_nextlevel:msgtosupporter'] = '<p>You have been assigned a new support request. The following message has NOT been sent to the user who made the support request
+because the plugin setting "Send support user assignments to the user" is disabled:</p>
+<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
+
+<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
+<p>You are receiving this email because you asked the support team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.</p>
+<p>We wish you a great learning experience!</p>
+
+<p>Your {$a->sitename} team</p>';
 $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
 
 <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
@@ -112,8 +130,7 @@ $string['startedby'] = 'Started by';
 $string['status'] = 'Status';
 
 // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-/* $string['issue_assign_nextlevel:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> forwarded this issue to the platform support team'; */
-$string['issue_assigned:subject'] = 'Your support request has been assigned';
+$string['issue_assigned:subject'] = 'Support request has been assigned';
 $string['issue_close'] = 'Close issue';
 $string['issue_closed:subject'] = 'Issue closed';
 $string['issue_closed:post'] = 'This issue closed was closed by <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a>. If you need further assistance please forward this issue again to the platform support team.';
@@ -127,7 +144,7 @@ $string['issue_responsibles:post'] = '<p>We are happy to inform you that your su
 
    <p>Your {$a->sitename} team</p>
 ';
-$string['issue_responsibles:subject'] = 'Your support request has been assigned';
+$string['issue_responsibles:subject'] = 'Support request has been assigned';
 $string['issuereceived:subject'] = 'Your support request has been received';
 $string['issue_revoke'] = 'Revoke this issue from higher support level';
 $string['issue_revoke:error'] = 'Sorry, this issue could not be revoked from the higher support levels';

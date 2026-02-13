@@ -747,18 +747,28 @@ class lib {
         $forum = $DB->get_record('forum', ['id' => $discussion->forum]);
 
         if (get_config('local_edusupport', 'sendmsgonset2ndlvl')) {
-            self::create_post(
-                $issue->discussionid,
-                get_string('issue_assign_nextlevel:post', 'local_edusupport', (object) [
-                    'fromuserfullname' => \fullname($USER),
-                    'fromuserid' => $USER->id,
-                    'wwwroot' => $CFG->wwwroot,
-                    'sitename' => $SITE->fullname,
-                    'supportforumname' => $forum->name,
-                ]),
-                get_string('issue_assigned:subject', 'local_edusupport'),
-                get_config('local_edusupport', 'sendsupporterassignments')
-            );
+            $subject = get_string('issue_assigned:subject', 'local_edusupport');
+            $messagebody = get_string('issue_assign_nextlevel:post', 'local_edusupport', (object) [
+                'fromuserfullname' => fullname($USER),
+                'fromuserid' => $USER->id,
+                'wwwroot' => $CFG->wwwroot,
+                'sitename' => $SITE->fullname,
+                'supportforumname' => $forum->name,
+            ]);
+            if (get_config('local_edusupport', 'sendsupporterassignments')) {
+                self::create_post(
+                    $issue->discussionid,
+                    $messagebody,
+                    $subject,
+                    1 // Send e-mail to all subscribers.
+                );
+            } else {
+                // If the setting is turned off, we only send the mail to supporters without posting it.
+                foreach ($supporters as $supporter) {
+                    $recipientuser = $DB->get_record('user', ['id' => $supporter->id]);
+                    email_to_user($recipientuser, $USER, $subject, html_to_text($messagebody), $messagebody);
+                }
+            }
         } else {
             self::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
         }
@@ -825,25 +835,36 @@ class lib {
             $supporter->supportlevel = get_string('label:2ndlevel', 'local_edusupport');
         }
         $touser = $DB->get_record('user', ['id' => $userid]);
-        self::create_post(
-            $discussionid,
-            get_string(
-                'issue_assign_nextlevel:post',
-                'local_edusupport',
-                (object) [
-                    'fromuserfullname' => \fullname($USER),
-                    'fromuserid' => $USER->id,
-                    'touserfullname' => \fullname($touser),
-                    'touserid' => $userid,
-                    'tosupportlevel' => $supporter->supportlevel,
-                    'wwwroot' => $CFG->wwwroot,
-                    'sitename' => $SITE->fullname,
-                    'supportforumname' => $forum->name,
-                ]
-            ),
-            get_string('issue_assigned:subject', 'local_edusupport'),
-            get_config('local_edusupport', 'sendsupporterassignments')
+        $subject = get_string('issue_assigned:subject', 'local_edusupport');
+        $messagebody = get_string(
+            'issue_assign_nextlevel:post',
+            'local_edusupport',
+            (object) [
+                'fromuserfullname' => \fullname($USER),
+                'fromuserid' => $USER->id,
+                'touserfullname' => \fullname($touser),
+                'touserid' => $userid,
+                'tosupportlevel' => $supporter->supportlevel,
+                'wwwroot' => $CFG->wwwroot,
+                'sitename' => $SITE->fullname,
+                'supportforumname' => $forum->name,
+            ]
         );
+        /* If the setting to send supporter assignments is turned on,
+        we create a post in the forum and send it to all subscribers.
+        If not, we only send an email to the supporters
+        without posting it into the forum. */
+        if (get_config('local_edusupport', 'sendsupporterassignments')) {
+            self::create_post(
+                $discussionid,
+                $messagebody,
+                $subject,
+                1 // Send e-mail to all subscribers.
+            );
+        } else {
+            // If the setting is turned off, we only send the mail to the supporter without posting it.
+            email_to_user($touser, $USER, $subject, html_to_text($messagebody), $messagebody);
+        }
 
         if (!isset($PAGE->context)) {
             $PAGE->set_context(\context_system::instance());
