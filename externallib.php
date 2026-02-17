@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 use context_system;
+use core\message\message;
 use core_user;
 use local_edusupport\guest_supportuser;
 use local_edusupport\lib;
@@ -442,23 +443,36 @@ class local_edusupport_external extends external_api {
                                 'supportforumname' => $forum->name,
                             ]
                         );
-                        /* If the setting to send supporter assignments is turned on,
-                        we create a post in the forum and send it to all subscribers.
-                        If not, we only send an email to the supporters
-                        without posting it into the forum. */
-                        if (get_config('local_edusupport', 'sendsupporterassignments')) {
-                            lib::create_post(
-                                $discussion->id,
-                                $messagebody,
-                                $subject,
-                                1 // Send it to everyone subscribed in the forum!
-                            );
-                        } else {
-                            // If the setting is turned off, we only send the mail to supporters without posting it.
-                            foreach ($supporters as $supporter) {
-                                $recipientuser = $DB->get_record('user', ['id' => $supporter->id]);
-                                email_to_user($recipientuser, $user, $subject, html_to_text($messagebody), $messagebody);
-                            }
+
+                        // Post assignment message to forum.
+                        lib::create_post(
+                            $discussion->id,
+                            $messagebody,
+                            $subject,
+                            // Only send mail if setting is turned on!
+                            get_config('local_edusupport', 'sendsupporterassignments')
+                        );
+                        // In any case, we want to inform the supporters.
+                        foreach ($supporters as $supporter) {
+                            // In any case, send e-mail to the dedicated supporter.
+                            $issueurl = (new moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
+                            $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name . " $issueurl";
+                            $postsubject = $discussion->name;
+                            $msg = new message();
+                            $touser = $DB->get_record('user', ['id' => $supporter->id]);
+                            $msg->userfrom = $USER;
+                            $msg->userto = $touser;
+                            $msg->subject = $postsubject;
+                            $msg->fullmessage = $posthtml;
+                            $msg->fullmessageformat = FORMAT_PLAIN;
+                            $msg->fullmessagehtml = $posthtml;
+                            $msg->smallmessage = $postsubject;
+                            $msg->contexturl = $issueurl; // A relevant URL for the notification.
+                            $msg->contexturlname = 'Issue'; // Link title explaining where users get to for the contexturl.
+                            $msg->name = 'edusupport_issue';
+                            $msg->component = 'local_edusupport';
+                            $msg->notification = 1;
+                            message_send($msg);
                         }
                     }
 
