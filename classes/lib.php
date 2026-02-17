@@ -23,6 +23,8 @@
 
 namespace local_edusupport;
 
+use context_system;
+use core\message\message;
 use local_edusupport\task\reminder;
 use local_edusupport\guest_supportuser;
 use mod_forum\event\post_created;
@@ -691,6 +693,10 @@ class lib {
     public static function set_2nd_level(int $discussionid, $keyvaluepair = null): bool {
         global $CFG, $DB, $USER, $PAGE, $SITE;
 
+        if (!isset($PAGE->context)) {
+            $PAGE->set_context(context_system::instance());
+        }
+
         $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid]);
         $issue = self::get_issue($discussionid, true, $keyvaluepair);
         if (!self::is_supportforum($discussion->forum)) {
@@ -698,7 +704,7 @@ class lib {
         }
         // Check if holidaymode is enabled.
         $holidaymode = get_config('local_edusupport', 'holidaymodeenabled') ? "AND holidaymode < ? " : " ";
-        // TODO: Only subscribe 1 person and make it responsible!
+        // Todo: Only subscribe 1 person and make it responsible!
         $supportforum = $DB->get_record('local_edusupport', ['forumid' => $discussion->forum]);
         $sql = "SELECT *
                     FROM {local_edusupport_supporters}
@@ -755,34 +761,19 @@ class lib {
                 'sitename' => $SITE->fullname,
                 'supportforumname' => $forum->name,
             ]);
-            if (get_config('local_edusupport', 'sendsupporterassignments')) {
-                self::create_post(
-                    $issue->discussionid,
-                    $messagebody,
-                    $subject,
-                    1 // Send e-mail to all subscribers.
-                );
-            } else {
-                // If the setting is turned off, we only send the mail to supporters without posting it.
-                foreach ($supporters as $supporter) {
-                    $recipientuser = $DB->get_record('user', ['id' => $supporter->id]);
-                    email_to_user($recipientuser, $USER, $subject, html_to_text($messagebody), $messagebody);
-                }
-            }
-        } else {
-            self::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
-        }
-
-        if (!isset($PAGE->context)) {
-            $PAGE->set_context(\context_system::instance());
-        }
-
-        // Send an email to user when setting is enabled.
-        if (get_config('local_edusupport', 'sendmsgonset2ndlvl')) {
-            $issueurl = (new \moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
+            // Post assignment message to forum.
+            self::create_post(
+                $issue->discussionid,
+                $messagebody,
+                $subject,
+                // Only send mail if setting is turned on!
+                get_config('local_edusupport', 'sendsupporterassignments')
+            );
+            // In any case, send e-mail to the dedicated supporter.
+            $issueurl = (new moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
             $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name . " $issueurl";
             $postsubject = $discussion->name;
-            $msg = new \core\message\message();
+            $msg = new message();
             $touser = $DB->get_record('user', ['id' => $dedicated->userid]);
             $msg->userfrom = $USER;
             $msg->userto = $touser;
@@ -797,7 +788,10 @@ class lib {
             $msg->component = 'local_edusupport';
             $msg->notification = 1;
             message_send($msg);
+        } else {
+            self::set_status(ISSUE_STATUS_AWAITING_SUPPORT_ACTION, $issue->id);
         }
+
         return true;
     }
 
@@ -810,6 +804,10 @@ class lib {
      */
     public static function set_current_supporter(int $discussionid, int $userid): bool {
         global $CFG, $DB, $USER, $PAGE, $SITE;
+
+        if (!isset($PAGE->context)) {
+            $PAGE->set_context(context_system::instance());
+        }
 
         $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid]);
         $forum = $DB->get_record('forum', ['id' => $discussion->forum]);
@@ -850,30 +848,20 @@ class lib {
                 'supportforumname' => $forum->name,
             ]
         );
-        /* If the setting to send supporter assignments is turned on,
-        we create a post in the forum and send it to all subscribers.
-        If not, we only send an email to the supporters
-        without posting it into the forum. */
-        if (get_config('local_edusupport', 'sendsupporterassignments')) {
-            self::create_post(
-                $discussionid,
-                $messagebody,
-                $subject,
-                1 // Send e-mail to all subscribers.
-            );
-        } else {
-            // If the setting is turned off, we only send the mail to the supporter without posting it.
-            email_to_user($touser, $USER, $subject, html_to_text($messagebody), $messagebody);
-        }
+        // Post assignment message to forum.
+        self::create_post(
+            $discussionid,
+            $messagebody,
+            $subject,
+            // Only send mail if setting is turned on!
+            get_config('local_edusupport', 'sendsupporterassignments')
+        );
 
-        if (!isset($PAGE->context)) {
-            $PAGE->set_context(\context_system::instance());
-        }
-
-        $issueurl = (new \moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
+        // In any case, send e-mail to the assigned supporter.
+        $issueurl = (new moodle_url('/local/edusupport/issue.php?d=' . $discussion->id))->out(false);
         $posthtml = get_string('issue:assigned', 'local_edusupport') . " " . $discussion->name . " $issueurl";
         $postsubject = $discussion->name;
-        $msg = new \core\message\message();
+        $msg = new message();
         $touser = $DB->get_record('user', ['id' => $userid]);
         $msg->userfrom = $USER;
         $msg->userto = $touser;
