@@ -96,7 +96,17 @@ class local_edusupport_external extends external_api {
     /**
      * Create an issue in the targetforum.
      *
-     * @return array $reply of created issue
+     * @param string $subject The subject of the issue.
+     * @param string $description The description of the issue.
+     * @param string $forumgroup Forum ID and group ID in format forumid_groupid.
+     * @param int $postto2ndlevel 1st level supporters can directly call the 2nd level support.
+     * @param string $image Base64 encoded image as data url or empty string.
+     * @param string $screenshotname The filename to use for the screenshot.
+     * @param string $url URL where the error happened.
+     * @param string $contactphone Contact phone number.
+     * @param string|null $guestmail Guest email address (optional).
+     * @param int|null $accountmanager Account manager ID (optional).
+     * @return array Array containing discussionid and responsibles.
      */
     public static function create_issue(
         $subject,
@@ -610,9 +620,17 @@ class local_edusupport_external extends external_api {
             if (!isset($reply['supporters'][$supporter->supportlevel])) {
                 $reply['supporters'][$supporter->supportlevel] = [];
             }
-            if ($supporter->userid == $USER->id) {
+            if (isset($supporter->userid) && $supporter->userid == $USER->id) {
                 $supporter->selected = true;
             }
+
+            // Todo: @dasistwas This code makes no sense becuase $issue is never assigned!
+            // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+            /* if (empty($issue->currentsupporter) && $supporter->userid == $USER->id) {
+                $supporter->selected = true;
+            } else if ($issue->currentsupporter == $supporter->userid) {
+                $supporter->selected = true;
+            }*/
             $reply['supporters'][$supporter->supportlevel][] = $supporter;
         }
 
