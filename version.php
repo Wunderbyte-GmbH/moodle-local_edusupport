@@ -15,17 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Version details.
  * @package    local_edusupport
- * @copyright  2018 Digital Education Society (http://www.dibig.at)
- *             2020 onwards Center for Learningmanagement (www.lernmanagement.at)
- * @author     Robert Schrenk
+ * @copyright  2018 Digital Education Society (https://www.dibig.at)
+ *             2020 onwards Center for Learningmanagement (https://www.lernmanagement.at)
+ *             2021 onwards Wunderbyte GmbH (https://www.wunderbyte.at)
+ * @author     Robert Schrenk, Thomas Winkler, David Bogner, Bernhard Fischer, Georg Maißer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2025052700;
+$plugin->version = 2026022300;
 $plugin->requires = 2020061500;
 $plugin->component = 'local_edusupport';
-$plugin->release = '2.7.0';
+$plugin->release = '2.7.1';
 $plugin->maturity = MATURITY_STABLE;
