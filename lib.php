@@ -15,105 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Library for the edusupport plugin.
+ *
  * @package    local_edusupport
  * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Adds module specific settings to the settings block
+ * Extend navigation.
  *
- * @param settings_navigation $settings The settings navigation object
- * @param navigation_node $modnode The node to add module settings to
- *
- * $settings is unused, but API requires it. Suppress PHPMD warning.
- *
- */
-function local_edusupport_before_standard_html_head() {
-    global $CFG, $DB, $OUTPUT, $PAGE, $SITE, $USER;
-
-    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-    /*
-    if (isloggedin() && !isguestuser()) {
-        // TODO?
-    }
-    */
-
-    if (strpos($_SERVER["SCRIPT_FILENAME"], '/mod/forum/discuss.php') > 0) {
-        $d = optional_param('d', 0, PARAM_INT);
-        $discussion = $DB->get_record('forum_discussions', ['id' => $d]);
-        $coursecontext = \context_course::instance($discussion->course);
-        if (
-            has_capability('local/edusupport:canforward2ndlevel', $coursecontext)
-                && \local_edusupport\lib::is_supportforum($discussion->forum)
-        ) {
-            $sql = "SELECT id
-                        FROM {local_edusupport_subscr}
-                        WHERE discussionid=? LIMIT 1 OFFSET 0";
-            $chk = $DB->get_record_sql($sql, [$discussion->id]);
-
-            $PAGE->requires->js_call_amd(
-                'local_edusupport/main',
-                'injectForwardButton',
-                [$d, !empty($chk->id), $SITE->fullname]
-            );
-        }
-        if (\local_edusupport\lib::is_supportforum($discussion->forum)) {
-            $PAGE->requires->js_call_amd('local_edusupport/main', 'injectTest');
-        }
-    }
-
-    if (strpos($_SERVER["SCRIPT_FILENAME"], '/course/management.php') > 0) {
-        // The user could potentially move a supportforum-course,
-        // or delete a course category, that contains a supportforum-course.
-        // In that case we will move the supportforum-course to a safe location.
-        $categoryid = optional_param('categoryid', 0, PARAM_INT);
-        $action = optional_param('action', '', PARAM_ALPHANUM);
-        if ($action == 'deletecategory') {
-            // Check if there are any supportforums below this context.
-            $coursecatcontext = \context_coursecat::instance($categoryid);
-            $sql = "SELECT *
-                        FROM {context}
-                        WHERE contextlevel=?
-                            AND (
-                                path LIKE ?
-                                OR path LIKE ?
-                            )";
-            $subcategories = $DB->get_records_sql($sql, [CONTEXT_COURSECAT, $coursecatcontext->path,
-                $coursecatcontext->path . '/%']);
-            foreach ($subcategories as $subcategory) {
-                $chkforforum = $DB->get_record('local_edusupport', ['categoryid' => $subcategory->instanceid]);
-                if (!empty($chkforforum->id)) {
-                    redirect(new \moodle_url(
-                        '/local/edusupport/error.php',
-                        ['error' => 'coursecategorydeletion', 'categoryid' => $categoryid]
-                    ));
-                }
-            }
-        }
-
-        // Check if the coursecategory exists and is visible.
-        $coursecat = \core_course_category::get($categoryid, MUST_EXIST, true);
-        if (empty($coursecat->__get('visible'))) {
-            $coursecat->update(['visible' => 1]);
-        }
-
-        // Check for any supportforum-courses that are should be contained by this coursecat.
-        $supportforums = $DB->get_records('local_edusupport', ['categoryid' => $categoryid]);
-        foreach ($supportforums as $supportforum) {
-            // Check if the course is in place and the category.
-            $course = $DB->get_record('course', ['id' => $supportforum->id]);
-            if (!empty($course->id) && $course->category != $categoryid) {
-                // Update our database.
-                $DB->set_field('local_edusupport', 'categoryid', $categoryid, ['courseid' => $course->id]);
-            }
-        }
-    }
-}
-
-
-/**
- * Extend Moodle Navigation.
+ * @param navigation_node $navigation The navigation node to extend
  */
 function local_edusupport_extend_navigation($navigation) {
     if (\local_edusupport\lib::is_supportteam()) {
@@ -129,6 +41,14 @@ function local_edusupport_extend_navigation($navigation) {
     }
 }
 
+/**
+ * Extend course navigation with edusupport nodes.
+ *
+ * @param navigation_node $parentnode The navigation node to add items to
+ * @param stdClass $course The course object
+ * @param context $context The context object
+ * @return void
+ */
 function local_edusupport_extend_navigation_course($parentnode, $course, $context) {
     // If we allow support users on course level, we can remove the next line.
     if (!is_siteadmin()) {
@@ -256,6 +176,7 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // Finally send the file.
     send_stored_file($file, 0, 0, true, $options); // Download MUST be forced - security!
+    return true;
 }
 
 /**
