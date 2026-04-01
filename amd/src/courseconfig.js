@@ -1,6 +1,6 @@
 define(
     ['jquery', 'core/ajax', 'core/notification'],
-    function($, AJAX, NOTIFICATION, STR, URL, ModalFactory, ModalEvents) {
+    function($, AJAX, NOTIFICATION) {
     return {
         setArchive: function(uniqid, forumid) {
             var SELF = this;

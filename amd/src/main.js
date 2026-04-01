@@ -1,6 +1,7 @@
 define(
-    ['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/url', 'core/modal_factory', 'core/modal_events', 'core/templates'],
-    function($, AJAX, NOTIFICATION, STR, URL, ModalFactory, ModalEvents, Templates) {
+    ['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/url', 'core/modal_save_cancel',
+        'core/local/modal/alert', 'core/modal_events'],
+    function($, AJAX, NOTIFICATION, STR, URL, SaveCancelModal, AlertModal, ModalEvents) {
     return {
         debug: 0,
         modal: undefined,
@@ -32,9 +33,8 @@ define(
                         body += '</select>';
 
                         //console.log(result);
-                        ModalFactory.create({
+                        SaveCancelModal.create({
                             title: STR.get_string('select', 'core'),
-                            type: ModalFactory.types.SAVE_CANCEL,
                             body: body,
                             //footer: 'footer',
                         }).done(function(modal) {
@@ -220,8 +220,7 @@ define(
                     {'key' : 'confirm', component: 'core' },
                     {'key' : (typeof revoke !== 'undefined' && revoke) ? 'issue_revoke' : 'issue_assign_nextlevel', component: 'local_edusupport' },
                 ]).done(function(s) {
-                    ModalFactory.create({
-                        type: ModalFactory.types.SAVE_CANCEL,
+                    SaveCancelModal.create({
                         title: s[0],
                         body: s[1],
                     })
@@ -426,9 +425,8 @@ define(
                         // Remove any previously created forms.
                         $('#local_edusupport_create_form').remove();
                         //console.log(result);
-                        ModalFactory.create({
+                        SaveCancelModal.create({
                             //title: 'create issue',
-                            type: ModalFactory.types.SAVE_CANCEL,
                             body: result,
                             large: 1,
                             //footer: 'footer',
@@ -464,9 +462,8 @@ define(
                         // Remove any previously created forms.
                         $('#local_edusupport_create_form').remove();
                         //console.log(result);
-                        ModalFactory.create({
+                        SaveCancelModal.create({
                             //title: 'create issue',
-                            type: ModalFactory.types.SAVE_CANCEL,
                             body: result,
                             large: 1,
                             //footer: 'footer',
@@ -482,9 +479,8 @@ define(
         },
 
         supportCourseMovedAlert: function(title, msg) {
-            ModalFactory.create({
+            AlertModal.create({
                 title: title,
-                type: ModalFactory.types.OK,
                 body: msg,
                 //footer: 'footer',
             }).done(function(modal) {
