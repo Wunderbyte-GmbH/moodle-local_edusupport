@@ -43,8 +43,13 @@ function xmldb_local_edusupport_install() {
 
     set_config('supportteamrole', $role->id, 'local_edusupport');
 
-    $guestuser = new local_edusupport\guest_supportuser();
-    $guestuser->create_guestuser_if_inextistant();
+    // Skip the dummy guest user on test sites: it becomes part of the site snapshot and
+    // pollutes user-table fixtures (e.g. record-count assertions in behat suites of other
+    // plugins). It is created on demand by guest_supportuser wherever it is needed.
+    if (!defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_UTIL') && !defined('PHPUNIT_TEST')) {
+        $guestuser = new local_edusupport\guest_supportuser();
+        $guestuser->create_guestuser_if_inextistant();
+    }
 
     // Ensure, that this role is assigned in the required context levels.
     $chk = $DB->get_record('role_context_levels', ['roleid' => $role->id, 'contextlevel' => CONTEXT_MODULE]);
