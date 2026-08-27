@@ -37,7 +37,7 @@ define(
                             title: STR.get_string('select', 'core'),
                             body: body,
                             //footer: 'footer',
-                        }).done(function(modal) {
+                        }).then(function(modal) {
                             console.log('Created modal');
                             modal.show();
                             modal.getRoot().on(ModalEvents.save, function(e) {
@@ -224,7 +224,7 @@ define(
                         title: s[0],
                         body: s[1],
                     })
-                    .done(function(modal) {
+                    .then(function(modal) {
                         var root = modal.getRoot();
                         root.on(ModalEvents.save, function() {
                             top.location.href = URL.relativeUrl('/local/edusupport/forward_2nd_level.php', { d: discussionid, revoke: revoke });
@@ -430,7 +430,7 @@ define(
                             body: result,
                             large: 1,
                             //footer: 'footer',
-                        }).done(function(modal) {
+                        }).then(function(modal) {
                             console.log('Created modal');
                             MAIN.modal = modal;
 
@@ -467,7 +467,7 @@ define(
                             body: result,
                             large: 1,
                             //footer: 'footer',
-                        }).done(function(modal) {
+                        }).then(function(modal) {
                             console.log('Created modal');
                             MAIN.modal = modal;
                             MAIN.prepareBox();
@@ -483,7 +483,7 @@ define(
                 title: title,
                 body: msg,
                 //footer: 'footer',
-            }).done(function(modal) {
+            }).then(function(modal) {
                 modal.show();
             });
         },
