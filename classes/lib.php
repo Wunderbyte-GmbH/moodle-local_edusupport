@@ -45,6 +45,12 @@ define("ISSUE_STATUS_CLOSED", 5);
 class lib {
     const SYSTEM_COURSE_ID = 1;
 
+    /** @var string Prefix that marks a discussion name as a closed issue. */
+    const CLOSED_PREFIX = "🔒 ";
+
+    /** @var array Prefixes used by earlier versions, still present in existing discussion names. */
+    const CLOSED_PREFIX_LEGACY = ["[Closed] "];
+
     /**
      * Perform some actions before the popup is rendered.
      */
@@ -109,6 +115,38 @@ class lib {
     }
 
     /**
+     * Add the closed-marker to a discussion name.
+     *
+     * Any previously set marker - including the ones used by earlier versions - is removed first,
+     * so the name never ends up carrying two prefixes.
+     *
+     * @param string $name the discussion name.
+     * @return string the name including the closed-marker.
+     */
+    public static function add_closed_prefix(string $name): string {
+        return self::CLOSED_PREFIX . self::strip_closed_prefix($name);
+    }
+
+    /**
+     * Remove the closed-marker from a discussion name.
+     *
+     * Also removes the markers used by earlier versions, so issues that were closed before the
+     * marker changed can still be reopened cleanly.
+     *
+     * @param string $name the discussion name.
+     * @return string the name without any closed-marker.
+     */
+    public static function strip_closed_prefix(string $name): string {
+        $prefixes = array_merge([self::CLOSED_PREFIX], self::CLOSED_PREFIX_LEGACY);
+        foreach ($prefixes as $prefix) {
+            if ($prefix !== '' && str_starts_with($name, $prefix)) {
+                return substr($name, strlen($prefix));
+            }
+        }
+        return $name;
+    }
+
+    /**
      * Close an issue.
      *
      * @param int discussionid.
@@ -152,10 +190,7 @@ class lib {
         // 4.) remove issue-link from database
         $DB->update_record('local_edusupport_issues', $issue);
         // Mark post as closed.
-        $prefix = "[Closed] ";
-        if (!(substr($discussion->name, 0, strlen($prefix)) == $prefix)) {
-            $discussion->name = "[Closed] " . $discussion->name;
-        }
+        $discussion->name = self::add_closed_prefix($discussion->name);
         $discussion->modified = time();
         $DB->update_record('forum_discussions', $discussion);
         return true;
@@ -257,11 +292,8 @@ class lib {
         // We also want to send reminders when we re-open an issue.
         self::send_reminder($issue->id);
 
-        // Mark post as closed.
-        $prefix = "[Closed] ";
-        if (substr($discussion->name, 0, strlen($prefix)) == $prefix) {
-            $discussion->name = substr($discussion->name, strlen($prefix));
-        }
+        // Remove the closed-marker again.
+        $discussion->name = self::strip_closed_prefix($discussion->name);
         $discussion->modified = time();
         $DB->update_record('forum_discussions', $discussion);
         return true;

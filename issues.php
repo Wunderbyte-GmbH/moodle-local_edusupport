@@ -32,24 +32,70 @@ $title = get_string('issues', 'local_edusupport');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
+$issupportteam = \local_edusupport\lib::is_supportteam();
+
+// Handle all actions before any output is sent, so we can redirect afterwards (post/redirect/get).
+// Without the redirect a reload or the back button would trigger the same action again, which for
+// close and reopen means another status post in the discussion and another round of notifications.
+if ($issupportteam) {
+    $assign = optional_param('assign', 0, PARAM_INT); // Discussion id we want to assign to.
+    $unassign = optional_param('unassign', 0, PARAM_INT); // Discussion id we want to unassign from.
+    $take = optional_param('take', 0, PARAM_INT); // Discussion id we want to take over ourselves.
+    $give = optional_param('give', 0, PARAM_INT); // Discussion id we want to hand back to 2nd level.
+    $reopen = optional_param('reopen', 0, PARAM_INT); // Discussion id we want to reopen.
+    $close = optional_param('close', 0, PARAM_INT); // Discussion id we want to close.
+    $prio = optional_param('prio', 0, PARAM_INT); // Discussion id we want to set the priority for.
+    $lvl = optional_param('lvl', 0, PARAM_INT); // The priority level to set.
+
+    if (
+        !empty($assign) || !empty($unassign) || !empty($take) || !empty($give)
+        || !empty($reopen) || !empty($close) || !empty($prio)
+    ) {
+        require_sesskey();
+
+        // Only act on discussions that actually are registered as an issue.
+        $isissue = function ($discussionid) use ($DB) {
+            return !empty($discussionid)
+                && $DB->record_exists('local_edusupport_issues', ['discussionid' => $discussionid]);
+        };
+
+        if ($isissue($assign)) {
+            \local_edusupport\lib::subscription_add($assign);
+        }
+        if ($isissue($unassign)) {
+            \local_edusupport\lib::subscription_remove($unassign);
+        }
+        if ($isissue($take)) {
+            \local_edusupport\lib::set_current_supporter($take, $USER->id);
+            \local_edusupport\lib::subscription_add($take);
+        }
+        if ($isissue($give)) {
+            \local_edusupport\lib::set_current_supporter($give, 1);
+            \local_edusupport\lib::subscription_add($give);
+        }
+        if ($isissue($reopen)) {
+            \local_edusupport\lib::reopen_issue($reopen);
+        }
+        if ($isissue($close)) {
+            \local_edusupport\lib::close_issue($close);
+        }
+        if (!empty($lvl) && $isissue($prio)) {
+            \local_edusupport\lib::set_prioritylvl($prio, $lvl);
+        }
+
+        redirect($PAGE->url);
+    }
+}
+
 echo $OUTPUT->header();
 
-if (!\local_edusupport\lib::is_supportteam()) {
+if (!$issupportteam) {
     echo $OUTPUT->render_from_template('local_edusupport/alert', [
         'content' => get_string('missing_permission', 'local_edusupport'),
         'type' => 'danger',
         'url' => new moodle_url('/my'),
     ]);
 } else {
-    $assign = optional_param('assign', 0, PARAM_INT); // Discussion id we want to assign to.
-    $unassign = optional_param('unassign', 0, PARAM_INT); // Discussion id we want to unassign from.
-    $take = optional_param('take', 0, PARAM_INT); // Discussion id we want to unassign from.
-    $give = optional_param('give', 0, PARAM_INT);
-    $reopen = optional_param('reopen', 0, PARAM_INT);
-    $close = optional_param('close', 0, PARAM_INT);
-    $prio = optional_param('prio', 0, PARAM_INT);
-    $lvl = optional_param('lvl', 0, PARAM_INT);
-    $sql = "SELECT id,discussionid FROM {local_edusupport_issues}";
     $issues = $DB->get_records('local_edusupport_issues', [], 'priority,id,discussionid,status');
 
     $params = [
@@ -66,8 +112,7 @@ if (!\local_edusupport\lib::is_supportteam()) {
     $params['count']['other'] = 0;
     $params['userlinks'] = get_config('local_edusupport', 'userlinks');
     $params['hasprio'] = $hasprio;
-    // Detect closed issues by adding prefix.
-    $prefix = "[Closed] ";
+    $params['sesskey'] = sesskey();
     foreach (array_reverse($issues) as $issue) {
         // Collect certain data about this issue.
         $discussion = $DB->get_record('forum_discussions', ['id' => $issue->discussionid]);
@@ -92,48 +137,6 @@ if (!\local_edusupport\lib::is_supportteam()) {
         if (isset($issue->accountmanager)) {
             $accountmanager = $DB->get_record('user', ['id' => $issue->accountmanager]);
             $issue->accountmanagerfn = \fullname($accountmanager);
-        }
-        // Check for any actions.
-        if (!empty($assign) && $assign == $issue->discussionid && empty($assigned->id)) {
-            $assigned = \local_edusupport\lib::subscription_add($issue->discussionid);
-        }
-        if (empty($issue->discussionid)) {
-            $issue->discussionid == $string->notasigned;
-        }
-        if (!empty($unassign) && $unassign == $issue->discussionid) {
-            \local_edusupport\lib::subscription_remove($issue->discussionid);
-            unset($assigned);
-        }
-        if (!empty($take) && $take == $issue->discussionid) {
-            \local_edusupport\lib::set_current_supporter($issue->discussionid, $USER->id);
-            $assigned = \local_edusupport\lib::subscription_add($issue->discussionid);
-            $issue->currentsupporter = $USER->id;
-        }
-        if (!empty($give) && $give == $issue->discussionid) {
-            \local_edusupport\lib::set_current_supporter($issue->discussionid, "1");
-            $assigned = \local_edusupport\lib::subscription_add($issue->discussionid);
-            $issue->currentsupporter = "1";
-        }
-        if (!empty($reopen) && $reopen == $issue->discussionid) {
-            \local_edusupport\lib::reopen_issue($issue->discussionid);
-            $issue->priority = "1";
-            $issue->status = ISSUE_STATUS_AWAITING_SUPPORT_ACTION;
-            if (substr($issue->name, 0, strlen($prefix)) == $prefix) {
-                $issue->name = substr($issue->name, strlen($prefix));
-            }
-        }
-        if (!empty($close) && $close == $issue->discussionid) {
-            \local_edusupport\lib::close_issue($issue->discussionid);
-            $issue->priority = "0";
-            $issue->status = ISSUE_STATUS_CLOSED;
-            unset($assigned);
-            if (substr($issue->name, 0, strlen($prefix)) == $prefix) {
-                $issue->name = substr($issue->name, strlen($prefix));
-            }
-        }
-        if (!empty($prio) && $prio == $issue->discussionid && !empty($lvl)) {
-            \local_edusupport\lib::set_prioritylvl($issue->discussionid, $lvl);
-            $issue->priority = $lvl;
         }
 
         // Now get the current supporter.
