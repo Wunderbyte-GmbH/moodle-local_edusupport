@@ -73,3 +73,29 @@ Feature: Handling a support issue from creation to closing
     And I set the field "Describe the problem encountered including the link to the page/course where the problem occured" to "Nothing happens when I log in."
     And I click on "Contact support" "button"
     Then I should see "Success"
+
+  @javascript
+  Scenario: The state filter hides the issues that do not match
+    Given I log in as "supporter1"
+    And I visit "/local/edusupport/issues.php"
+    And I should see "Printer is broken"
+    When I set the field "Closed" to "1"
+    Then I should not see "Printer is broken"
+    When I set the field "Closed" to ""
+    Then I should see "Printer is broken"
+
+  @javascript
+  Scenario: A supporter changes the status of an issue from the issue page
+    Given I log in as "supporter1"
+    And I visit "/local/edusupport/issues.php"
+    And I click on "Printer is broken" "link"
+    When I set the field "Change status" to "Ongoing"
+    And I wait until the page is ready
+    And I visit "/local/edusupport/issues.php"
+    # The state filter is the oracle here: the issue must have left "Not yet started"
+    # and arrived at "Ongoing". Asserting on the label alone would pass either way.
+    And I set the field "Not yet started" to "1"
+    Then I should not see "Printer is broken"
+    When I set the field "Not yet started" to ""
+    And I set the field "Ongoing" to "1"
+    Then I should see "Printer is broken"
