@@ -673,35 +673,6 @@ class lib {
     }
 
     /**
-     * Get the support level a user is registered with.
-     *
-     * A user can be registered for the site wide team and for a single course at the same
-     * time. The entry of the course wins, because it is the more specific one.
-     *
-     * @param int $courseid the course to look at, besides the site wide team.
-     * @param int $userid
-     * @return string the support level, or an empty string if the user is no supporter.
-     */
-    public static function get_supporter_level(int $courseid, int $userid): string {
-        global $DB;
-
-        $sql = "SELECT supportlevel
-                  FROM {local_edusupport_supporters}
-                 WHERE userid = :userid
-                   AND (courseid = :courseid OR courseid = :systemcourseid)
-              ORDER BY courseid DESC";
-        $params = [
-            'userid' => $userid,
-            'courseid' => $courseid,
-            'systemcourseid' => self::SYSTEM_COURSE_ID,
-        ];
-        $records = $DB->get_records_sql($sql, $params, 0, 1);
-        $record = reset($records);
-
-        return empty($record) ? '' : (string) $record->supportlevel;
-    }
-
-    /**
      * Checks if a given forum is used as support-forum.
      *
      * @param forumid.
