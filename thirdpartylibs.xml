@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/html2canvas.js</location>
+    <name>html2canvas</name>
+    <description>Takes a screenshot of the current page in the browser, so that a support request can carry a picture of the problem.</description>
+    <version>1.0.0-alpha.12</version>
+    <license>MIT</license>
+    <repository>https://github.com/niklasvh/html2canvas</repository>
+    <copyrights>
+      <copyright>2018 Niklas von Hertzen, https://hertzen.com</copyright>
+    </copyrights>
+  </library>
+</libraries>
