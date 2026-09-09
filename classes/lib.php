@@ -147,6 +147,40 @@ class lib {
     }
 
     /**
+     * Rewrite discussion names that still carry the closed-marker of an earlier version.
+     *
+     * Only discussions that are registered as an issue are touched.
+     *
+     * @return int the number of discussions that were changed.
+     */
+    public static function migrate_legacy_closed_prefixes(): int {
+        global $DB;
+        $changed = 0;
+        foreach (self::CLOSED_PREFIX_LEGACY as $legacyprefix) {
+            $like = $DB->sql_like('fd.name', ':prefix');
+            $sql = "SELECT fd.id, fd.name
+                      FROM {forum_discussions} fd
+                      JOIN {local_edusupport_issues} lei ON lei.discussionid = fd.id
+                     WHERE $like";
+            $params = ['prefix' => $DB->sql_like_escape($legacyprefix) . '%'];
+            foreach ($DB->get_records_sql($sql, $params) as $discussion) {
+                // The sql_like() match is case insensitive on most databases, so confirm it here.
+                if (!str_starts_with($discussion->name, $legacyprefix)) {
+                    continue;
+                }
+                $DB->set_field(
+                    'forum_discussions',
+                    'name',
+                    self::add_closed_prefix($discussion->name),
+                    ['id' => $discussion->id]
+                );
+                $changed++;
+            }
+        }
+        return $changed;
+    }
+
+    /**
      * Close an issue.
      *
      * @param int discussionid.

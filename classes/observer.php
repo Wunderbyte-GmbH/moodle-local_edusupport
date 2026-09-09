@@ -118,7 +118,7 @@ class observer {
             $post->authorfullname = \fullname($author);
             $post->authorlink = $CFG->wwwroot . '/user/view.php?id=' . $author->id;
             $post->authorpicture = $OUTPUT->user_picture($author, ['size' => 40]);
-            $post->postdate = strftime('%d. %B %Y, %H:%m', $post->created);
+            $post->postdate = userdate($post->created, '%d. %B %Y, %H:%M');
 
             $post->coursename = $course->fullname;
             $post->forumname = $forum->name;

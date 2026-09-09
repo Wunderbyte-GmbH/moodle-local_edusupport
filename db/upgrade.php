@@ -152,27 +152,7 @@ function xmldb_local_edusupport_upgrade($oldversion) {
     }
     if ($oldversion < 2026090900) {
         // The marker for closed issues changed - bring existing discussion names in line.
-        foreach (\local_edusupport\lib::CLOSED_PREFIX_LEGACY as $legacyprefix) {
-            $like = $DB->sql_like('fd.name', ':prefix');
-            $sql = "SELECT fd.id, fd.name
-                      FROM {forum_discussions} fd
-                      JOIN {local_edusupport_issues} lei ON lei.discussionid = fd.id
-                     WHERE $like";
-            $params = ['prefix' => $DB->sql_like_escape($legacyprefix) . '%'];
-            $discussions = $DB->get_records_sql($sql, $params);
-            foreach ($discussions as $discussion) {
-                // The sql_like() match is case insensitive on most databases, so confirm it here.
-                if (!str_starts_with($discussion->name, $legacyprefix)) {
-                    continue;
-                }
-                $DB->set_field(
-                    'forum_discussions',
-                    'name',
-                    \local_edusupport\lib::add_closed_prefix($discussion->name),
-                    ['id' => $discussion->id]
-                );
-            }
-        }
+        \local_edusupport\lib::migrate_legacy_closed_prefixes();
         // Edusupport savepoint reached.
         upgrade_plugin_savepoint(true, 2026090900, 'local', 'edusupport');
     }

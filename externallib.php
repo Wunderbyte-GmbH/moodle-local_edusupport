@@ -22,9 +22,7 @@
  * @author     Robert Schrenk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-use context_system;
 use core\message\message;
-use core_user;
 use local_edusupport\guest_supportuser;
 use local_edusupport\lib;
 
@@ -88,8 +86,9 @@ class local_edusupport_external extends external_api {
                 // We use PARAM_TEXT, as any input by the user is valid.
             'contactphone' => new external_value(PARAM_TEXT, 'Contactphone'),
                 // We use PARAM_TEXT, was the user can enter any contact information.
-            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_OPTIONAL, null, NULL_ALLOWED),
-            'accountmanager' => new external_value(PARAM_INT, 'Accountmanager', VALUE_OPTIONAL, null, NULL_ALLOWED),
+            // Top level parameters must not be VALUE_OPTIONAL, only VALUE_DEFAULT or VALUE_REQUIRED.
+            'guestmail' => new external_value(PARAM_EMAIL, 'Guestmail', VALUE_DEFAULT, null, NULL_ALLOWED),
+            'accountmanager' => new external_value(PARAM_INT, 'Accountmanager', VALUE_DEFAULT, null, NULL_ALLOWED),
         ]);
     }
 
@@ -127,7 +126,8 @@ class local_edusupport_external extends external_api {
 
         $cache = \cache::make('local_edusupport', 'spamprotect');
         $timeoffset = time() - $protecttime;
-        $log = $cache->get('log');
+        // An empty cache hands back false, which cannot be appended to further down.
+        $log = $cache->get('log') ?: [];
         if (!empty($log)) {
             for ($a = 0; $a < count($log); $a++) {
                 if ($log[$a] < $timeoffset) {
