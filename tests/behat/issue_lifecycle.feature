@@ -99,3 +99,17 @@ Feature: Handling a support issue from creation to closing
     When I set the field "Not yet started" to ""
     And I set the field "Ongoing" to "1"
     Then I should see "Printer is broken"
+
+  Scenario: An administrator picks the support forum of a course
+    Given the following "activities" exist:
+      | activity | course | name             | intro          |
+      | forum    | SUP    | Second forum     | Not for support |
+    And I log in as "admin"
+    And I am on "Support area" course homepage
+    When I navigate to "Choose forums for eduSupport" in current page administration
+    Then I should see "Second forum"
+    And I should see "Course Supportforum"
+    When I click on "enable" "link" in the "Second forum" "table_row"
+    Then I should see "disable" in the "Second forum" "table_row"
+    When I click on "disable" "link" in the "Second forum" "table_row"
+    Then I should not see "disable" in the "Second forum" "table_row"

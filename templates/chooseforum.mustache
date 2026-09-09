@@ -29,13 +29,13 @@
                 <tr>
                     <td>
                         {{^state}}
-                            <a href="{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&state=1"
+                            <a href="{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&state=1&sesskey={{sesskey}}"
                                 class="btn btn-block btn-secondary">
                                 {{#str}} supportforum:enable, local_edusupport {{/str}}
                             </a>
                         {{/state}}
                         {{#state}}
-                        <a href="{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&state=-1"
+                        <a href="{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&state=-1&sesskey={{sesskey}}"
                             class="btn btn-block btn-primary">
                             {{#str}} supportforum:disable, local_edusupport {{/str}}
                         </a>
@@ -47,13 +47,13 @@
                         {{/state}}
                         {{#state}}
                             {{^statecentral}}
-                                <a href="{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&central=1"
+                                <a href="{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&central=1&sesskey={{sesskey}}"
                                     class="btn btn-block btn-primary">
                                     {{#str}} supportforum:central:enable, local_edusupport {{/str}}
                                 </a>
                             {{/statecentral}}
                             {{#statecentral}}
-                                <a href="{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&central=-1"
+                                <a href="{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&central=-1&sesskey={{sesskey}}"
                                     class="btn btn-block btn-primary">
                                     {{#str}} supportforum:central:disable, local_edusupport {{/str}}
                                 </a>
@@ -66,7 +66,7 @@
                             -
                         {{/state}}
                         {{#state}}
-                        <select name="setsupporter_{{uniqid}}_{{id}}" onchange="top.location.href='{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&dedicatedsupporter=' + this.value;">
+                        <select name="setsupporter_{{uniqid}}_{{id}}" onchange="top.location.href='{{wwwroot}}/local/edusupport/chooseforum.php?courseid={{course}}&forumid={{id}}&dedicatedsupporter=' + this.value + '&sesskey={{sesskey}}';">
                             <option value="-1">{{#str}} none {{/str}}</option>
                             {{#supporters}}
                             <option value="{{userid}}"{{#selected}} selected="selected" {{/selected}}>

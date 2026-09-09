@@ -40,9 +40,54 @@ $title = get_string('supportforum:choose', 'local_edusupport');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
+$isadmin = is_siteadmin();
+
+// Handle the choice before any output is sent, so we can redirect afterwards
+// (post/redirect/get). Without it a reload would toggle the forum a second time.
+if ($isadmin && !empty($forumid)) {
+    require_sesskey();
+
+    $dedicatedsupporter = optional_param('dedicatedsupporter', 0, PARAM_INT);
+    if (!empty($dedicatedsupporter)) {
+        if (\local_edusupport\lib::supportforum_setdedicatedsupporter($forumid, $dedicatedsupporter)) {
+            redirect(
+                $PAGE->url,
+                get_string('dedicatedsupporter:successfully_set', 'local_edusupport'),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
+        }
+        redirect(
+            $PAGE->url,
+            get_string('dedicatedsupporter:not_successfully_set', 'local_edusupport'),
+            null,
+            \core\output\notification::NOTIFY_ERROR
+        );
+    }
+
+    switch ($state) {
+        case 1:
+            \local_edusupport\lib::supportforum_enable($forumid);
+            break;
+        case -1:
+            \local_edusupport\lib::supportforum_disable($forumid);
+            break;
+    }
+    switch ($central) {
+        case 1:
+            \local_edusupport\lib::supportforum_enablecentral($forumid);
+            break;
+        case -1:
+            \local_edusupport\lib::supportforum_disablecentral($forumid);
+            break;
+    }
+
+    redirect($PAGE->url);
+}
+
 echo $OUTPUT->header();
 
-if (!is_siteadmin()) {
+if (!$isadmin) {
     $tocmurl = new moodle_url('/course/view.php', ['id' => $courseid]);
     echo $OUTPUT->render_from_template('local_edusupport/alert', [
         'content' => get_string('missing_permission', 'local_edusupport'),
@@ -50,40 +95,6 @@ if (!is_siteadmin()) {
         'url' => $tocmurl->__toString(),
     ]);
 } else {
-    if (!empty($forumid)) {
-        $dedicatedsupporter = optional_param('dedicatedsupporter', 0, PARAM_INT);
-        if (!empty($dedicatedsupporter)) {
-            if (\local_edusupport\lib::supportforum_setdedicatedsupporter($forumid, $dedicatedsupporter)) {
-                echo $OUTPUT->render_from_template('local_edusupport/alert', [
-                    'content' => get_string('dedicatedsupporter:successfully_set', 'local_edusupport'),
-                    'type' => 'success',
-                ]);
-            } else {
-                echo $OUTPUT->render_from_template('local_edusupport/alert', [
-                    'content' => get_string('dedicatedsupporter:not_successfully_set', 'local_edusupport'),
-                    'type' => 'danger',
-                ]);
-            }
-        } else {
-            switch ($state) {
-                case 1:
-                    \local_edusupport\lib::supportforum_enable($forumid);
-                    break;
-                case -1:
-                    \local_edusupport\lib::supportforum_disable($forumid);
-                    break;
-            }
-            switch ($central) {
-                case 1:
-                    \local_edusupport\lib::supportforum_enablecentral($forumid);
-                    break;
-                case -1:
-                    \local_edusupport\lib::supportforum_disablecentral($forumid);
-                    break;
-            }
-        }
-    }
-
     $sql = "SELECT userid,supportlevel
                 FROM {local_edusupport_supporters}
                 WHERE courseid=1
@@ -123,7 +134,10 @@ if (!is_siteadmin()) {
         }
     }
 
-    echo $OUTPUT->render_from_template('local_edusupport/chooseforum', ['forums' => $forums, 'wwwroot' => $CFG->wwwroot]);
+    echo $OUTPUT->render_from_template(
+        'local_edusupport/chooseforum',
+        ['forums' => $forums, 'wwwroot' => $CFG->wwwroot, 'sesskey' => sesskey()]
+    );
 }
 
 echo $OUTPUT->footer();
