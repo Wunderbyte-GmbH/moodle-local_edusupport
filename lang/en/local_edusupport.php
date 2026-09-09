@@ -15,12 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * English strings for local_edusupport.
+ *
  * @package   local_edusupport
  * @copyright 2018 Digital Education Society (http://www.dibig.at)
  * @author    Robert Schrenk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['accountmanager'] = 'Your Account managers';
+$string['accountmanagers'] = 'Account managers';
+$string['accountmanagertitle'] = 'Account manager';
 $string['allowguesttickets'] = 'Allow tickets from guest user.';
 $string['allowguesttickets:description'] = 'Guest can post one ticket and gets updates via mail.';
 $string['archive'] = 'Archive';
@@ -32,6 +37,7 @@ $string['autocreate_usergroup'] = 'Automatically create a private group for user
 $string['back'] = 'back';
 $string['be_more_accurate'] = 'Please be more accurate when describing your problem!';
 $string['cachedef_supportmenu'] = 'Cache for the supportmenu';
+$string['capstocheck'] = 'Capabilties that are checked';
 $string['changes_saved_fail'] = 'Changes could not be saved.';
 $string['changes_saved_successfully'] = 'Changes saved successfully.';
 $string['changestatus'] = 'Change status';
@@ -81,6 +87,7 @@ $string['faqread'] = 'Please confirm that you have read the FAQ';
 $string['faqread:description'] = 'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
 $string['firstlvlgroupmode'] = '1st level support group modus';
 $string['firstlvlgroupmode:description'] = 'Enables group mode so that non teachers (other roles) get connected based on a customfield and can answer in the courseforum (make sure to give the role "canforward2ndlevel" right. Also enable group mode in course and set forum to seperate groups.';
+$string['furtherquestions'] = 'As you have posted a support request as guest user, you can not reply or post further comments for that issue. If you want to have further support please register on {$a->sitename}.';
 $string['goto_targetforum'] = 'Supportforum';
 $string['goto_tutorials'] = 'Documents & Tutorials';
 $string['guestmail'] = 'Your e-mail';
@@ -161,12 +168,14 @@ $string['missing_permission'] = 'Missing required permission';
 $string['missing_targetforum'] = 'Missing target forum, must be configured!';
 $string['missing_targetforum_exists'] = 'The configured target forum does not exist. Wrong configuration!';
 $string['no_such_issue'] = 'This is not an open issue! You can navigate to the <a href="{$a->todiscussionurl}"><u>discussion page</u></a> or go <a href="{$a->toissuesurl}"><u>back to the issues overview</u></a>.';
+$string['none'] = 'none chosen';
 $string['notasigned'] = 'No support user has been assigned yet';
 $string['only_you'] = 'Only you and our team';
 $string['phonefield'] = 'disable phone field';
 $string['phonefield:description'] = 'Deactivate phone field in the form for creating issues';
 $string['pluginname'] = 'eduSupport';
 
+$string['possiblemanagers'] = 'Possible managers';
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
 
 To reply click on this link: {$a->replylink}';
@@ -186,6 +195,17 @@ $string['prioritylvl:high'] = 'high priority';
 $string['prioritylvl:low'] = 'low priority';
 $string['prioritylvl:mid'] = 'mid priority';
 $string['privacy:metadata'] = 'This plugin does not store any personal data as it uses a forum as target.';
+$string['privacy:metadata:edusupport:courseid'] = 'Course Id with supportforum';
+$string['privacy:metadata:edusupport:currentsupporter'] = 'User Id of the assigned user';
+$string['privacy:metadata:edusupport:discussionid'] = 'Forum discussion Id ';
+$string['privacy:metadata:edusupport:fieldid'] = 'Id';
+$string['privacy:metadata:edusupport:issueid'] = 'Issue Id';
+$string['privacy:metadata:edusupport:issues'] = 'Issues of supporters';
+$string['privacy:metadata:edusupport:status'] = 'Status of issue';
+$string['privacy:metadata:edusupport:subscr'] = 'All subscribed issues';
+$string['privacy:metadata:edusupport:supporters'] = 'All defined supporters';
+$string['privacy:metadata:edusupport:supportlvl'] = 'Supportlevel';
+$string['privacy:metadata:edusupport:userid'] = 'User Id';
 $string['relativeurlsupportarea'] = 'Relative URL to Supportarea';
 $string['rolename'] = 'rolename';
 $string['rolename:description'] = 'rolename for the supporters (e.g. teacher instead of editingtecher or customrole)';
@@ -208,6 +228,7 @@ $string['sendrequestreceived'] = 'Send e-mail notification that the request has 
 $string['sendrequestreceived:description'] = 'An e-mail is sent to the user submitting a support request. The e-mail confirms the receipt of the request but is not part of the ticket specific thread in the support forum';
 $string['sendsupporterassignments'] = 'Send support user assignments to the user';
 $string['sendsupporterassignments:description'] = 'Notify the user via emails when a support user has been assigned to the request. Everytime someone new is assigned an email is sent';
+$string['setaccountmanager'] = 'Set Account managers';
 $string['showresponsibles'] = 'Show the support contacts to the person filing a request';
 $string['showresponsibles:description'] = 'After a support request has been submitted, show who is going to look after it - by name, in the confirmation dialogue and in an automatic post in the ticket. Turn this off if the support contacts of a course should stay unnamed. Supporters are notified about new tickets either way.';
 $string['spamprotection:exception'] = 'Sorry, maximum amount of issues exceeded. Try again in a few minutes.';
@@ -219,11 +240,20 @@ $string['startedby'] = 'Started by';
 
 // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 
+$string['status'] = 'Status';
+$string['status:awaitingsupportaction'] = 'Awaiting support action';
+$string['status:awaitinguserreply'] = 'Awaiting user reply';
+$string['status:closed'] = 'Closed';
+$string['status:notstarted'] = 'Not yet started';
+$string['status:ongoing'] = 'Ongoing';
 $string['subject'] = 'Subject';
 $string['subject_missing'] = 'Missing subject';
 $string['subject_prefix'] = 'Support request with following topic: ';
 $string['support_area'] = 'Helpdesk & Tutorials';
+$string['supportadded'] = "Supportuser added";
+$string['supportchanged'] = "Supportuser changed";
 $string['supportcourse'] = 'Supportcourse';
+$string['supportdeleted'] = "Supportuser deleted";
 $string['supporters'] = 'Supporters';
 $string['supporters:choose'] = 'Choose supporters';
 $string['supporters:description'] = 'All users of the course, that are enrolled at least as "non-editing teacher" can be configured as supporter. Just enter anything as supportlevel to activate somebody as supporter!';
@@ -236,6 +266,7 @@ $string['supportlevel'] = 'Supportlevel';
 $string['targetforum'] = 'Supportforum';
 $string['targetforum:core:description'] = 'All users will be automatically enrolled to the systemwide supportforum as soon as they create a support issue. Furthermore groups can be created and managed automatically to seperate support issues.';
 $string['targetforum:description'] = 'Please select the forum that should be used as target for support issues within this course. This forum will be forced to have some group mode enabled. The Plugin will create an individual group for every single user.';
+$string['timebeforereminder'] = 'Time between last statusupdate and reminder';
 $string['to_group'] = 'To';
 $string['toggle'] = 'Course Supportforum';
 $string['toggle:central'] = 'Central Supportforum';
@@ -248,47 +279,3 @@ $string['userlinks:description'] = 'show userlinks in issues list';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';
 $string['your_issues'] = 'Your issues';
-
-
-
-/* State */
-
-$string['status:notstarted'] = 'Not yet started';
-$string['status:awaitinguserreply'] = 'Awaiting user reply';
-$string['status:ongoing'] = 'Ongoing';
-$string['status:closed'] = 'Closed';
-$string['status:awaitingsupportaction'] = 'Awaiting support action';
-$string['status'] = 'Status';
-
-/* Events */
-$string['supportadded'] = "Supportuser added";
-$string['supportdeleted'] = "Supportuser deleted";
-$string['supportchanged'] = "Supportuser changed";
-
-/* PrivaCY API */
-$string['privacy:metadata:edusupport:subscr'] = 'All subscribed issues';
-$string['privacy:metadata:edusupport:issues'] = 'Issues of supporters';
-$string['privacy:metadata:edusupport:fieldid'] = 'Id';
-$string['privacy:metadata:edusupport:issueid'] = 'Issue Id';
-$string['privacy:metadata:edusupport:discussionid'] = 'Forum discussion Id ';
-$string['privacy:metadata:edusupport:userid'] = 'User Id';
-$string['privacy:metadata:edusupport:supporters'] = 'All defined supporters';
-$string['privacy:metadata:edusupport:supportlvl'] = 'Supportlevel';
-$string['privacy:metadata:edusupport:courseid'] = 'Course Id with supportforum';
-$string['privacy:metadata:edusupport:currentsupporter'] = 'User Id of the assigned user';
-$string['privacy:metadata:edusupport:status'] = 'Status of issue';
-
-
-/* Accountmanager */
-$string['possiblemanagers'] = 'Possible managers';
-$string['none'] = 'none chosen';
-$string['accountmanagers'] = 'Account managers';
-$string['accountmanager'] = 'Your Account managers';
-$string['capstocheck'] = 'Capabilties that are checked';
-$string['setaccountmanager'] = 'Set Account managers';
-$string['accountmanagertitle'] = 'Account manager';
-
-/* Guestticket */
-$string['furtherquestions'] = 'As you have posted a support request as guest user, you can not reply or post further comments for that issue. If you want to have further support please register on {$a->sitename}.';
-
-$string['timebeforereminder'] = 'Time between last statusupdate and reminder';

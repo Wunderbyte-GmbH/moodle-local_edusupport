@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Event observer definitions for local_edusupport.
+ *
  * @package    local_edusupport
  * @copyright  2020 Center for Learningmanagement (https://www.lernmanagement.at)
  * @author     Robert Schrenk

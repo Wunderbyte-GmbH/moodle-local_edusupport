@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Configure the support forums of a course.
+ *
  * @package    local_edusupport
  * @copyright  2019 Digital Education Society (http://www.dibig.at)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -69,8 +71,10 @@ if (\local_edusupport\lib::can_config_course($course->id)) {
     $enrolled = get_enrolled_users($context, 'moodle/course:viewhiddenactivities');
     $potentialsupporters = [];
     foreach ($enrolled as &$potentialsupporter) {
-        // TODO: This function does not exist!! - @David.
-        $potentialsupporter->supportlevel = local_edusupport::get_supporter_level($course->id, $potentialsupporter->id);
+        $potentialsupporter->supportlevel = \local_edusupport\lib::get_supporter_level(
+            $course->id,
+            $potentialsupporter->id
+        );
         $potentialsupporter->courseid = $COURSE->id;
         $potentialsupporters[] = $potentialsupporter;
     }

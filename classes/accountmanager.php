@@ -33,6 +33,7 @@ namespace local_edusupport;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class accountmanager {
+    /** @var int Id of the user this account manager belongs to. */
     public $userid;
 
     /**

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Form a supporter uses to set a holiday mode.
+ *
  * @package    local_edusupport
  * @copyright  2018 Digital Education Society (http://www.dibig.at)
  * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
@@ -28,14 +30,32 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . "/formslib.php");
 
+/**
+ * Form a supporter uses to set a holiday mode.
+ *
+ * @package    local_edusupport
+ * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class holidaymode_form extends \moodleform {
+    /**
+     * Define the form.
+     *
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
         $mform->addElement('date_time_selector', 'holidaymode', '');
         $mform->disable_form_change_checker();
     }
 
-    // Custom validation should be added here.
+    /**
+     * Validate the submitted data. Custom validation should be added here.
+     *
+     * @param array $data the submitted data.
+     * @param array $files the submitted files.
+     * @return array of errors, keyed by element name.
+     */
     public function validation($data, $files) {
         $errors = [];
         return $errors;

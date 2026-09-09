@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Show a single support issue and let the support team act on it.
+ *
  * @package    local_edusupport
  * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
  * @author     Robert Schrenk
@@ -443,16 +445,6 @@ if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
             $out = $out1 . $out2;
         }
     }
-    // It gets saved at /mod_forum/ Don t know why this line was needed.
-    /*
-    $replacements = array(
-        array($CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/mod_forum/',
-            $CFG->wwwroot . '/pluginfile.php/' . $modcontext->id . '/local_edusupport/'),
-    );
-    foreach ($replacements as $replacement) {
-        $out = str_replace($replacement[0], $replacement[1], $out);
-    }
-    */
     echo $out;
 
     if (!empty($replyto)) {

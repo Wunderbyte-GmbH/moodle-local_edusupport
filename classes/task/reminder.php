@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Scheduled task that reminds supporters of issues waiting for them.
+ *
  * @package    local_edusupport
  * @copyright  2018 Digital Education Society (http://www.dibig.at)
  * @author     Robert Schrenk
@@ -23,12 +25,30 @@
 
 namespace local_edusupport\task;
 
+/**
+ * Ad hoc task that reminds supporters of issues waiting for them.
+ *
+ * @package    local_edusupport
+ * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class reminder extends \core\task\adhoc_task {
+    /**
+     * Get the name shown for this task in the admin screens.
+     *
+     * @return string
+     */
     public function get_name() {
         // Shown in admin screens.
         return get_string('cron:reminder:title', 'local_edusupport');
     }
 
+    /**
+     * Send the reminders this task was queued for.
+     *
+     * @param bool $debug whether to report what is being done.
+     * @return bool|void
+     */
     public function execute($debug = false) {
         global $DB;
 
@@ -98,6 +118,14 @@ class reminder extends \core\task\adhoc_task {
         }
         return true;
     }
+    /**
+     * Send one reminder message to a supporter.
+     *
+     * @param object $supporter the user to remind.
+     * @param array $reminders the discussions to remind them of.
+     * @param bool $debug whether to report what is being done.
+     * @return bool|void
+     */
     private function send($supporter, $reminders = [], $debug = false) {
         global $CFG, $OUTPUT;
         if (!empty($supporter->id) && $supporter->id > 0 && count($reminders) > 0) {

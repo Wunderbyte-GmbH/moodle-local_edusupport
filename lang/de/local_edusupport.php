@@ -15,12 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * German strings for local_edusupport.
+ *
  * @package   local_edusupport
  * @copyright 2018 Digital Education Society (http://www.dibig.at)
  * @author    Robert Schrenk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['accountmanager'] = 'Dein Account Manager';
+$string['accountmanagers'] = 'Account Manager';
 $string['archive'] = 'Archiv';
 $string['assigned'] = 'Zugeordnet';
 $string['auto2ndlvl'] = 'Automatische Weiterleitung zum 2nd Level Support';
@@ -29,8 +33,10 @@ $string['autocreate_orggroup'] = 'Automatisch Gruppen für eduvidual-Organisatio
 $string['autocreate_usergroup'] = 'Automatisch private Gruppen für Nutzer/innen anlegen';
 $string['back'] = 'Zurück';
 $string['be_more_accurate'] = 'Bitte beschreiben Sie das Problem genauer!';
+$string['capstocheck'] = 'Rechte die geprüft werden';
 $string['changes_saved_fail'] = 'Änderungen konnten nicht gespeichert werden.';
 $string['changes_saved_successfully'] = 'Änderungen erfolgreich gespeichert.';
+$string['changestatus'] = 'Status ändern';
 $string['contactphone'] = 'Telefon';
 $string['contactphone_missing'] = 'Bitte geben Sie Ihre Telefonnummer für Rückfragen an!';
 $string['continue'] = 'Weiter';
@@ -48,6 +54,8 @@ $string['create_issue_success_title'] = 'Erfolg';
 $string['cron:deleteexpiredissues:title'] = 'Lösche alte Tickets';
 $string['cron:reminder:intro'] = 'Dies ist eine freundlicher Erinnerung an jene offenen Tickets, die Ihnen als Supporter zugeteilt wurden!';
 $string['cron:reminder:title'] = 'Support Erinnerung';
+$string['customfieldname'] = 'Profilfeldname für den Gruppenmodus';
+$string['customfieldname:description'] = 'Profilfeldname für den Gruppenmodus';
 $string['dedicatedsupporter'] = 'Zugewiesen';
 $string['dedicatedsupporter:not_successfully_set'] = 'Konnte bevorzugte/n Supportmitarbeiter/in nicht auswählen.';
 $string['dedicatedsupporter:successfully_set'] = 'Erfolgreich eine/n bevorzugte/n Supportmitarbeiter/in ausgewählt.';
@@ -70,6 +78,9 @@ $string['faqlink'] = 'FAQ-Link';
 $string['faqlink:description'] = 'Addresse zum FAQ';
 $string['faqread'] = 'Bitte bestätigen, dass Sie die FAQ gelesen haben!';
 $string['faqread:description'] = 'Ich bestätige hiermit die <a href="{$a}">FAQ</a> gelesen zu haben';
+$string['firstlvlgroupmode'] = '1st level Support Gruppen Modus';
+$string['firstlvlgroupmode:description'] = 'Aktiviert den Gruppenmodus, so dass Nicht-Lehrer (andere Rollen) auf der Grundlage eines benutzerdefinierten Feldes verbunden werden und im Kursforum antworten können (stellen Sie sicher, dass Sie der Rolle "canforward2ndlevel" das Recht geben. Aktivieren Sie auch den Gruppenmodus im Kurs und aktivieren Sie getrennte Gruppen.';
+$string['furtherquestions'] = 'Da Sie eine Supportanfrage als Gastbenutzer gestellt haben, können Sie nicht antworten oder weitere Kommentare zu dieser Anfrage abgeben. Wenn Sie weitere Unterstützung wünschen, registrieren Sie sich bitte unter {$a->sitename}.';
 $string['goto_targetforum'] = 'Supportforum';
 $string['goto_tutorials'] = 'Hilfe & Anleitungen';
 $string['guestmail'] = 'Ihre E-Mail Adresse';
@@ -82,6 +93,7 @@ $string['holidaymode_is_on'] = 'Urlaubsmodus ist an';
 $string['holidaymode_is_on_descr'] = 'Bei aktiviertem Urlaubsmodus werden Ihnen keine neuen Tickets zugewiesen.';
 $string['holidaymodeenabled'] = "Urlaubsmodus aktivieren";
 $string['holidaymodeenabled:description'] = "Urlaubsmodus: Supporter bekommen bis zu einem bestimmten Datum keine Tickets.";
+$string['invalidmail'] = 'Bitte tragen Sie eine richtige E-Mail Adresse ein.';
 $string['issue'] = 'Ticket';
 $string['issue:assigned'] = 'Sie wurden folgendem Ticket zugewiesen:';
 $string['issue:countassigned'] = 'verfolgte Tickets';
@@ -140,11 +152,13 @@ $string['missing_permission'] = 'Fehlende Erlaubnis!';
 $string['missing_targetforum'] = 'Das Zielforum fehlt und muss konfiguriert werden!';
 $string['missing_targetforum_exists'] = 'Das konfigurierte Zielforum existiert nicht. Die fehlerhafte Konfiguration muss behoben werden!';
 $string['no_such_issue'] = 'Dies ist kein offenes Ticket! Sie können die <a href="{$a->todiscussionurl}"><u>Diskussion direkt im Forum</u></a> aufrufen oder zurück zur <a href="{$a->toissuesurl}"><u>Übersicht der offenen Tickets</u></a> wechseln.';
+$string['none'] = 'nichts ausgewählt';
 $string['notasigned'] = 'Es wurde noch kein Support-User zugewiesen';
 $string['only_you'] = 'Nur Sie und unser Team';
 $string['phonefield'] = 'Telefonfeld verbergen';
 $string['phonefield:description'] = 'Telefonfeld verbergen';
 $string['pluginname'] = 'eduSupport';
+$string['possiblemanagers'] = 'Mögliche Manager';
 $string['postmailinfolink'] = 'Dies ist die Kopie einer Nachricht, die in {$a->coursename} gepostet wurde.
 
 Klicken Sie hier, um zu antworten: {$a->replylink}';
@@ -163,7 +177,20 @@ $string['prioritylvl:high'] = 'hohe Priorität';
 $string['prioritylvl:low'] = 'niedrige Priorität';
 $string['prioritylvl:mid'] = 'mittlere Priorität';
 $string['privacy:metadata'] = 'Dieses Plugin speichert keine personenbezogenen Daten, da die Informationen in einem Forum abgelegt werden.';
+$string['privacy:metadata:edusupport:courseid'] = 'Kurs Id mit dem Supportforum';
+$string['privacy:metadata:edusupport:currentsupporter'] = 'User Id des supportenden Users';
+$string['privacy:metadata:edusupport:discussionid'] = 'Forum Diskussions Id ';
+$string['privacy:metadata:edusupport:fieldid'] = 'Id';
+$string['privacy:metadata:edusupport:issueid'] = 'Ticket Id';
+$string['privacy:metadata:edusupport:issues'] = 'Tickets des Supporters';
+$string['privacy:metadata:edusupport:priority'] = 'Ticketstatus';
+$string['privacy:metadata:edusupport:subscr'] = 'Alle beobachteten Tickets';
+$string['privacy:metadata:edusupport:supporters'] = 'Alle Supporter';
+$string['privacy:metadata:edusupport:supportlvl'] = 'Supportlevel';
+$string['privacy:metadata:edusupport:userid'] = 'User Id';
 $string['relativeurlsupportarea'] = 'Relative URL zum Supportbereich';
+$string['rolename'] = 'Rollenname';
+$string['rolename:description'] = 'Rollenname für den 1st Level Support (z.B. teacher statt editingtecher oder eine eigens erstellte Rolle)';
 $string['screenshot'] = 'Screenshot anhängen';
 $string['screenshot:description'] = 'Ein Screenshot kann bei der Problembehebung helfen!';
 $string['screenshot:generateinfo'] = 'Zur Generierung des Screenshots wird das Formular kurz unsichtbar, wird aber danach gleich wieder angezeigt!';
@@ -183,13 +210,24 @@ $string['sendrequestreceived'] = 'Senden einer E-Mail zur Bestätigung, dass die
 $string['sendrequestreceived:description'] = 'Benachrichtigen Sie den/die Benutzer/in ausschließlich per E-Mail (und nicht im Support-Forum), dass die Anfrage eingegangen ist. Dies dient nur der Information des Benutzers und ist für die Dokumentation des Verlaufs der Anfrage im Support-Forum nicht relevant.';
 $string['sendsupporterassignments'] = 'Senden von Support-Benutzerzuweisungen an den Benutzer';
 $string['sendsupporterassignments:description'] = 'Benachrichtigen Sie den Benutzer per E-Mail, wenn ein Support-User der Anfrage zugewiesen wurde. Jedes Mal, wenn ein neuer Benutzer zugewiesen wird, wird eine E-Mail gesendet';
+$string['setaccountmanager'] = 'Setze Account Manager';
 $string['showresponsibles'] = 'Ansprechpersonen der anfragenden Person anzeigen';
 $string['showresponsibles:description'] = 'Nach dem Abschicken einer Supportanfrage anzeigen, wer sich darum kümmert - namentlich, im Bestätigungsdialog und in einem automatischen Beitrag im Ticket. Abschalten, wenn die Ansprechpersonen eines Kurses ungenannt bleiben sollen. Die Supporter werden in jedem Fall über neue Tickets benachrichtigt.';
+$string['startedby'] = 'Gestartet von';
+$string['status'] = 'Status';
+$string['status:awaitingsupportaction'] = 'Erwarte Bearbeitung durch Supporter:in';
+$string['status:awaitinguserreply'] = 'Erwarte Antwort des/der Benutzer:in';
+$string['status:closed'] = 'Abgeschlossen';
+$string['status:notstarted'] = 'Noch nicht gestartet';
+$string['status:ongoing'] = 'In Bearbeitung';
 $string['subject'] = 'Betreff';
 $string['subject_missing'] = 'Bitte geben Sie einen stichwortartigen Titel an, der das Problem beschreibt!';
 $string['subject_prefix'] = 'Supportanfrage zu folgendem Thema: ';
 $string['support_area'] = 'Hilfe & Anleitungen';
+$string['supportadded'] = "Supportuser hinzugefgügt";
+$string['supportchanged'] = "Supportuser geändert";
 $string['supportcourse'] = 'Supportkurs';
+$string['supportdeleted'] = "Supportuser gelöscht";
 $string['supporters'] = 'Supportmitarbeiter/innen';
 $string['supporters:choose'] = 'Supportmitarbeiter/innen wählen';
 $string['supporters:description'] = 'Alle Nutzer/innen des Kurses, die zumindest als "non-editing Teacher" eingestuft sind, stehen als Supportmitarbeiter/innen zur Verfügung. Geben Sie ein beliebiges Supportlevel (wird immer alphabetisch sortiert) an, um jemanden als Mitarbeiter/in einzusetzen!';
@@ -202,6 +240,7 @@ $string['supportlevel'] = 'Supportlevel';
 $string['targetforum'] = 'Supportforum';
 $string['targetforum:core:description'] = 'Alle Nutzer/innen werden automatisch in das systemweite Supportforum eingeschrieben, sobald sie eine Supportanfrage erstellen. Außerdem besteht die Möglichkeit automatische Gruppen anzulegen, um die Supportanfragen voneinander zu trennen.';
 $string['targetforum:description'] = 'Bitte wählen Sie jenes Forum, welches im Kurs für Supportanfragen genutzt werden soll. In diesem Forum wird zwangszweise der Gruppenmodus aktiviert bevor die erste Supportanfrage erstellt wird. Das Plugin wird außerdem für jede/n Nutzer/in automatisch eine private Gruppe anlegen.';
+$string['timebeforereminder'] = 'Zeit bevor Erinnerung gesendet wird';
 $string['to_group'] = 'An';
 $string['toggle'] = 'Kurssupportforum';
 $string['toggle:central'] = 'Zentrales Supportforum';
@@ -214,53 +253,3 @@ $string['userlinks:description'] = 'zeige Userlinks in Taskliste';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';
 $string['your_issues'] = 'Ihre Anfragen';
-
-/* Status */
-$string['status:notstarted'] = 'Noch nicht gestartet';
-$string['status:awaitinguserreply'] = 'Erwarte Antwort des/der Benutzer:in';
-$string['status:ongoing'] = 'In Bearbeitung';
-$string['status:awaitingsupportaction'] = 'Erwarte Bearbeitung durch Supporter:in';
-$string['status:closed'] = 'Abgeschlossen';
-
-$string['status'] = 'Status';
-$string['changestatus'] = 'Status ändern';
-$string['startedby'] = 'Gestartet von';
-$string['invalidmail'] = 'Bitte tragen Sie eine richtige E-Mail Adresse ein.';
-
-$string['firstlvlgroupmode'] = '1st level Support Gruppen Modus';
-$string['firstlvlgroupmode:description'] = 'Aktiviert den Gruppenmodus, so dass Nicht-Lehrer (andere Rollen) auf der Grundlage eines benutzerdefinierten Feldes verbunden werden und im Kursforum antworten können (stellen Sie sicher, dass Sie der Rolle "canforward2ndlevel" das Recht geben. Aktivieren Sie auch den Gruppenmodus im Kurs und aktivieren Sie getrennte Gruppen.';
-$string['customfieldname'] = 'Profilfeldname für den Gruppenmodus';
-$string['customfieldname:description'] = 'Profilfeldname für den Gruppenmodus';
-$string['rolename'] = 'Rollenname';
-$string['rolename:description'] = 'Rollenname für den 1st Level Support (z.B. teacher statt editingtecher oder eine eigens erstellte Rolle)';
-
-
-/* Events */
-$string['supportadded'] = "Supportuser hinzugefgügt";
-$string['supportdeleted'] = "Supportuser gelöscht";
-$string['supportchanged'] = "Supportuser geändert";
-
-/* Privacy API */
-$string['privacy:metadata:edusupport:subscr'] = 'Alle beobachteten Tickets';
-$string['privacy:metadata:edusupport:issues'] = 'Tickets des Supporters';
-$string['privacy:metadata:edusupport:fieldid'] = 'Id';
-$string['privacy:metadata:edusupport:issueid'] = 'Ticket Id';
-$string['privacy:metadata:edusupport:discussionid'] = 'Forum Diskussions Id ';
-$string['privacy:metadata:edusupport:userid'] = 'User Id';
-$string['privacy:metadata:edusupport:supporters'] = 'Alle Supporter';
-$string['privacy:metadata:edusupport:supportlvl'] = 'Supportlevel';
-$string['privacy:metadata:edusupport:courseid'] = 'Kurs Id mit dem Supportforum';
-$string['privacy:metadata:edusupport:currentsupporter'] = 'User Id des supportenden Users';
-$string['privacy:metadata:edusupport:priority'] = 'Ticketstatus';
-
-/* Accountmanager */
-$string['possiblemanagers'] = 'Mögliche Manager';
-$string['none'] = 'nichts ausgewählt';
-$string['accountmanagers'] = 'Account Manager';
-$string['accountmanager'] = 'Dein Account Manager';
-$string['capstocheck'] = 'Rechte die geprüft werden';
-$string['setaccountmanager'] = 'Setze Account Manager';
-
-$string['furtherquestions'] = 'Da Sie eine Supportanfrage als Gastbenutzer gestellt haben, können Sie nicht antworten oder weitere Kommentare zu dieser Anfrage abgeben. Wenn Sie weitere Unterstützung wünschen, registrieren Sie sich bitte unter {$a->sitename}.';
-
-$string['timebeforereminder'] = 'Zeit bevor Erinnerung gesendet wird';

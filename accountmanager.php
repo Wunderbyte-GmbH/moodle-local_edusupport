@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Assign the account manager a user turns to for support.
+ *
  * @package    local_edusupport
  * @copyright  2022 Thomas Winkler
  * @author     Thomas Winkler

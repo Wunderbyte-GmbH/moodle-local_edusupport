@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Form used to file a support request.
+ *
  * @package    local_edusupport
  * @copyright  2018 Digital Education Society (http://www.dibig.at)
  * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
@@ -28,12 +30,31 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . "/formslib.php");
 
+/**
+ * Form used to file a support request.
+ *
+ * @package    local_edusupport
+ * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class issue_create_form extends moodleform {
+    /** @var int Maximum size of a single attachment in bytes. */
     public $maxbytes = 1024 * 1024;
+
+    /** @var int Maximum size of all attachments of an area in bytes. */
     public $areamaxbytes = 10485760;
+
+    /** @var int Maximum number of attachments. */
     public $maxfiles = 1;
+
+    /** @var int Whether attachments may use subdirectories. */
     public $subdirs = 0;
 
+    /**
+     * Define the form.
+     *
+     * @return void
+     */
     public function definition() {
         global $CFG, $COURSE, $SITE;
 
@@ -204,12 +225,23 @@ class issue_create_form extends moodleform {
         $mform->addElement('html', '</div>');
     }
 
-    // Custom validation should be added here.
+    /**
+     * Validate the submitted data. Custom validation should be added here.
+     *
+     * @param array $data the submitted data.
+     * @param array $files the submitted files.
+     * @return array of errors, keyed by element name.
+     */
     public function validation($data, $files) {
         $errors = [];
         return $errors;
     }
 
+    /**
+     * Get the priority levels a request can be filed with.
+     *
+     * @return array of prefix => label.
+     */
     public function return_priority_options() {
         return [
             "" => get_string('prioritylvl:low', 'local_edusupport'),

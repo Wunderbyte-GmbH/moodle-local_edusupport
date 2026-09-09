@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Mobile app definitions for local_edusupport.
+ *
  * @package    local_edusupport
  * @copyright  2019 Digital Education Society (http://www.dibig.at)
  * @author     Robert Schrenk
@@ -24,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 $addons = [
-    'local_edusupport' => [ // Plugin identifier
+    'local_edusupport' => [ // Plugin identifier.
         'handlers' => [ // Different places where the plugin will display content.
             'issue_close' => [ // Handler unique name (alphanumeric).
                 'displaydata' => [
@@ -33,8 +35,8 @@ $addons = [
                     'title' => 'pluginname',
                 ],
                 'init' => 'edusupport_init',
-                'delegate' => 'CoreCourseModuleDelegate', // Delegate (where to display the link to the plugin)
-                'method' => 'issue_close', // Main function in \mod_certificate\output\mobile
+                'delegate' => 'CoreCourseModuleDelegate', // Delegate, where to display the link to the plugin.
+                'method' => 'issue_close', // Main function in \mod_certificate\output\mobile.
                 'offlinefunctions' => [
                     'mobile_course_view' => [],
                     'mobile_issues_view' => [],

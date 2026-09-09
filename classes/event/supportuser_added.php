@@ -96,10 +96,20 @@ class supportuser_added extends \core\event\base {
         }
     }
 
+    /**
+     * Map the object id for course restores.
+     *
+     * @return string
+     */
     public static function get_objectid_mapping() {
         return \core\event\base::NOT_MAPPED;
     }
 
+    /**
+     * Map the other data for course restores.
+     *
+     * @return array
+     */
     public static function get_other_mapping() {
         $othermapped = [];
         $othermapped['someid'] = \core\event\base::NOT_MAPPED;

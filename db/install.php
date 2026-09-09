@@ -15,14 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Install time setup for local_edusupport.
+ *
  * @package    local_edusupport
  * @copyright  2020 Center for Learning Management (https://www.lernmanagement.at)
  * @author     Robert Schrenk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
+/**
+ * Set up the role and capabilities the support team needs.
+ *
+ * @return void
+ */
 function xmldb_local_edusupport_install() {
     global $DB, $CFG;
 
@@ -97,9 +102,15 @@ function xmldb_local_edusupport_install() {
         'moodle/user:readuserposts',
     ];
     foreach ($caps as $cap) {
-        $chk = $DB->get_record('role_capabilities', ['contextid' => $ctx->id, 'roleid' => $role->id, 'capability' => $cap, 'permission' => 1]);
+        $params = [
+            'contextid' => $ctx->id,
+            'roleid' => $role->id,
+            'capability' => $cap,
+            'permission' => 1,
+        ];
+        $chk = $DB->get_record('role_capabilities', $params);
         if (empty($chk->id)) {
-            $DB->insert_record('role_capabilities', ['contextid' => $ctx->id, 'roleid' => $role->id, 'capability' => $cap, 'permission' => 1, 'timemodified' => time(), 'modifierid' => 2]);
+            $DB->insert_record('role_capabilities', $params + ['timemodified' => time(), 'modifierid' => 2]);
         }
     }
 }

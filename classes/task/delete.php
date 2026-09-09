@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Scheduled task that removes issues closed long enough ago.
+ *
  * @package    local_edusupport
  * @copyright  2018 Digital Education Society (http://www.dibig.at)
  * @author     Robert Schrenk
@@ -23,12 +25,30 @@
 
 namespace local_edusupport\task;
 
+/**
+ * Scheduled task that removes issues closed long enough ago.
+ *
+ * @package    local_edusupport
+ * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class delete extends \core\task\scheduled_task {
+    /**
+     * Get the name shown for this task in the admin screens.
+     *
+     * @return string
+     */
     public function get_name() {
         // Shown in admin screens.
         return get_string('cron:deleteexpiredissues:title', 'local_edusupport');
     }
 
+    /**
+     * Delete every issue whose retention time has passed.
+     *
+     * @param bool $debug whether to report what is being done.
+     * @return void
+     */
     public function execute($debug = false) {
         $issues = \local_edusupport\lib::get_expiredissues();
         foreach ($issues as $issue) {

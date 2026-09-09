@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Core library of the eduSupport plugin.
+ *
  * @package    local_edusupport
  * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
  * @author     Robert Schrenk
@@ -42,7 +44,15 @@ define("ISSUE_STATUS_ONGOING", 3);
 define("ISSUE_STATUS_AWAITING_SUPPORT_ACTION", 4);
 define("ISSUE_STATUS_CLOSED", 5);
 
+/**
+ * Core library of the eduSupport plugin.
+ *
+ * @package    local_edusupport
+ * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class lib {
+    /** @var int Course id standing for the site wide support team rather than a single course. */
     const SYSTEM_COURSE_ID = 1;
 
     /** @var string Prefix that marks a discussion name as a closed issue. */
@@ -95,6 +105,8 @@ class lib {
     }
 
     /**
+     * Check whether the current user may configure the support forums of a course.
+     *
      * @param int $courseid
      * @return bool
      */
@@ -108,6 +120,8 @@ class lib {
     }
 
     /**
+     * Check whether the current user may configure the plugin site wide.
+     *
      * @return bool
      */
     public static function can_config_global(): bool {
@@ -659,6 +673,35 @@ class lib {
     }
 
     /**
+     * Get the support level a user is registered with.
+     *
+     * A user can be registered for the site wide team and for a single course at the same
+     * time. The entry of the course wins, because it is the more specific one.
+     *
+     * @param int $courseid the course to look at, besides the site wide team.
+     * @param int $userid
+     * @return string the support level, or an empty string if the user is no supporter.
+     */
+    public static function get_supporter_level(int $courseid, int $userid): string {
+        global $DB;
+
+        $sql = "SELECT supportlevel
+                  FROM {local_edusupport_supporters}
+                 WHERE userid = :userid
+                   AND (courseid = :courseid OR courseid = :systemcourseid)
+              ORDER BY courseid DESC";
+        $params = [
+            'userid' => $userid,
+            'courseid' => $courseid,
+            'systemcourseid' => self::SYSTEM_COURSE_ID,
+        ];
+        $records = $DB->get_records_sql($sql, $params, 0, 1);
+        $record = reset($records);
+
+        return empty($record) ? '' : (string) $record->supportlevel;
+    }
+
+    /**
      * Checks if a given forum is used as support-forum.
      *
      * @param forumid.
@@ -984,8 +1027,10 @@ class lib {
     }
 
     /**
-     * @param $discussionid
-     * @param $priority
+     * Set the priority level of an issue.
+     *
+     * @param int $discussionid
+     * @param int $priority
      * @return bool
      * @throws \dml_exception
      */

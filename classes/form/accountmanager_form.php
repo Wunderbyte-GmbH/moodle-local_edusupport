@@ -88,6 +88,12 @@ class accountmanager_form extends moodleform {
     }
 
 
+    /**
+     * Fill the form with the account managers and capabilities currently configured.
+     *
+     * @param stdClass|array $defaults the data to preset the form with.
+     * @return void
+     */
     public function set_data($defaults) {
         $currentaccountmanagers = explode(',', get_config('local_edusupport', 'accountmanagers'));
         $defaults->possiblemanagers = $currentaccountmanagers;

@@ -40,6 +40,8 @@ use stdClass;
  * @covers     \local_edusupport\lib::set_2nd_level
  * @covers     \local_edusupport\lib::subscription_add
  * @covers     \local_edusupport\lib::subscription_remove
+ * @covers     \local_edusupport\lib::validate_supporter_assignment
+ * @covers     \local_edusupport\lib::get_supporter_level
  */
 final class supporter_assignment_test extends advanced_testcase {
     /** @var stdClass the course holding the support forum. */
@@ -179,6 +181,36 @@ final class supporter_assignment_test extends advanced_testcase {
             'error:notasupporter',
             lib::validate_supporter_assignment($issue->discussionid, $this->supporter->id)
         );
+    }
+
+    /**
+     * The support level of a user is read from the registry, course entry first.
+     */
+    public function test_get_supporter_level(): void {
+        global $DB;
+
+        // The supporter of the fixture is registered site wide without a level.
+        $this->assertSame('', lib::get_supporter_level($this->course->id, $this->supporter->id));
+
+        // Somebody who is not registered at all.
+        $this->assertSame('', lib::get_supporter_level($this->course->id, $this->student->id));
+
+        // A site wide level is reported for any course.
+        $thirdlevel = $this->getDataGenerator()->create_user();
+        $this->generator->create_supporter(['userid' => $thirdlevel->id, 'supportlevel' => 'technical']);
+        $this->assertSame('technical', lib::get_supporter_level($this->course->id, $thirdlevel->id));
+
+        // An entry for the course itself wins over the site wide one.
+        $this->generator->create_supporter([
+            'userid' => $thirdlevel->id,
+            'courseid' => $this->course->id,
+            'supportlevel' => 'pedagogy',
+        ]);
+        $this->assertSame('pedagogy', lib::get_supporter_level($this->course->id, $thirdlevel->id));
+
+        // A level registered for one course does not leak into another one.
+        $othercourse = $this->getDataGenerator()->create_course();
+        $this->assertSame('technical', lib::get_supporter_level($othercourse->id, $thirdlevel->id));
     }
 
     /**

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Privacy provider for local_edusupport.
+ *
  * @package    local_edusupport
  * @copyright  2018 Digital Education Society (http://www.dibig.at)
  * @author     Robert Schrenk
@@ -30,7 +32,23 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use context_user;
 
-class provider implements \core_privacy\local\request\core_userlist_provider, \core_privacy\local\metadata\provider, \core_privacy\local\request\plugin\provider {
+/**
+ * Privacy provider for local_edusupport.
+ *
+ * @package    local_edusupport
+ * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\plugin\provider {
+    /**
+     * Describe the personal data local_edusupport stores.
+     *
+     * @param collection $collection the collection to add the descriptions to.
+     * @return collection the collection with this plugin's descriptions added.
+     */
     public static function get_metadata(collection $collection): collection {
 
         // Table edusuport subscribers.
@@ -112,6 +130,12 @@ class provider implements \core_privacy\local\request\core_userlist_provider, \c
     }
 
 
+    /**
+     * Add the users who have data in the given context to the user list.
+     *
+     * @param userlist $userlist the list to add the users to.
+     * @return void
+     */
     public static function get_users_in_context(userlist $userlist) {
 
         $context = $userlist->get_context();

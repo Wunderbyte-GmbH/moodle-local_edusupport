@@ -15,12 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Database upgrade steps for local_edusupport.
+ *
  * @package    local_edusupport
  * @copyright  2019 Digital Education Society (http://www.dibig.at)
  * @author     Robert Schrenk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Bring the database up to date with the current version of the plugin.
+ *
+ * @param int $oldversion the version the site is upgrading from.
+ * @return bool
+ */
 function xmldb_local_edusupport_upgrade($oldversion) {
     global $DB, $CFG;
     $dbman = $DB->get_manager();

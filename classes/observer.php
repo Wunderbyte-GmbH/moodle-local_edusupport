@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Event observers of the eduSupport plugin.
+ *
  * @package    local_edusupport
  * @copyright  2020 Center for Learningmangement (www.lernmanagement.at)
  * @author     Robert Schrenk
@@ -28,6 +30,13 @@ use local_edusupport\event\supportuser_added;
 use local_edusupport\event\supportuser_changed;
 use local_edusupport\event\supportuser_deleted;
 
+/**
+ * Event observers of the eduSupport plugin.
+ *
+ * @package    local_edusupport
+ * @copyright  2020 Center for Learningmanagement (www.lernmanagement.at)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class observer {
     /**
      * Observer for the supportuser_added event
@@ -62,6 +71,12 @@ class observer {
         cache_helper::purge_by_event('setbacksupportmenu');
     }
 
+    /**
+     * React to a forum post being created in a support forum.
+     *
+     * @param \core\event\base $event the event that was triggered.
+     * @return void
+     */
     public static function event($event) {
 
         // We should have separate functions for different event types for better readability!
