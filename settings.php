@@ -187,6 +187,15 @@ if ($hassiteconfig) {
 
     $settings->add(
         new admin_setting_configcheckbox(
+            'local_edusupport/showresponsibles',
+            get_string('showresponsibles', 'local_edusupport'),
+            get_string('showresponsibles:description', 'local_edusupport'),
+            1
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configcheckbox(
             'local_edusupport/holidaymodeenabled',
             get_string('holidaymodeenabled', 'local_edusupport'),
             get_string('holidaymodeenabled:description', 'local_edusupport'),

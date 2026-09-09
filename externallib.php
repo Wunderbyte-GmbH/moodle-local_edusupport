@@ -167,6 +167,8 @@ class local_edusupport_external extends external_api {
                 'discussionid' => 0,
                 'responsibles' => [],
         ];
+        // Whether the person filing the request gets to see who is going to look after it.
+        $showresponsibles = !empty(get_config('local_edusupport', 'showresponsibles'));
         if (!empty(get_config('local_edusupport', 'trackhost'))) {
             $params['webhost'] = gethostname();
         }
@@ -191,11 +193,13 @@ class local_edusupport_external extends external_api {
 
             $supportuser = core_user::get_support_user();
             $recipients = [$supportuser];
-            $reply['responsibles'][] = [
-                    'userid' => $supportuser->id,
-                    'name' => \fullname($supportuser),
-                    'email' => $supportuser->email,
-            ];
+            if ($showresponsibles) {
+                $reply['responsibles'][] = [
+                        'userid' => $supportuser->id,
+                        'name' => \fullname($supportuser),
+                        'email' => $supportuser->email,
+                ];
+            }
             $fromuser = $user;
 
             if (!empty($params['image'])) {
@@ -229,13 +233,14 @@ class local_edusupport_external extends external_api {
                 $forum = $DB->get_record('forum', ['id' => $forumid], '*', MUST_EXIST);
                 [$course, $cm] = get_course_and_cm_from_instance($forum, 'forum');
 
-                $coursesupporters = lib::get_course_supporters($forum);
-                foreach ($coursesupporters as $coursesupporter) {
-                    $reply['responsibles'][] = [
-                            'userid' => $coursesupporter->id,
-                            'name' => \fullname($coursesupporter),
-                            'email' => $coursesupporter->email,
-                    ];
+                if ($showresponsibles) {
+                    foreach (lib::get_course_supporters($forum) as $coursesupporter) {
+                        $reply['responsibles'][] = [
+                                'userid' => $coursesupporter->id,
+                                'name' => \fullname($coursesupporter),
+                                'email' => $coursesupporter->email,
+                        ];
+                    }
                 }
 
                 $context = context_module::instance($cm->id);
@@ -430,38 +435,40 @@ class local_edusupport_external extends external_api {
                     } else if (get_config('local_edusupport', 'auto2ndlvl')) {
                         lib::set_2nd_level($discussion->id, $keyvaluepair);
                     } else {
-                        // Post answer containing the reponsibles.
                         $supporters = array_values(lib::get_course_supporters($forum));
 
-                        if (!get_config('local_edusupport', 'firstlvlgroupmode')) {
+                        // Post answer containing the reponsibles, unless that was turned off.
+                        if ($showresponsibles) {
                             $responsibles = [];
-                            foreach ($supporters as $supporter) {
-                                $responsibles[] =
-                                        "<a href='{$CFG->wwwroot}/user/profile.php?id={$supporter->id}' target='_blank'>" .
-                                            "{$supporter->firstname} {$supporter->lastname}</a>";
+                            if (!get_config('local_edusupport', 'firstlvlgroupmode')) {
+                                foreach ($supporters as $supporter) {
+                                    $responsibles[] =
+                                            "<a href='{$CFG->wwwroot}/user/profile.php?id={$supporter->id}' target='_blank'>" .
+                                                "{$supporter->firstname} {$supporter->lastname}</a>";
+                                }
                             }
+                            $forum = $DB->get_record('forum', ['id' => $discussion->forum]);
+
+                            $subject = get_string('issue_responsibles:subject', 'local_edusupport');
+                            $messagebody = get_string(
+                                'issue_responsibles:post',
+                                'local_edusupport',
+                                [
+                                    'responsibles' => implode(', ', $responsibles),
+                                    'sitename' => $SITE->fullname,
+                                    'supportforumname' => $forum->name,
+                                ]
+                            );
+
+                            // Post assignment message to forum.
+                            lib::create_post(
+                                $discussion->id,
+                                $messagebody,
+                                $subject,
+                                // Only send mail if setting is turned on!
+                                get_config('local_edusupport', 'sendsupporterassignments')
+                            );
                         }
-                        $forum = $DB->get_record('forum', ['id' => $discussion->forum]);
-
-                        $subject = get_string('issue_responsibles:subject', 'local_edusupport');
-                        $messagebody = get_string(
-                            'issue_responsibles:post',
-                            'local_edusupport',
-                            [
-                                'responsibles' => implode(', ', $responsibles),
-                                'sitename' => $SITE->fullname,
-                                'supportforumname' => $forum->name,
-                            ]
-                        );
-
-                        // Post assignment message to forum.
-                        lib::create_post(
-                            $discussion->id,
-                            $messagebody,
-                            $subject,
-                            // Only send mail if setting is turned on!
-                            get_config('local_edusupport', 'sendsupporterassignments')
-                        );
                         // In any case, we want to inform the supporters.
                         foreach ($supporters as $supporter) {
                             // In any case, send e-mail to the dedicated supporter.

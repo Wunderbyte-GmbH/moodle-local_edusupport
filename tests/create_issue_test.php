@@ -153,11 +153,10 @@ final class create_issue_test extends advanced_testcase {
     /**
      * The reported contacts are everyone who may edit the course.
      *
-     * This pins current behaviour: get_course_supporters() asks for moodle/course:update and
-     * ignores the plugin's own supporter registry. Anyone with editing rights in the support
-     * course - a manager, an integration account - is published to the person filing a ticket,
-     * name and email address included. If the lookup is ever narrowed to the registry, this
-     * test is meant to fail and force a deliberate decision.
+     * This is the first level model: whoever holds moodle/course:update in the support course
+     * answers the requests filed there, which is what lets every school run its own support
+     * course. The plugin's own supporter registry is the second level and deliberately does
+     * not appear here.
      */
     public function test_create_issue_reports_course_editors_as_responsible(): void {
         $datagenerator = $this->getDataGenerator();
@@ -177,6 +176,60 @@ final class create_issue_test extends advanced_testcase {
         $responsibleids = array_column($reply['responsibles'], 'userid');
         $this->assertContains((int) $editor->id, array_map('intval', $responsibleids));
         $this->assertNotContains((int) $supporter->id, array_map('intval', $responsibleids));
+    }
+
+    /**
+     * The support contacts can be kept from the person filing the request.
+     */
+    public function test_support_contacts_can_be_hidden(): void {
+        $datagenerator = $this->getDataGenerator();
+        $editor = $datagenerator->create_user();
+        $datagenerator->enrol_user($editor->id, $this->course->id, 'editingteacher');
+
+        set_config('showresponsibles', 0, 'local_edusupport');
+
+        $this->setUser($this->student);
+        $reply = $this->create_issue('Drucker geht nicht');
+
+        $this->assertGreaterThan(0, $reply['discussionid']);
+        $this->assertSame([], $reply['responsibles']);
+    }
+
+    /**
+     * Hiding the contacts also keeps them out of the ticket itself.
+     */
+    public function test_hiding_the_contacts_skips_the_post_naming_them(): void {
+        global $DB;
+
+        $datagenerator = $this->getDataGenerator();
+        $editor = $datagenerator->create_user();
+        $datagenerator->enrol_user($editor->id, $this->course->id, 'editingteacher');
+
+        set_config('showresponsibles', 0, 'local_edusupport');
+
+        $this->setUser($this->student);
+        $reply = $this->create_issue('Drucker geht nicht');
+
+        // Only the request itself, no automatic post listing who is responsible.
+        $this->assertSame(1, $DB->count_records('forum_posts', ['discussion' => $reply['discussionid']]));
+    }
+
+    /**
+     * With the setting on, the ticket carries the post naming the contacts.
+     */
+    public function test_showing_the_contacts_posts_them_into_the_ticket(): void {
+        global $DB;
+
+        $datagenerator = $this->getDataGenerator();
+        $editor = $datagenerator->create_user();
+        $datagenerator->enrol_user($editor->id, $this->course->id, 'editingteacher');
+
+        set_config('showresponsibles', 1, 'local_edusupport');
+
+        $this->setUser($this->student);
+        $reply = $this->create_issue('Drucker geht nicht');
+
+        $this->assertSame(2, $DB->count_records('forum_posts', ['discussion' => $reply['discussionid']]));
     }
 
     /**

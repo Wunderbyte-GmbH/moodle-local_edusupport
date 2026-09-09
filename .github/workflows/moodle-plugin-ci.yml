@@ -1,0 +1,26 @@
+name: Moodle Plugin CI
+
+on: [push, pull_request]
+
+jobs:
+  moodle405to500:
+    uses: Wunderbyte-GmbH/catalyst-moodle-workflows/.github/workflows/ci.yml@main
+    with:
+      # Releasing to the Moodle Plugins directory is handled by moodle-release.yml,
+      # which runs on tags starting with "v".
+      disable_release: true
+
+      # local_edusupport builds on core forums only and has no plugin dependencies,
+      # so no extra_plugin_runners are needed here.
+      moodle_branches: "MOODLE_405_STABLE MOODLE_500_STABLE"
+      min_php: '8.1'
+
+      # The plugin ships AMD sources, so the stale build file check applies. If it starts
+      # failing, rebuild amd/build with "npx grunt --root=local/edusupport" and commit.
+
+      # Warnings do not fail the build yet. The plugin still carries a backlog of missing
+      # phpdoc one-liners; once that is cleared, set this to 0 to keep it clear.
+      # codechecker_max_warnings: 0
+
+      # PHPMD is off for now, to be enabled together with the phpdoc cleanup.
+      # enable_phpmd: true

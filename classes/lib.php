@@ -671,9 +671,23 @@ class lib {
     }
 
     /**
-     * Get all supporters for a certain course (the trainers).
+     * Get the first level support of a support forum.
      *
-     * @param object forum
+     * First level support is defined by the capability moodle/course:update in the course
+     * holding the support forum, not by a role name and not by the plugin's own supporter
+     * registry. Whoever may edit the support course is expected to answer the requests filed
+     * there. This is what carries the per-school model: every school gets its own support
+     * course, and the staff who maintain that course are its first level support. Only when
+     * they cannot help does an issue get escalated to the second level, which is the team
+     * kept in local_edusupport_supporters.
+     *
+     * The practical consequence is that any role granting moodle/course:update in that course
+     * counts - a manager assigned site wide, or an integration account, will be listed here
+     * too. Whether these people are named to the person filing a request is governed by the
+     * showresponsibles setting.
+     *
+     * @param object $forum the support forum.
+     * @return array of user records, keyed by user id.
      */
     public static function get_course_supporters($forum) {
         $ctx = \context_course::instance($forum->course);

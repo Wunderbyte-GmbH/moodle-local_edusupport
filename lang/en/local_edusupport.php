@@ -21,12 +21,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allowguesttickets'] = 'Allow tickets from guest user.';
+$string['allowguesttickets:description'] = 'Guest can post one ticket and gets updates via mail.';
 $string['archive'] = 'Archive';
 $string['assigned'] = 'Assigned';
 $string['auto2ndlvl'] = 'Auto forward 2nd';
 $string['auto2ndlvl:description'] = 'Automatically forward all tickets to 2nd level support';
 $string['autocreate_orggroup'] = 'Automatically create groups for eduvidual-Organizations';
 $string['autocreate_usergroup'] = 'Automatically create a private group for user';
+$string['back'] = 'back';
 $string['be_more_accurate'] = 'Please be more accurate when describing your problem!';
 $string['cachedef_supportmenu'] = 'Cache for the supportmenu';
 $string['changes_saved_fail'] = 'Changes could not be saved.';
@@ -50,6 +53,8 @@ $string['create_issue_success_title'] = 'Success';
 $string['cron:deleteexpiredissues:title'] = 'delete expired issues';
 $string['cron:reminder:intro'] = 'This is a friendly reminder about an open issue, that is assigned to you as assigned supporter!';
 $string['cron:reminder:title'] = 'A user is waiting for your support';
+$string['customfieldname'] = 'customfieldname for group mode';
+$string['customfieldname:description'] = 'customfieldname for group mode';
 $string['dedicatedsupporter'] = 'Dedicated';
 $string['dedicatedsupporter:not_successfully_set'] = 'Dedicated supporter could not be set';
 $string['dedicatedsupporter:successfully_set'] = 'Successfully set dedicated supporter';
@@ -74,9 +79,13 @@ $string['faqlink'] = 'FAQ-link';
 $string['faqlink:description'] = 'link to FAQ';
 $string['faqread'] = 'Please confirm that you have read the FAQ';
 $string['faqread:description'] = 'I confirm, that I have read the <a href="{$a}" target="_blank">FAQ</a> prior to posting my question.';
+$string['firstlvlgroupmode'] = '1st level support group modus';
+$string['firstlvlgroupmode:description'] = 'Enables group mode so that non teachers (other roles) get connected based on a customfield and can answer in the courseforum (make sure to give the role "canforward2ndlevel" right. Also enable group mode in course and set forum to seperate groups.';
 $string['goto_targetforum'] = 'Supportforum';
 $string['goto_tutorials'] = 'Documents & Tutorials';
 $string['guestmail'] = 'Your e-mail';
+$string['guestmodeenabled'] = 'Guestmode active';
+$string['guestmodeenabled:description'] = 'Guests can now also post supporttickets. These tickets get answered by mail';
 $string['header'] = 'Request for help in &nbsp;<i>{$a}</i>';
 $string['holidaymode'] = 'Holidaymode';
 $string['holidaymode_end'] = 'End holidaymode';
@@ -84,6 +93,7 @@ $string['holidaymode_is_on'] = 'Holidaymode is on';
 $string['holidaymode_is_on_descr'] = 'As long as you are on holidays, no new issues will be assigned to you.';
 $string['holidaymodeenabled'] = "Activate holidaymode";
 $string['holidaymodeenabled:description'] = "Holidaymode: Supportuser don't get tickets till a set date.";
+$string['invalidmail'] = 'Please enter a vaild email address';
 $string['issue'] = 'Issue';
 $string['issue:assigned'] = 'You have been assigned to this issue:';
 $string['issue:countassigned'] = 'Subscribed issues';
@@ -93,15 +103,6 @@ $string['issue:countother'] = 'Other issues';
 $string['issue_assign'] = 'Assign issue';
 $string['issue_assign_nextlevel'] = 'Forward to the platform-support team';
 $string['issue_assign_nextlevel:error'] = 'Sorry, this issue could not be forwarded to the platform support team';
-$string['issue_assign_nextlevel:msgtosupporter'] = '<p>You have been assigned a new support request. The following message has NOT been sent to the user who made the support request
-because the plugin setting "Senden von Support-Benutzerzuweisungen an den Benutzer" is disabled:</p>
-<p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
-
-<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
-<p>You are receiving this email because you asked the support team for help via a support request. You can find all your request under {$a->supportforumname} on {$a->sitename}.</p>
-<p>We wish you a great learning experience!</p>
-
-<p>Your {$a->sitename} team</p>';
 $string['issue_assign_nextlevel:msgtosupporter'] = '<p>You have been assigned a new support request. The following message has NOT been sent to the user who made the support request
 because the plugin setting "Send support user assignments to the user" is disabled:</p>
 <p>We are happy to inform you that your support request has been assigned to the {$a->sitename} support team!</p>
@@ -118,26 +119,10 @@ $string['issue_assign_nextlevel:post'] = '<p>We are happy to inform you that you
 <p>We wish you a great learning experience!</p>
 
 <p>Your {$a->sitename} team</p>';
-$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been received.</p>
-
-<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
-<p>You are receiving this email because you asked the team for help via a support request. You can find all your requests in the <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">support forum</a> on {$a->sitename}. </p>
-<p>We wish you a great learning experience!</p>
-<p>Your {$a->sitename} support team</p>';
-$string['notasigned'] = 'No support user has been assigned yet';
-$string['pluginname'] = 'eduSupport';
-
-$string['prepage'] = "Prepage content";
-$string['prepage:description'] = "Content displayed before form e.g. faq";
-
-$string['startedby'] = 'Started by';
-$string['status'] = 'Status';
-
-// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 $string['issue_assigned:subject'] = 'Support request has been assigned';
 $string['issue_close'] = 'Close issue';
-$string['issue_closed:subject'] = 'Issue closed';
 $string['issue_closed:post'] = 'This issue closed was closed by <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a>. If you need further assistance please forward this issue again to the platform support team.';
+$string['issue_closed:subject'] = 'Issue closed';
 $string['issue_responsibles:post'] = '<p>We are happy to inform you that your support request has been assigned to {$a->responsibles} from the {$a->sitename} support team!</p>
 
    <p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
@@ -149,34 +134,39 @@ $string['issue_responsibles:post'] = '<p>We are happy to inform you that your su
    <p>Your {$a->sitename} team</p>
 ';
 $string['issue_responsibles:subject'] = 'Support request has been assigned';
-$string['issuereceived:subject'] = 'Your support request has been received';
 $string['issue_revoke'] = 'Revoke this issue from higher support level';
 $string['issue_revoke:error'] = 'Sorry, this issue could not be revoked from the higher support levels';
 $string['issue_revoke:post'] = '<a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a> revoked this issue from the higher support level';
 $string['issue_revoke:subject'] = 'Supportissue revoked';
-$string['issue_close'] = 'Close issue';
-$string['issue_closed:subject'] = 'Issue closed';
-$string['issue_closed:post'] = 'This issue closed was closed by <a href="{$a->wwwroot}/user/view.php?id={$a->fromuserid}">{$a->fromuserfullname}</a>. If you need further assistance please forward this issue again to the platform support team.';
+$string['issuereceived'] = '<p>Thank you for reaching out, your support request has been received.</p>
+
+<p>You will receive an answer to your question shortly. Please understand that some issues take longer to resolve and it might take a few days before we can provide you with a solution.</p>
+<p>You are receiving this email because you asked the team for help via a support request. You can find all your requests in the <a href="{$a->wwwroot}/mod/forum/view.php?id={$a->cmid}">support forum</a> on {$a->sitename}. </p>
+<p>We wish you a great learning experience!</p>
+<p>Your {$a->sitename} support team</p>';
+$string['issuereceived:subject'] = 'Your support request has been received';
 $string['issues'] = 'Issues';
 $string['issues:assigned'] = 'Subscribed';
 $string['issues:assigned:none'] = 'Currently you do not have any issue subscriptions';
 $string['issues:closed'] = 'Closed issues';
-
 $string['issues:current'] = 'My issues';
 $string['issues:current:none'] = 'Seems you deserve a break - no issue left for you!';
-$string['issues:other'] = 'Other issues';
-$string['issues:other:none'] = 'Great, there seem to be no more problems on that planet!';
+$string['issues:openall'] = '{$a} total open';
 $string['issues:openmine'] = '{$a} for me';
 $string['issues:opennosupporter'] = '{$a} unassigned';
-$string['issues:openall'] = '{$a} total open';
+$string['issues:other'] = 'Other issues';
+$string['issues:other:none'] = 'Great, there seem to be no more problems on that planet!';
 $string['label:2ndlevel'] = 'Platform support team';
 $string['missing_permission'] = 'Missing required permission';
 $string['missing_targetforum'] = 'Missing target forum, must be configured!';
 $string['missing_targetforum_exists'] = 'The configured target forum does not exist. Wrong configuration!';
 $string['no_such_issue'] = 'This is not an open issue! You can navigate to the <a href="{$a->todiscussionurl}"><u>discussion page</u></a> or go <a href="{$a->toissuesurl}"><u>back to the issues overview</u></a>.';
+$string['notasigned'] = 'No support user has been assigned yet';
 $string['only_you'] = 'Only you and our team';
 $string['phonefield'] = 'disable phone field';
 $string['phonefield:description'] = 'Deactivate phone field in the form for creating issues';
+$string['pluginname'] = 'eduSupport';
+
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
 
 To reply click on this link: {$a->replylink}';
@@ -186,82 +176,80 @@ $string['predefined_subjects'] = 'Define predefined subjects here';
 $string['predefined_subjects:description'] = 'When submitting a support request you can define a list of subjects to choose from instead of a text input field. Leave empty if you want to use text input. One subject per line if you want to provide predefined subjects';
 $string['predefined_subjects_prefix'] = 'Enable prefix';
 $string['predefined_subjects_prefix:description'] = 'Enable prefix (name can be changed in language customisation subject_prefix e.g. Other:)';
-$string['subject_prefix'] = 'Support request with following topic: ';
-$string['privacy:metadata'] = 'This plugin does not store any personal data as it uses a forum as target.';
+$string['prepage'] = "Prepage content";
+$string['prepage:description'] = "Content displayed before form e.g. faq";
+
 $string['priority'] = 'set priority';
 $string['prioritylvl'] = 'enable priorities';
 $string['prioritylvl:description'] = 'If enabled you can select priorities in the issues list';
+$string['prioritylvl:high'] = 'high priority';
 $string['prioritylvl:low'] = 'low priority';
 $string['prioritylvl:mid'] = 'mid priority';
-$string['prioritylvl:high'] = 'high priority';
+$string['privacy:metadata'] = 'This plugin does not store any personal data as it uses a forum as target.';
 $string['relativeurlsupportarea'] = 'Relative URL to Supportarea';
-$string['select_subject'] = 'Please select a subject';
+$string['rolename'] = 'rolename';
+$string['rolename:description'] = 'rolename for the supporters (e.g. teacher instead of editingtecher or customrole)';
 $string['screenshot'] = 'Post screenshot';
 $string['screenshot:description'] = 'A screenshot may help to solve the problem.';
 $string['screenshot:generateinfo'] = 'To generate the screenshot the form will be hidden, and reappears afterwards.';
 $string['screenshot:upload:failed'] = 'Preparation of file failed!';
 $string['screenshot:upload:successful'] = 'File has been successfully prepared for uploading!';
 $string['select_isselected'] = 'Currently selected';
+$string['select_subject'] = 'Please select a subject';
 $string['select_unavailable'] = 'Unavailable';
 $string['send'] = 'Send';
+$string['sendissueclosed'] = 'Send e-mail when issue is closed';
+$string['sendissueclosed:description'] = 'Notify the user via emails when the issue is closed. In any case, the "issue is closed message" will be posted in the support forum';
 $string['sendmsgonset2ndlvl'] = 'Send a message to user when 2nd level support user is assigned';
 $string['sendmsgonset2ndlvl:description'] = 'Send a email to the user when whenever a support user is assigend or changed';
 $string['sendoriginalrequest'] = 'Send the original support request to user';
 $string['sendoriginalrequest:description'] = 'Send the forum post of the support request to the user who requested support';
-$string['sendsupporterassignments'] = 'Send support user assignments to the user';
-$string['sendsupporterassignments:description'] = 'Notify the user via emails when a support user has been assigned to the request. Everytime someone new is assigned an email is sent';
-$string['sendissueclosed'] = 'Send e-mail when issue is closed';
-$string['sendissueclosed:description'] = 'Notify the user via emails when the issue is closed. In any case, the "issue is closed message" will be posted in the support forum';
 $string['sendrequestreceived'] = 'Send e-mail notification that the request has been received';
 $string['sendrequestreceived:description'] = 'An e-mail is sent to the user submitting a support request. The e-mail confirms the receipt of the request but is not part of the ticket specific thread in the support forum';
+$string['sendsupporterassignments'] = 'Send support user assignments to the user';
+$string['sendsupporterassignments:description'] = 'Notify the user via emails when a support user has been assigned to the request. Everytime someone new is assigned an email is sent';
+$string['showresponsibles'] = 'Show the support contacts to the person filing a request';
+$string['showresponsibles:description'] = 'After a support request has been submitted, show who is going to look after it - by name, in the confirmation dialogue and in an automatic post in the ticket. Turn this off if the support contacts of a course should stay unnamed. Supporters are notified about new tickets either way.';
 $string['spamprotection:exception'] = 'Sorry, maximum amount of issues exceeded. Try again in a few minutes.';
 $string['spamprotection:limit'] = 'Spamprotection > limit';
 $string['spamprotection:limit:description'] = 'The maximum amount of created issues within time range.';
 $string['spamprotection:threshold'] = 'Spamprotection > minutes';
 $string['spamprotection:threshold:description'] = 'The time range that is used to protect from spam.';
+$string['startedby'] = 'Started by';
+
+// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+
 $string['subject'] = 'Subject';
 $string['subject_missing'] = 'Missing subject';
+$string['subject_prefix'] = 'Support request with following topic: ';
 $string['support_area'] = 'Helpdesk & Tutorials';
 $string['supportcourse'] = 'Supportcourse';
 $string['supporters'] = 'Supporters';
 $string['supporters:choose'] = 'Choose supporters';
 $string['supporters:description'] = 'All users of the course, that are enrolled at least as "non-editing teacher" can be configured as supporter. Just enter anything as supportlevel to activate somebody as supporter!';
-$string['supportforum:choose'] = 'Choose forums for eduSupport';
 $string['supportforum:central:disable'] = 'disable';
 $string['supportforum:central:enable'] = 'enable';
+$string['supportforum:choose'] = 'Choose forums for eduSupport';
 $string['supportforum:disable'] = 'disable';
 $string['supportforum:enable'] = 'enable';
 $string['supportlevel'] = 'Supportlevel';
 $string['targetforum'] = 'Supportforum';
-$string['targetforum:description'] = 'Please select the forum that should be used as target for support issues within this course. This forum will be forced to have some group mode enabled. The Plugin will create an individual group for every single user.';
 $string['targetforum:core:description'] = 'All users will be automatically enrolled to the systemwide supportforum as soon as they create a support issue. Furthermore groups can be created and managed automatically to seperate support issues.';
+$string['targetforum:description'] = 'Please select the forum that should be used as target for support issues within this course. This forum will be forced to have some group mode enabled. The Plugin will create an individual group for every single user.';
 $string['to_group'] = 'To';
 $string['toggle'] = 'Course Supportforum';
 $string['toggle:central'] = 'Central Supportforum';
 $string['tooltiptext'] = 'Support';
 $string['trackhost'] = 'Track host';
 $string['trackhost:description'] = 'Big moodle sites may use an architecture with multiple webhosts. If you enable this option, edusupport will add the hostname of the used webhost to the issue.';
-$string['guestmodeenabled'] = 'Guestmode active';
-$string['guestmodeenabled:description'] = 'Guests can now also post supporttickets. These tickets get answered by mail';
 $string['userid'] = 'UserID';
 $string['userlinks'] = 'enable userlinks';
 $string['userlinks:description'] = 'show userlinks in issues list';
-$string['your_issues'] = 'Your issues';
 $string['webhost'] = 'Host';
 $string['weburl'] = 'URL';
+$string['your_issues'] = 'Your issues';
 
-$string['allowguesttickets'] = 'Allow tickets from guest user.';
-$string['allowguesttickets:description'] = 'Guest can post one ticket and gets updates via mail.';
-$string['back'] = 'back';
-$string['continue'] = 'continue';
-$string['firstlvlgroupmode'] = '1st level support group modus';
-$string['firstlvlgroupmode:description'] = 'Enables group mode so that non teachers (other roles) get connected based on a customfield and can answer in the courseforum (make sure to give the role "canforward2ndlevel" right. Also enable group mode in course and set forum to seperate groups.';
-$string['customfieldname'] = 'customfieldname for group mode';
-$string['customfieldname:description'] = 'customfieldname for group mode';
-$string['rolename'] = 'rolename';
-$string['rolename:description'] = 'rolename for the supporters (e.g. teacher instead of editingtecher or customrole)';
 
-$string['invalidmail'] = 'Please enter a vaild email address';
 
 /* State */
 
