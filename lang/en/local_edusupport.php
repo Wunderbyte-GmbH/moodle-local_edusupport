@@ -170,6 +170,7 @@ $string['missing_targetforum_exists'] = 'The configured target forum does not ex
 $string['no_such_issue'] = 'This is not an open issue! You can navigate to the <a href="{$a->todiscussionurl}"><u>discussion page</u></a> or go <a href="{$a->toissuesurl}"><u>back to the issues overview</u></a>.';
 $string['none'] = 'none chosen';
 $string['notasigned'] = 'No support user has been assigned yet';
+$string['notused'] = 'This is not used anymore. The default support forum is set in the course configuration.';
 $string['only_you'] = 'Only you and our team';
 $string['phonefield'] = 'disable phone field';
 $string['phonefield:description'] = 'Deactivate phone field in the form for creating issues';

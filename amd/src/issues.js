@@ -13,70 +13,94 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * @package    local_edusupport
+/**
+ * Filtering and status handling on the issue overview.
+ *
+ * @module     local_edusupport/issues
  * @copyright  Wunderbyte GmbH <info@wunderbyte.at>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Ajax from 'core/ajax';
+import Notification from 'core/notification';
 
-var alltr = Array.from(document.querySelectorAll('tr.issue'));
-var checked = {};
+const alltr = Array.from(document.querySelectorAll('tr.issue'));
+const checked = {};
 
+/**
+ * Wire up the state filter and the status selects.
+ *
+ * @returns {void}
+ */
 export const init = () => {
-
-    var allCheckboxes = document.querySelectorAll('#issuefilter input[type=checkbox]');
-
+    const allCheckboxes = document.querySelectorAll('#issuefilter input[type=checkbox]');
 
     getChecked('statefilter');
-    Array.prototype.forEach.call(allCheckboxes, function (el) {
-    el.addEventListener('change', toggleCheckbox);
+    Array.prototype.forEach.call(allCheckboxes, function(el) {
+        el.addEventListener('change', toggleCheckbox);
     });
     document.querySelectorAll('.changeStatusSelect').forEach(function(status) {
         status.addEventListener('change', function() {
-           setStatus(status.value, status.dataset.issueid);
+            setStatus(status.value, status.dataset.issueid);
         });
-   });
+    });
 };
 
-
+/**
+ * Store a new status for an issue and reload the page.
+ *
+ * @param {string} status the status to set.
+ * @param {number} issueid the issue to set it for.
+ * @returns {void}
+ */
 export const setStatus = (status, issueid) => {
-        Ajax.call([{
-        methodname: "local_edusupport_set_status",
-        args: { status: status,
-                issueid: issueid,
+    Ajax.call([{
+        methodname: 'local_edusupport_set_status',
+        args: {
+            status: status,
+            issueid: issueid,
         },
-            done: function(data) {
-                location.reload();
-            },
-            fail: function(ex) {
-                // eslint-disable-next-line no-console
-                console.log("ex:" + ex);
-            },
-        }]);
+        done: function() {
+            location.reload();
+        },
+        fail: Notification.exception,
+    }]);
 };
 
-
-export const toggleCheckbox = (e)  => {
-  getChecked(e.target.name);
-  setVisibility();
+/**
+ * Remember which boxes of a filter are ticked and apply the filter.
+ *
+ * @param {Event} e the change event of the checkbox.
+ * @returns {void}
+ */
+export const toggleCheckbox = (e) => {
+    getChecked(e.target.name);
+    setVisibility();
 };
 
-export const getChecked = (name)  => {
-  checked[name] = Array.from(document.querySelectorAll('input[name=' + name + ']:checked')).map(function (el) {
-    return el.value;
-  });
+/**
+ * Remember which boxes of a filter are ticked.
+ *
+ * @param {string} name the name of the checkbox group.
+ * @returns {void}
+ */
+export const getChecked = (name) => {
+    checked[name] = Array.from(document.querySelectorAll('input[name=' + name + ']:checked'))
+        .map(function(el) {
+            return el.value;
+        });
 };
 
+/**
+ * Show only the issues matching the current filter.
+ *
+ * @returns {void}
+ */
 export const setVisibility = () => {
-  alltr.map(function (el) {
-    var statefilter = checked.statefilter.length ?
-(Array.from(el.classList).filter(value => checked.statefilter.includes(value))).length : true;
-    if (statefilter) {
-      el.style.display = 'table-row';
-    } else {
-      el.style.display = 'none';
-    }
-  });
+    alltr.forEach(function(el) {
+        const statefilter = checked.statefilter.length
+            ? Array.from(el.classList).filter(value => checked.statefilter.includes(value)).length
+            : true;
+        el.style.display = statefilter ? 'table-row' : 'none';
+    });
 };

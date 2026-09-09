@@ -8,17 +8,15 @@ define(
         screenshot: '',
         screenshotname: '',
         triggerSteps: 0,
-        assignSupporter: function(discussionid /*, userid*/){
-            var MAIN = this;
-            //if (MAIN.debug > 0) //console.log('local_edusupport/main:assignSupporter(discussionid, userid)', discussionid, userid);
-                console.log('ajax call');
+        assignSupporter: function(discussionid) {
                 // Show a selection of possible supporters.
                 AJAX.call([{
                     methodname: 'local_edusupport_get_potentialsupporters',
-                    args: { discussionid: discussionid },
+                    args: {discussionid: discussionid},
                     done: function(result) {
-                        try { result = JSON.parse(result); } catch(e) { }
-                        if (MAIN.debug > 0) {console.log('local_edusupport_external:local_edusupport_get_potentialsupporters', result);}
+                        try {
+ result = JSON.parse(result);
+} catch (e) { }
                         var supportlevels = Object.keys(result.supporters);
                         var body = '<input type="hidden" value="' + discussionid + '" />';
                         body += '<select>';
@@ -26,31 +24,31 @@ define(
                             body += '<optgroup label="' + supportlevels[a] + '">';
                             for (var b = 0; b < result.supporters[supportlevels[a]].length; b++) {
                                 var supporter = result.supporters[supportlevels[a]][b];
-                                body += '<option value="' + supporter.userid + '"' + ((supporter.selected)?' selected="selected"':'') + '>' + supporter.firstname + ' ' + supporter.lastname + '</option>';
+                                var selected = supporter.selected ? ' selected="selected"' : '';
+                                body += '<option value="' + supporter.userid + '"' + selected + '>'
+                                    + supporter.firstname + ' ' + supporter.lastname + '</option>';
                             }
                             body += '</optgroup>';
                         }
                         body += '</select>';
 
-                        //console.log(result);
+                        // Console.log(result);
                         SaveCancelModal.create({
                             title: STR.get_string('select', 'core'),
                             body: body,
-                            //footer: 'footer',
+                            // Footer: 'footer',
                         }).then(function(modal) {
-                            console.log('Created modal');
                             modal.show();
                             modal.getRoot().on(ModalEvents.save, function(e) {
                                 e.preventDefault();
                                 var discussionid = $(this).find('.modal-body input').val();
                                 var supporterid = $(this).find('.modal-body select').val();
-                                var data = { 'discussionid': discussionid, 'supporterid': supporterid };
-                                //console.log('Store', this, e, data);
+                                var data = {'discussionid': discussionid, 'supporterid': supporterid};
+                                // Console.log('Store', this, e, data);
                                 AJAX.call([{
                                     methodname: 'local_edusupport_set_currentsupporter',
                                     args: data,
                                     done: function(result) {
-                                        console.log(result);
                                         if (result == 1) {
                                             top.location.reload();
                                         } else {
@@ -68,10 +66,11 @@ define(
         },
         /**
          * Checks if a particular support form has a screenshot. If not, it hides the modal and creates one.
+         *
+         * @param {object} c the checkbox that was clicked.
+         * @returns {void}
          */
         checkHasScreenshot: function(c) {
-            var MAIN = this;
-            if (MAIN.debug > 0) console.log('local_edusupport/main:checkHasScreenshot(c)', c);
             if ($(c).closest("form").find("#screenshot").attr('src') == '') {
                 $(c).closest("form").find('#screenshot_ok').css("display", "block");
 
@@ -83,17 +82,17 @@ define(
         },
         /**
          * Generate the screenshot now.
-         * @param b the button within the form that was clicked.
+         *
+         * @returns {void}
          */
-        generateScreenshot: function(b) {
+        generateScreenshot: function() {
+            var MAIN = this;
             MAIN.modal.hide();
             require(['local_edusupport/html2canvas'], function(h2c) {
-                console.log('Making screenshot');
                 h2c(document.body).then(function(canvas) {
-                    console.log('Got screenshot');
                     MAIN.canvas = canvas;
                     if (typeof MAIN.modal !== 'undefined') {
-                        MAIN.prepareScreenshot(b);
+                        MAIN.prepareScreenshot();
                         MAIN.modal.show();
                     }
                 });
@@ -103,7 +102,6 @@ define(
          * Inject a help button in the upper right menu.
          */
         injectHelpButton: function() {
-            console.log('local_edusupport/main:injectHelpButton()');
             AJAX.call([{
                 methodname: 'local_edusupport_get_extralinks',
                 args: {},
@@ -115,10 +113,13 @@ define(
         },
         /**
          * Scans the page for all discussion posts and adds a reply-button.
+         *
+         * @param {number} discussion the discussion to add the buttons to.
+         * @returns {void}
          */
         injectReplyButtons: function(discussion) {
             STR.get_strings([
-                    {'key' : 'reply', component: 'forum' },
+                    {'key': 'reply', component: 'forum'},
                 ]).done(function(s) {
                     // Remove default reply links.
                     $('a[href*="issue.php?discussion=' + discussion + '&parent="]').remove();
@@ -129,8 +130,12 @@ define(
                         var postid = $(this).attr('data-post-id');
                         if ($(this).find('.reply-' + postid).length == 0) {
                             $(this).find('.post-actions:first-child').append(
-                                $('<a data-region="post-action" class="btn btn-link reply-' + postid + '" title="' + s[0] + '" aria-label="' + s[0] + '" role="menuitem" tabindex="-1">')
-                                    .html(s[0]).attr('href', URL.relativeUrl('/local/edusupport/issue.php?discussion=' + discussion + '&replyto=' + postid + '#mformforum'))
+                                $('<a data-region="post-action" class="btn btn-link reply-' + postid + '"'
+                                    + ' title="' + s[0] + '" aria-label="' + s[0] + '"'
+                                    + ' role="menuitem" tabindex="-1">')
+                                    .html(s[0])
+                                    .attr('href', URL.relativeUrl('/local/edusupport/issue.php?discussion='
+                                        + discussion + '&replyto=' + postid + '#mformforum'))
                             );
                         }
                     });
@@ -139,19 +144,20 @@ define(
         },
         /**
          * Close an issue.
-        **/
+         *
+         * @param {number} discussionid the issue to close.
+         * @returns {void}
+         */
         closeIssue: function(discussionid) {
-            console.log('closeIssue(discussionid)', discussionid);
             AJAX.call([{
                 methodname: 'local_edusupport_close_issue',
-                args: { discussionid: discussionid },
+                args: {discussionid: discussionid},
                 done: function(result) {
-                    console.log(result);
                     if (result == 1) {
                         top.location.href = URL.relativeUrl('/local/edusupport/issues.php', {});
                     } else {
                         NOTIFICATION.exception(result);
-                        //alert('Error: ' + result);
+                        // Alert('Error: ' + result);
                     }
                 },
                 fail: NOTIFICATION.exception
@@ -159,24 +165,27 @@ define(
         },
         /**
          * Colorize shown discussions.
-        **/
+         **/
         colorize: function() {
             var discussionids = [];
-            $('table.forumheaderlist tr.discussion td.starter a').each(function(){ var d = $(this).attr('href').split('?d='); discussionids[discussionids.length] = d[1]; });
-            var data = { discussionids: discussionids };
-            console.log('local_edusupport_colorize', data);
+            $('table.forumheaderlist tr.discussion td.starter a').each(function() {
+ var d = $(this).attr('href').split('?d='); discussionids[discussionids.length] = d[1];
+});
+            var data = {discussionids: discussionids};
             AJAX.call([{
                 methodname: 'local_edusupport_colorize',
                 args: data,
                 done: function(result) {
-                    try { result = JSON.parse(result); } catch(e) {}
-                    console.log(result);
+                    try {
+ result = JSON.parse(result);
+} catch (e) {}
                     if (typeof result.styles !== 'undefined') {
                         var discussionids = Object.keys(result.styles);
                         for (var a = 0; a < discussionids.length; a++) {
                             var discussionid = discussionids[a];
                             var style = result.styles[discussionid];
-                            $('table.forumheaderlist tr.discussion td.starter a[href$="d=' + discussionid + '"]').closest('tr').attr('style', style);
+                            $('table.forumheaderlist tr.discussion td.starter a[href$="d=' + discussionid + '"]')
+                                .closest('tr').attr('style', style);
                         }
                     }
                 },
@@ -185,18 +194,28 @@ define(
         },
         /**
          * Let's inject a button to call the 2nd level support.
-         * @param discussionid.
-         * @param isissue determines if this issue is already at higher support levels.
+         *
+         * @param {number} discussionid the issue the button belongs to.
+         * @param {boolean} isissue determines if this issue is already at higher support levels.
+         * @returns {void}
          */
         injectForwardButton: function(discussionid, isissue) {
-            if (this.debug) console.log('local_edusupport/main:injectForwardButton(discussionid, isissue)', discussionid, isissue);
-            if (typeof discussionid === 'undefined') return;
+            if (this.debug) {
+}
+            if (typeof discussionid === 'undefined') {
+ return;
+}
             STR.get_strings([
-                    {'key' : (typeof isissue !== 'undefined' && isissue) ? 'issue_revoke' : 'issue_assign_nextlevel', component: 'local_edusupport' },
+                    {
+                        'key': (typeof isissue !== 'undefined' && isissue) ? 'issue_revoke' : 'issue_assign_nextlevel',
+                        component: 'local_edusupport'
+                    },
                 ]).done(function(s) {
                     $('#page-content div[role="main"] .discussionname').parent().prepend(
                         $('<a href="#">')
-                                    .attr('onclick', "require(['local_edusupport/main'], function(MAIN) { MAIN.injectForwardModal(" + discussionid + ", " + isissue + "); }); return false;")
+                                    .attr('onclick', "require(['local_edusupport/main'], function(MAIN) { "
+                                        + "MAIN.injectForwardModal(" + discussionid + ", " + isissue + "); });"
+                                        + " return false;")
                                     .attr('style', 'float: right')
                                     .addClass("btn btn-secondary")
                                     .html(s[0])
@@ -206,10 +225,10 @@ define(
         },
         injectTest: function() {
             var discussionname = $(".discussionname");
-            if(discussionname.text().substr(0,2) == "! ") {
+            if (discussionname.text().substr(0, 2) == "! ") {
                 discussionname.addClass("alert-warning");
             }
-             if(discussionname.text().substr(0,2) == "!!") {
+             if (discussionname.text().substr(0, 2) == "!!") {
                 discussionname.addClass("alert-danger");
             }
 
@@ -217,8 +236,11 @@ define(
         },
         injectForwardModal: function(discussionid, revoke) {
             STR.get_strings([
-                    {'key' : 'confirm', component: 'core' },
-                    {'key' : (typeof revoke !== 'undefined' && revoke) ? 'issue_revoke' : 'issue_assign_nextlevel', component: 'local_edusupport' },
+                    {'key': 'confirm', component: 'core'},
+                    {
+                        'key': (typeof revoke !== 'undefined' && revoke) ? 'issue_revoke' : 'issue_assign_nextlevel',
+                        component: 'local_edusupport'
+                    },
                 ]).done(function(s) {
                     SaveCancelModal.create({
                         title: s[0],
@@ -227,7 +249,8 @@ define(
                     .then(function(modal) {
                         var root = modal.getRoot();
                         root.on(ModalEvents.save, function() {
-                            top.location.href = URL.relativeUrl('/local/edusupport/forward_2nd_level.php', { d: discussionid, revoke: revoke });
+                            top.location.href = URL.relativeUrl('/local/edusupport/forward_2nd_level.php',
+                                {d: discussionid, revoke: revoke});
                         });
                         modal.show();
                     });
@@ -237,13 +260,10 @@ define(
         postBox: function(modal) {
             var MAIN = this;
             if (typeof MAIN.is_sending !== 'undefined' && MAIN.is_sending) {
-                console.log('Issue in queue, aborting');
                 return;
             }
-            if (MAIN.debug > 0) console.log('MAIN.postBox(modal)', modal);
             var subject = $('#local_edusupport_create_form #id_subject').val();
             var contactphone = $('#local_edusupport_create_form #id_contactphone').val() || '';
-            console.log(contactphone);
             var description = $('#local_edusupport_create_form #id_description').val();
             var forum_group = $('#local_edusupport_create_form #id_forum_group').val();
             var postto2ndlevel = $('#local_edusupport_create_form #id_postto2ndlevel').prop('checked') ? 1 : 0;
@@ -251,14 +271,12 @@ define(
             var screenshot = MAIN.screenshot; // $('#local_edusupport_create_form img#screenshot').attr('src');
             var screenshotname = MAIN.screenshotname;
             var faqread = $('#local_edusupport_create_form #id_faqread').prop('checked') ? 1 : 0;
-            var guestmail = $('#local_edusupport_create_form #id_guestmail').length ? $('#local_edusupport_create_form #id_guestmail').val() : null;
-            var accountmanager = $('#local_edusupport_create_form #id_accountmanager').length ? $('#local_edusupport_create_form #id_accountmanager').val() : null;
-            /*var priority = $('#local_edusupport_create_form #id_prioritylvl').val();
-            subject = priority + " " + subject;
-            console.log.subject; */
+            var guestmailfield = $('#local_edusupport_create_form #id_guestmail');
+            var guestmail = guestmailfield.length ? guestmailfield.val() : null;
+            var accountmanagerfield = $('#local_edusupport_create_form #id_accountmanager');
+            var accountmanager = accountmanagerfield.length ? accountmanagerfield.val() : null;
             var url = top.location.href;
-            console.log('')
-            if (faqread  == 0) {
+            if (faqread == 0) {
                 var editaPresent = STR.get_string('faqread', 'local_edusupport', {});
                 $.when(editaPresent).done(function(localizedEditString) {
                     NOTIFICATION.alert('', localizedEditString);
@@ -281,7 +299,7 @@ define(
             }
 
             var validregex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-            if ($('#local_edusupport_create_form #id_guestmail').length && !$('#local_edusupport_create_form #id_guestmail').val().match(validregex)) {
+            if (guestmailfield.length && !guestmailfield.val().match(validregex)) {
                 var editaPresent = STR.get_string('invalidmail', 'local_edusupport', {});
                 $.when(editaPresent).done(function(localizedEditString) {
                     NOTIFICATION.alert('', localizedEditString);
@@ -291,17 +309,15 @@ define(
 
             MAIN.is_sending = true;
 
-            var imagedataurl = (post_screenshot && typeof screenshot !== 'undefined' ) ? screenshot : '';
-            console.log(accountmanager);
-            if (MAIN.debug > 0) console.log('local_edusupport_create_issue', { subject: subject, description: description, forum_group: forum_group,
-                 postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname, url: url, contactphone: contactphone, guestmail: guestmail, accountmanager: accountmanager});
+            var imagedataurl = (post_screenshot && typeof screenshot !== 'undefined') ? screenshot : '';
             AJAX.call([{
                 methodname: 'local_edusupport_create_issue',
-                args: { subject: subject, description: description, forum_group: forum_group, postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname,
+                args: {subject: subject, description: description, forum_group: forum_group,
+                    postto2ndlevel: postto2ndlevel, image: imagedataurl, screenshotname: screenshotname,
                      url: url, contactphone: contactphone, guestmail: guestmail, accountmanager: accountmanager},
                 done: function(result) {
-                    // result is the discussion id, -999 if sent by mail, or -1. if > 0 show confirm box that redirects to post. if -1 show error.
-                    if (MAIN.debug > 0) console.log(result);
+                    // Result is the discussion id, -999 if sent by mail, or -1. If it is above 0 we
+                    // show a confirm box that redirects to the post, on -1 we show an error.
                     modal.hide();
 
                     var responsibles = '';
@@ -310,7 +326,9 @@ define(
                         for (var i = 0; i < result.responsibles.length; i++) {
                             var r = result.responsibles[i];
                             if (typeof r.userid !== 'undefined' && r.userid > 0) {
-                                responsibles += '<li><a href="' + URL.fileUrl('/user', 'view.php?id=' + r.userid) + '" target="_blank">' + r.name + '</a></li>';
+                                responsibles += '<li><a href="'
+                                    + URL.fileUrl('/user', 'view.php?id=' + r.userid)
+                                    + '" target="_blank">' + r.name + '</a></li>';
                             } else if (typeof r.email !== 'undefined' && r.email != '') {
                                 responsibles += '<li><a href="mailto:' + r.email + '">' + r.name + '</a></li>';
                             } else {
@@ -320,12 +338,12 @@ define(
                         responsibles += '</ul>';
                     }
                     if (typeof result.discussionid !== 'undefined' && parseInt(result.discussionid) == -999) {
-                        // confirmation, was sent by mail.
+                        // Confirmation, was sent by mail.
                         STR.get_strings([
-                            {'key' : 'create_issue_success_title', component: 'local_edusupport' },
-                            {'key' : 'create_issue_success_description_mail', component: 'local_edusupport'},
-                            {'key' : 'create_issue_success_responsibles', component: 'local_edusupport' },
-                            {'key' : 'create_issue_success_close', component: 'local_edusupport' },
+                            {'key': 'create_issue_success_title', component: 'local_edusupport'},
+                            {'key': 'create_issue_success_description_mail', component: 'local_edusupport'},
+                            {'key': 'create_issue_success_responsibles', component: 'local_edusupport'},
+                            {'key': 'create_issue_success_close', component: 'local_edusupport'},
                             ]).done(function(s) {
                                 var desc = s[1];
                                 if (responsibles != '') {
@@ -335,25 +353,27 @@ define(
                             }
                         ).fail(NOTIFICATION.exception);
                     } else if (typeof result.discussionid !== 'undefined' && parseInt(result.discussionid) > 0) {
-                        // confirmation
+                        // Confirmation
                         STR.get_strings([
-                            {'key' : 'create_issue_success_title', component: 'local_edusupport' },
-                            {'key' : 'create_issue_success_description', component: 'local_edusupport'},
-                            {'key' : 'create_issue_success_responsibles', component: 'local_edusupport' },
-                            {'key' : 'create_issue_success_goto', component: 'local_edusupport' },
-                            {'key' : 'create_issue_success_close', component: 'local_edusupport' },
+                            {'key': 'create_issue_success_title', component: 'local_edusupport'},
+                            {'key': 'create_issue_success_description', component: 'local_edusupport'},
+                            {'key': 'create_issue_success_responsibles', component: 'local_edusupport'},
+                            {'key': 'create_issue_success_goto', component: 'local_edusupport'},
+                            {'key': 'create_issue_success_close', component: 'local_edusupport'},
                             ]).done(function(s) {
                                 var desc = s[1];
                                 if (responsibles != '') {
                                     desc = s[2] + responsibles;
                                 }
-                                NOTIFICATION.confirm(s[0], desc, s[3], s[4], function(){ top.location.href = URL.fileUrl('/mod/forum', 'discuss.php?d=' + result.discussionid); });
+                                NOTIFICATION.confirm(s[0], desc, s[3], s[4], function() {
+ top.location.href = URL.fileUrl('/mod/forum', 'discuss.php?d=' + result.discussionid);
+});
                             }
                         ).fail(NOTIFICATION.exception);
                     } else {
                         STR.get_strings([
-                                {'key' : 'create_issue_error_title', component: 'local_edusupport' },
-                                {'key' : 'create_issue_error_description', component: 'local_edusupport' },
+                                {'key': 'create_issue_error_title', component: 'local_edusupport'},
+                                {'key': 'create_issue_error_description', component: 'local_edusupport'},
                             ]).done(function(s) {
                                 NOTIFICATION.alert(s[0], s[1]);
                             }
@@ -366,7 +386,6 @@ define(
         },
         prepareBox: function() {
             var MAIN = this;
-            if (MAIN.debug > 0) console.log('Showing modal');
             var body = $(MAIN.modal.body);
             if (body.find('#id_forum_group>option').length <= 1) {
                 body.find('#id_forum_group').parent().parent().css('display', 'none');
@@ -384,15 +403,17 @@ define(
             $.when(editaPresent).done(function(localizedEditString) {
                 MAIN.modal.setSaveButtonText(localizedEditString);
             });
-            /*$('#id_postscreenshot').closest('div.fitem').css('display', 'none');
+            /* $('#id_postscreenshot').closest('div.fitem').css('display', 'none');
             $('#screenshot').closest('div').css('display', 'none');
 */
             MAIN.modal.show();
         },
         /**
          * Insert screenshot to form.
+         *
+         * @returns {void}
          */
-        prepareScreenshot: function(c){
+        prepareScreenshot: function() {
             var MAIN = this;
             var dataurl = MAIN.canvas.toDataURL();
             var body = $(MAIN.modal.body);
@@ -400,38 +421,37 @@ define(
             $('#screenshot').closest('div').css('display', undefined);
             $('#id_postscreenshot').closest('div.fitem').css('display', undefined);
             MAIN.checkHasScreenshot($('#id_postscreenshot'));
-            // delete canvas - next time we want a new screenshot!
-            delete(MAIN.canvas);
+            // Delete canvas - next time we want a new screenshot!
+            delete (MAIN.canvas);
         },
-        showBox: function(forumid){
-            if (typeof forumid === 'undefined') forumid = 0;
+        showBox: function(forumid) {
+            if (typeof forumid === 'undefined') {
+ forumid = 0;
+}
             var MAIN = this;
             // @todo no functional requirement that screenshot works.
             // @todo screenshot creation parallel to modal?
             // @todo save modal in object for manipulation
-            delete(MAIN.canvas);
+            delete (MAIN.canvas);
 
             if (typeof MAIN.modal !== 'undefined') {
                 MAIN.prepareBox(forumid);
             } else {
-                console.log('Fetching modal');
                 MAIN.triggerSpinner(1);
                 AJAX.call([{
                     methodname: 'local_edusupport_create_form',
-                    args: { url: top.location.href, image: '', forumid: forumid },
+                    args: {url: top.location.href, image: '', forumid: forumid},
                     done: function(result) {
-                        console.log('Got modal');
                         MAIN.triggerSpinner(-1);
                         // Remove any previously created forms.
                         $('#local_edusupport_create_form').remove();
-                        //console.log(result);
+                        // Console.log(result);
                         SaveCancelModal.create({
-                            //title: 'create issue',
+                            // Title: 'create issue',
                             body: result,
                             large: 1,
-                            //footer: 'footer',
+                            // Footer: 'footer',
                         }).then(function(modal) {
-                            console.log('Created modal');
                             MAIN.modal = modal;
 
                             MAIN.prepareBox();
@@ -441,34 +461,33 @@ define(
                 }]);
             }
         },
-        showSupporter: function(forumid){
-            if (typeof forumid === 'undefined') forumid = 0;
+        showSupporter: function(forumid) {
+            if (typeof forumid === 'undefined') {
+ forumid = 0;
+}
             var MAIN = this;
             // @todo no functional requirement that screenshot works.
             // @todo screenshot creation parallel to modal?
             // @todo save modal in object for manipulation
-            delete(MAIN.canvas);
+            delete (MAIN.canvas);
             if (typeof MAIN.modal !== 'undefined') {
                 MAIN.prepareBox(forumid);
             } else {
-                console.log('Fetching modal');
                 MAIN.triggerSpinner(1);
                 AJAX.call([{
                     methodname: 'local_edusupport_create_form',
-                    args: { url: top.location.href, image: '', forumid: forumid },
+                    args: {url: top.location.href, image: '', forumid: forumid},
                     done: function(result) {
-                        console.log('Got modal');
                         MAIN.triggerSpinner(-1);
                         // Remove any previously created forms.
                         $('#local_edusupport_create_form').remove();
-                        //console.log(result);
+                        // Console.log(result);
                         SaveCancelModal.create({
-                            //title: 'create issue',
+                            // Title: 'create issue',
                             body: result,
                             large: 1,
-                            //footer: 'footer',
+                            // Footer: 'footer',
                         }).then(function(modal) {
-                            console.log('Created modal');
                             MAIN.modal = modal;
                             MAIN.prepareBox();
                         });
@@ -482,24 +501,25 @@ define(
             AlertModal.create({
                 title: title,
                 body: msg,
-                //footer: 'footer',
+                // Footer: 'footer',
             }).then(function(modal) {
                 modal.show();
             });
         },
         triggerSpinner: function(steps) {
-            MAIN = this;
+            var MAIN = this;
             MAIN.triggerSteps += steps;
             if (MAIN.triggerSteps > 0) {
                 if ($('body #edusupport-spinner').length == 0) {
-                    $('body').append($('<div id="edusupport-spinner" class="spinner-grid show"><div></div><div></div><div></div><div></div></div>'));
+                    $('body').append($('<div id="edusupport-spinner" class="spinner-grid show">'
+                        + '<div></div><div></div><div></div><div></div></div>'));
                 }
             } else {
                 $('#edusupport-spinner').remove();
             }
         },
         uploadScreenshot: function() {
-            MAIN = this;
+            var MAIN = this;
             $('#edusupport_screenshot input').addClass('disabled');
             $('#edusupport_screenshot div.alert').addClass('hidden');
             var file = document.querySelector('#edusupport_screenshot input[type="file"]').files[0];
@@ -507,39 +527,17 @@ define(
             reader.readAsDataURL(file);
             if (typeof file.name !== 'undefined') {
                 MAIN.screenshotname = file.name;
-                reader.onload = function () {
+                reader.onload = function() {
                     $('#edusupport_screenshot div.alert-success').removeClass('hidden');
                     $('#edusupport_screenshot input').removeClass('disabled');
                     MAIN.screenshot = reader.result;
-                    console.log(reader.result);
                 };
-                reader.onerror = function (error) {
+                reader.onerror = function() {
                     $('#edusupport_screenshot div.alert-danger').removeClass('hidden');
                     $('#edusupport_screenshot input').removeClass('disabled');
 
-                    console.log('Error: ', error, file);
                 };
             }
         },
     };
 });
-
-function changeStatus() {
-    var selectValue = document.querySelector("#statusChange1").value;
-    Ajax.call([{
-        methodname: "local_edusupport_set_status",
-        args: { status: selectValue},
-        done: function(data) {
-            if (data.status == false) {
-                return;
-            }
-        },
-        fail: function(ex) {
-            // eslint-disable-next-line no-console
-            console.log("ex:" + ex);
-        },
-    }]);
-
-
-}
-

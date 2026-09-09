@@ -154,6 +154,7 @@ $string['missing_targetforum_exists'] = 'Das konfigurierte Zielforum existiert n
 $string['no_such_issue'] = 'Dies ist kein offenes Ticket! Sie können die <a href="{$a->todiscussionurl}"><u>Diskussion direkt im Forum</u></a> aufrufen oder zurück zur <a href="{$a->toissuesurl}"><u>Übersicht der offenen Tickets</u></a> wechseln.';
 $string['none'] = 'nichts ausgewählt';
 $string['notasigned'] = 'Es wurde noch kein Support-User zugewiesen';
+$string['notused'] = 'Wird nicht mehr verwendet. Das Standard-Supportforum wird in der Kurskonfiguration gesetzt.';
 $string['only_you'] = 'Nur Sie und unser Team';
 $string['phonefield'] = 'Telefonfeld verbergen';
 $string['phonefield:description'] = 'Telefonfeld verbergen';
