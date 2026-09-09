@@ -1103,7 +1103,7 @@ class lib {
         if ($forumid == $centralforum) {
             self::supportforum_disablecentral();
         }
-        // TODO shall we check for orphaned discussions too?
+        // TODO MDL-000000 shall we check for orphaned discussions too?
     }
 
     /**

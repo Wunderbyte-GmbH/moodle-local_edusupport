@@ -73,7 +73,7 @@ class local_edusupport_post_form extends moodleform {
         global $DB, $discussion;
         $dbforum = $DB->get_record('forum', ['id' => $discussion->forum]);
 
-        // TODO: add max files and max size support.
+        // TODO: MDL-000000 add max files and max size support.
         $maxbytes = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes, $dbforum->maxbytes);
         return [
             'maxfiles' => EDITOR_UNLIMITED_FILES,

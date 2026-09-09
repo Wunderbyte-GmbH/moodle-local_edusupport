@@ -18,9 +18,10 @@ jobs:
       # The plugin ships AMD sources, so the stale build file check applies. If it starts
       # failing, rebuild amd/build with "npx grunt --root=local/edusupport" and commit.
 
-      # Warnings do not fail the build yet. The plugin still carries a backlog of missing
-      # phpdoc one-liners; once that is cleared, set this to 0 to keep it clear.
-      # codechecker_max_warnings: 0
+      # The plugin is clean against the Moodle standard, so keep it that way: any new
+      # warning fails the build.
+      codechecker_max_warnings: 0
 
-      # PHPMD is off for now, to be enabled together with the phpdoc cleanup.
+      # PHPMD is off. It is a separate checker with its own backlog, to be looked at on
+      # its own rather than bundled into this one.
       # enable_phpmd: true

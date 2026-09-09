@@ -73,7 +73,7 @@ class issue_create_form extends moodleform {
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
 
-        // TODO: Obsolete forumid remove in the future.
+        // TODO: MDL-000000 Obsolete forumid remove in the future.
         $mform->addElement('hidden', 'forumid', '');
         $mform->setType('forumid', PARAM_INT);
 
