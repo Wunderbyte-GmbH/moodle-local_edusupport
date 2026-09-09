@@ -85,6 +85,40 @@ if ($issupportteam) {
 
         redirect($PAGE->url);
     }
+
+    // Holiday mode is handled here as well, so its form can redirect just like every other action.
+    if (get_config('local_edusupport', 'holidaymodeenabled')) {
+        // A user can be registered as a supporter for more than one course. Holiday mode applies to
+        // the person, not to a single course, so we read one row but write all of them.
+        $supporter = $DB->get_record(
+            'local_edusupport_supporters',
+            ['userid' => $USER->id],
+            '*',
+            IGNORE_MULTIPLE
+        );
+        if (!empty($supporter->id)) {
+            $holidaymodeform = new \local_edusupport\holidaymode_form();
+            $holidaymodeend = optional_param('holidaymodeend', 0, PARAM_INT);
+            if (!empty($holidaymodeend)) {
+                require_sesskey();
+                $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, ['userid' => $supporter->userid]);
+                redirect($PAGE->url);
+            } else if ($holidaymodedata = $holidaymodeform->get_data()) {
+                // The date_time_selector hands us a timestamp, and get_data() has checked the sesskey.
+                $DB->set_field(
+                    'local_edusupport_supporters',
+                    'holidaymode',
+                    (int) $holidaymodedata->holidaymode,
+                    ['userid' => $supporter->userid]
+                );
+                redirect($PAGE->url);
+            } else if (!empty($supporter->holidaymode) && $supporter->holidaymode < time()) {
+                // Expired holiday mode - invalidate it.
+                $supporter->holidaymode = 0;
+                $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, ['userid' => $supporter->userid]);
+            }
+        }
+    }
 }
 
 echo $OUTPUT->header();
@@ -183,33 +217,12 @@ if (!$issupportteam) {
         }
     }
 
-    $supporter = $DB->get_record('local_edusupport_supporters', ['userid' => $USER->id]);
-    // Check if holidaymode is enabled.
-    $holidaymodeenabled = get_config('local_edusupport', 'holidaymodeenabled');
-    if ($holidaymodeenabled) {
-        $hm = optional_param('holidaymode', 0, PARAM_INT);
-        if ($hm == -1) {
-            // Disable holiday mode.
-            $supporter->holidaymode = 0;
-            $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, ['userid' => $supporter->userid]);
-        } else if (is_array($hm)) {
-            $supporter->holidaymode = mktime($hm['hour'], $hm['minute'], 0, $hm['month'], $hm['day'], $hm['year']);
-            $DB->set_field(
-                'local_edusupport_supporters',
-                'holidaymode',
-                $supporter->holidaymode,
-                ['userid' => $supporter->userid]
-            );
-        }
-        if ($supporter->holidaymode < time()) {
-            // Expired holidaymode - invalidate.
-            $supporter->holidaymode = 0;
-            $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, ['userid' => $supporter->userid]);
-        }
-
-        require_once($CFG->dirroot . '/local/edusupport/classes/holidaymode_form.php');
-        $mform = new \local_edusupport\holidaymode_form();
-        $supporter->holidayform = $mform->render();
+    // Holiday mode was already handled before any output was sent, this only renders it.
+    if (!empty($supporter->id) && !empty($holidaymodeform)) {
+        $supporter->holidayform = $holidaymodeform->render();
+        $supporter->wwwroot = $CFG->wwwroot;
+        $supporter->uniqid = uniqid();
+        $supporter->sesskey = sesskey();
         echo $OUTPUT->render_from_template('local_edusupport/holidaymode', $supporter);
     }
     $params['accountmanagerenabled'] = !empty(get_config('local_edusupport', 'accountmanagers'));
