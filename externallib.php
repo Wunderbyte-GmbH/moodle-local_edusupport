@@ -717,7 +717,8 @@ class local_edusupport_external extends external_api {
      *
      * @param int $discussionid The discussion ID
      * @param int $supporterid The supporter user ID to assign
-     * @return mixed Result of setting current supporter
+     * @return int 1 when the issue was handed over.
+     * @throws \moodle_exception when the assignment is not allowed.
      */
     public static function set_currentsupporter($discussionid, $supporterid) {
         global $CFG, $DB, $USER;
@@ -725,7 +726,13 @@ class local_edusupport_external extends external_api {
             self::set_currentsupporter_parameters(),
             ['discussionid' => $discussionid, 'supporterid' => $supporterid]
         );
-        return lib::set_current_supporter($params['discussionid'], $params['supporterid']);
+        // Report a refusal as an exception, so the caller gets the reason instead of a bare failure.
+        $error = lib::validate_supporter_assignment($params['discussionid'], $params['supporterid']);
+        if ($error !== null) {
+            throw new \moodle_exception($error, 'local_edusupport');
+        }
+        lib::set_current_supporter($params['discussionid'], $params['supporterid']);
+        return 1;
     }
     /**
      * Returns description of the return value for set_currentsupporter.

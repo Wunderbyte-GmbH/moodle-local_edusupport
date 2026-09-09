@@ -107,7 +107,7 @@ final class supporter_assignment_test extends advanced_testcase {
         $issue = $this->create_issue();
 
         $this->setUser($this->supporter);
-        lib::set_current_supporter($issue->discussionid, $this->supporter->id);
+        $this->assertTrue(lib::set_current_supporter($issue->discussionid, $this->supporter->id));
 
         $this->assertEquals(
             $this->supporter->id,
@@ -120,11 +120,7 @@ final class supporter_assignment_test extends advanced_testcase {
     }
 
     /**
-     * An issue cannot be handed to someone outside the support team.
-     *
-     * Note that the refusal is not visible in the return value: the method is declared to
-     * return bool but returns -3 here, which PHP coerces to true. Only the unchanged
-     * currentsupporter shows that nothing happened.
+     * An issue cannot be handed to someone outside the support team, and says so.
      */
     public function test_set_current_supporter_refuses_an_outsider(): void {
         global $DB;
@@ -134,7 +130,7 @@ final class supporter_assignment_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($outsider->id, $this->course->id, 'student');
 
         $this->setUser($this->supporter);
-        lib::set_current_supporter($issue->discussionid, $outsider->id);
+        $this->assertFalse(lib::set_current_supporter($issue->discussionid, $outsider->id));
 
         $this->assertEquals(
             0,
@@ -144,6 +140,65 @@ final class supporter_assignment_test extends advanced_testcase {
             'discussionid' => $issue->discussionid,
             'userid' => $outsider->id,
         ]));
+    }
+
+    /**
+     * Every way an assignment can be refused names its own reason.
+     */
+    public function test_validate_supporter_assignment_reports_the_reason(): void {
+        $issue = $this->create_issue();
+        $outsider = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($outsider->id, $this->course->id, 'student');
+
+        $this->setUser($this->supporter);
+        $this->assertNull(lib::validate_supporter_assignment($issue->discussionid, $this->supporter->id));
+        $this->assertSame(
+            'error:targetnotasupporter',
+            lib::validate_supporter_assignment($issue->discussionid, $outsider->id)
+        );
+        $this->assertSame(
+            'error:unknowndiscussion',
+            lib::validate_supporter_assignment(0, $this->supporter->id)
+        );
+
+        $plainforum = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
+        $plaindiscussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion([
+            'course' => $this->course->id,
+            'forum' => $plainforum->id,
+            'userid' => $this->student->id,
+            'name' => 'Kein Ticket',
+        ]);
+        $this->assertSame(
+            'error:notasupportforum',
+            lib::validate_supporter_assignment($plaindiscussion->id, $this->supporter->id)
+        );
+
+        // Someone outside the support team may not hand over anything at all.
+        $this->setUser($this->student);
+        $this->assertSame(
+            'error:notasupporter',
+            lib::validate_supporter_assignment($issue->discussionid, $this->supporter->id)
+        );
+    }
+
+    /**
+     * Every refusal reason has a language string in English and German.
+     */
+    public function test_every_refusal_reason_has_a_string(): void {
+        $reasons = [
+            'error:notasupportforum',
+            'error:notasupporter',
+            'error:targetnotasupporter',
+            'error:unknowndiscussion',
+        ];
+        foreach ($reasons as $reason) {
+            foreach (['en', 'de'] as $language) {
+                $this->assertNotEmpty(
+                    get_string_manager()->get_string($reason, 'local_edusupport', null, $language),
+                    "Missing {$language} string for {$reason}."
+                );
+            }
+        }
     }
 
     /**

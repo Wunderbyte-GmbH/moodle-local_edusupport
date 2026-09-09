@@ -862,11 +862,42 @@ class lib {
     }
 
     /**
+     * Check whether the current user may hand an issue to a particular supporter.
+     *
+     * Returning the reason rather than just a boolean lets callers tell the user what went
+     * wrong. set_current_supporter() uses this to decide whether to act at all.
+     *
+     * @param int $discussionid the discussion behind the issue.
+     * @param int $userid the user the issue should be handed to.
+     * @return string|null the language string identifier of the refusal, or null if allowed.
+     */
+    public static function validate_supporter_assignment(int $discussionid, int $userid): ?string {
+        global $DB;
+
+        $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid]);
+        if (empty($discussion->id)) {
+            return 'error:unknowndiscussion';
+        }
+        if (!self::is_supportforum($discussion->forum)) {
+            return 'error:notasupportforum';
+        }
+        // Check if the user taking the action belongs to the supportteam.
+        if (!self::is_supportteam()) {
+            return 'error:notasupporter';
+        }
+        // Check if the assigned user belongs to the supportteam as well.
+        if (!self::is_supportteam($userid, $discussion->course)) {
+            return 'error:targetnotasupporter';
+        }
+        return null;
+    }
+
+    /**
      * Used by 2nd-level support to assign an issue to a particular person from 3rd level.
      *
      * @param int $discussionid.
      * @param int $userid.
-     * @return true on success.
+     * @return bool true when the issue was handed over, false when that was refused.
      */
     public static function set_current_supporter(int $discussionid, int $userid): bool {
         global $CFG, $DB, $USER, $PAGE, $SITE;
@@ -875,20 +906,13 @@ class lib {
             $PAGE->set_context(context_system::instance());
         }
 
+        if (self::validate_supporter_assignment($discussionid, $userid) !== null) {
+            return false;
+        }
+
         $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid]);
         $forum = $DB->get_record('forum', ['id' => $discussion->forum]);
         $issue = self::get_issue($discussionid);
-        if (!self::is_supportforum($discussion->forum)) {
-            return -1;
-        }
-        // Check if the user taking the action belongs to the supportteam.
-        if (!self::is_supportteam()) {
-            return -2;
-        }
-        // Check if the assigned user belongs to the supportteam as well.
-        if (!self::is_supportteam($userid, $discussion->course)) {
-            return -3;
-        }
 
         // Set currentsupporter and add to subscribed users.
         $DB->set_field('local_edusupport_issues', 'currentsupporter', $userid, ['discussionid' => $discussion->id]);
