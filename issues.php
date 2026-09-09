@@ -43,14 +43,13 @@ if ($issupportteam) {
     $assign = optional_param('assign', 0, PARAM_INT); // Discussion id we want to assign to.
     $unassign = optional_param('unassign', 0, PARAM_INT); // Discussion id we want to unassign from.
     $take = optional_param('take', 0, PARAM_INT); // Discussion id we want to take over ourselves.
-    $give = optional_param('give', 0, PARAM_INT); // Discussion id we want to hand back to 2nd level.
     $reopen = optional_param('reopen', 0, PARAM_INT); // Discussion id we want to reopen.
     $close = optional_param('close', 0, PARAM_INT); // Discussion id we want to close.
     $prio = optional_param('prio', 0, PARAM_INT); // Discussion id we want to set the priority for.
     $lvl = optional_param('lvl', 0, PARAM_INT); // The priority level to set.
 
     if (
-        !empty($assign) || !empty($unassign) || !empty($take) || !empty($give)
+        !empty($assign) || !empty($unassign) || !empty($take)
         || !empty($reopen) || !empty($close) || !empty($prio)
     ) {
         require_sesskey();
@@ -70,10 +69,6 @@ if ($issupportteam) {
         if ($isissue($take)) {
             \local_edusupport\lib::set_current_supporter($take, $USER->id);
             \local_edusupport\lib::subscription_add($take);
-        }
-        if ($isissue($give)) {
-            \local_edusupport\lib::set_current_supporter($give, 1);
-            \local_edusupport\lib::subscription_add($give);
         }
         if ($isissue($reopen)) {
             \local_edusupport\lib::reopen_issue($reopen);
