@@ -183,5 +183,19 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         // Edusupport savepoint reached.
         upgrade_plugin_savepoint(true, 2026091000, 'local', 'edusupport');
     }
+    if ($oldversion < 2026091001) {
+        // Which supporters escalation may pick was encoded in the free text support level,
+        // where an empty string meant "available for automatic assignment". That text is a
+        // label people fill in as they please, so it gets its own field instead. Everyone
+        // starts out assignable; whoever should not be is unticked afterwards.
+        $table = new xmldb_table('local_edusupport_supporters');
+        $field = new xmldb_field('autoassign', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'holidaymode');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Edusupport savepoint reached.
+        upgrade_plugin_savepoint(true, 2026091001, 'local', 'edusupport');
+    }
     return true;
 }

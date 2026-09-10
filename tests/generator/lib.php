@@ -60,8 +60,8 @@ class local_edusupport_generator extends component_generator_base {
     /**
      * Add a user to the support team.
      *
-     * Without a courseid the user joins the global support team, which is what
-     * lib::is_supportteam() checks for when no course is given.
+     * Without a courseid the user joins the platform wide team, which is the second level.
+     * Pass a real courseid to make somebody first level support of that course.
      *
      * @param array|stdClass|null $record needs a userid.
      * @return stdClass the local_edusupport_supporters record.
@@ -79,6 +79,7 @@ class local_edusupport_generator extends component_generator_base {
             'userid' => $record->userid,
             'supportlevel' => $record->supportlevel ?? '',
             'holidaymode' => $record->holidaymode ?? 0,
+            'autoassign' => $record->autoassign ?? 1,
         ];
         $supporter->id = $DB->insert_record('local_edusupport_supporters', $supporter);
 

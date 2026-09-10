@@ -21,6 +21,7 @@
                 <td width="50">{{#str}} userid, local_edusupport {{/str}}</td>
                 <td>{{#str}} name {{/str}}</td>
                 <td>{{#str}} supportlevel, local_edusupport {{/str}}</td>
+                <td>{{#str}} autoassign, local_edusupport {{/str}}</td>
                 <td>{{#str}} action {{/str}}</td>
             </tr>
         </thead>
@@ -33,6 +34,7 @@
                     <td><input type="number" name="userid" value="{{userid}}" /></td>
                     <td>{{lastname}} {{firstname}}</td>
                     <td><input type="text" name="supportlevel" value="{{supportlevel}}" /></td>
+                    <td><input type="checkbox" name="autoassign" value="1" {{#autoassign}}checked="checked"{{/autoassign}} /></td>
                     <td>
                         <input type="submit" name="remove" value="{{#str}} remove {{/str}}" />
                         <input type="submit" value="{{#str}} save {{/str}}" />
@@ -46,6 +48,7 @@
                 <td><input type="number" name="userid" value="{{userid}}" /></td>
                 <td>-</td>
                 <td><input type="text" name="supportlevel" value="{{supportlevel}}" /></td>
+                <td><input type="checkbox" name="autoassign" value="1" checked="checked" /></td>
                 <td>
                     <input type="submit" value="{{#str}} save {{/str}}" />
                 </td>

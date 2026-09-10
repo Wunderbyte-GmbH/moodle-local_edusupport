@@ -33,6 +33,7 @@ require_once($CFG->libdir . '/adminlib.php');
 $id = optional_param('id', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
 $supportlevel = optional_param('supportlevel', '', PARAM_TEXT);
+$autoassign = optional_param('autoassign', 0, PARAM_BOOL);
 $remove = optional_param('remove', 0, PARAM_BOOL);
 
 // This page maintains the platform wide team only. First level support of a single course is
@@ -96,6 +97,7 @@ if (!is_siteadmin()) {
                     'courseid' => $courseid,
                     'userid' => $userid,
                     'supportlevel' => $supportlevel,
+                    'autoassign' => $autoassign,
                 ]);
                 if ($success) {
                     $event = \local_edusupport\event\supportuser_changed::create(
@@ -119,6 +121,7 @@ if (!is_siteadmin()) {
                 'courseid' => $courseid,
                 'userid' => $userid,
                 'supportlevel' => $supportlevel,
+                'autoassign' => $autoassign,
             ]);
             if ($success) {
                 $event = \local_edusupport\event\supportuser_added::create(

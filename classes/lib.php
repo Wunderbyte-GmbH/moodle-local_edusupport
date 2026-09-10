@@ -686,8 +686,8 @@ class lib {
                 'id ASC'
             );
 
-            // A row carrying a support level names a third level speciality - that must not be
-            // lost, so it wins over a plain one. Among equals the oldest row wins.
+            // supportlevel is a free text label without meaning to the code, but keeping a
+            // filled one loses less than keeping an empty one. Among equals the oldest wins.
             $winner = null;
             foreach ($rows as $row) {
                 if ($winner === null || ($winner->supportlevel === '' && $row->supportlevel !== '')) {
@@ -695,13 +695,19 @@ class lib {
                 }
             }
 
-            // An ongoing holiday must survive the merge, so keep the furthest reaching one.
+            // An ongoing holiday must survive the merge, and so must being assignable -
+            // losing either would quietly change who escalation can reach.
             $holidaymode = 0;
+            $autoassign = 0;
             foreach ($rows as $row) {
                 $holidaymode = max($holidaymode, (int) $row->holidaymode);
+                $autoassign = max($autoassign, (int) $row->autoassign);
             }
             if ((int) $winner->holidaymode !== $holidaymode) {
                 $DB->set_field('local_edusupport_supporters', 'holidaymode', $holidaymode, ['id' => $winner->id]);
+            }
+            if ((int) $winner->autoassign !== $autoassign) {
+                $DB->set_field('local_edusupport_supporters', 'autoassign', $autoassign, ['id' => $winner->id]);
             }
 
             $DB->delete_records_select(
@@ -718,38 +724,151 @@ class lib {
     }
 
     /**
+     * Get the platform wide support team, which is the second level.
+     *
+     * Note that supportlevel is a free text label people fill in as they please. It groups
+     * the team in the assignment dialogue and carries no meaning for the code.
+     *
+     * @param bool $assignableonly only those escalation may pick automatically.
+     * @param bool $availableonly leave out whoever is on holiday right now.
+     * @return array of supporter records, keyed by row id.
+     */
+    public static function get_second_level(bool $assignableonly = false, bool $availableonly = false): array {
+        global $DB;
+
+        $wheres = ['courseid = :courseid'];
+        $params = ['courseid' => self::SYSTEM_COURSE_ID];
+
+        if ($assignableonly) {
+            $wheres[] = 'autoassign = 1';
+        }
+        if ($availableonly) {
+            $wheres[] = 'holidaymode < :now';
+            $params['now'] = time();
+        }
+
+        return $DB->get_records_select('local_edusupport_supporters', implode(' AND ', $wheres), $params);
+    }
+
+    /**
+     * Get the first level support of a single course.
+     *
+     * @param int $courseid
+     * @return array of supporter records, keyed by row id.
+     */
+    public static function get_first_level(int $courseid): array {
+        global $DB;
+
+        if ($courseid == self::SYSTEM_COURSE_ID) {
+            // That id is the sentinel for the platform team, it is never a course.
+            return [];
+        }
+
+        return $DB->get_records('local_edusupport_supporters', ['courseid' => $courseid]);
+    }
+
+    /**
+     * Check whether a user belongs to the platform wide support team.
+     *
+     * @param int $userid check a particular user, or the current one.
+     * @return bool
+     */
+    public static function is_second_level(int $userid = 0): bool {
+        global $DB, $USER;
+
+        $userid = empty($userid) ? $USER->id : $userid;
+
+        return $DB->record_exists('local_edusupport_supporters', [
+            'userid' => $userid,
+            'courseid' => self::SYSTEM_COURSE_ID,
+        ]);
+    }
+
+    /**
+     * Check whether a user is first level support of a particular course.
+     *
+     * @param int $userid
+     * @param int $courseid
+     * @return bool
+     */
+    public static function is_first_level(int $userid, int $courseid): bool {
+        global $DB;
+
+        if ($courseid == self::SYSTEM_COURSE_ID) {
+            return false;
+        }
+
+        return $DB->record_exists('local_edusupport_supporters', [
+            'userid' => $userid,
+            'courseid' => $courseid,
+        ]);
+    }
+
+    /**
+     * Get the users of a course that may be made first level support.
+     *
+     * Eligible is whoever is enrolled and can both start a discussion in a forum and see
+     * hidden activities. That pair is what separates teaching staff from students: a student
+     * may start discussions too, but cannot see hidden activities.
+     *
+     * The two capabilities cannot be handed to one get_enrolled_users() call, because a list
+     * of capabilities there means "one of these is enough" (see get_with_capability_join() in
+     * lib/accesslib.php). The two sets are intersected in a single query instead.
+     *
+     * @param int $courseid
+     * @param string $search optional name or identity search for an autocomplete.
+     * @param int $limit optional maximum number of users to return.
+     * @return array of user records, keyed by user id.
+     */
+    public static function get_assignable_users(int $courseid, string $search = '', int $limit = 0): array {
+        global $DB;
+
+        $context = \context_course::instance($courseid);
+        [$postsql, $postparams] = get_enrolled_sql($context, 'mod/forum:startdiscussion', 0, true);
+        [$staffsql, $staffparams] = get_enrolled_sql($context, 'moodle/course:viewhiddenactivities', 0, true);
+
+        $wheres = ["u.id IN ($postsql)", "u.id IN ($staffsql)", 'u.deleted = 0'];
+        $params = array_merge($postparams, $staffparams);
+
+        if ($search !== '') {
+            [$searchsql, $searchparams] = users_search_sql($search, 'u', USER_SEARCH_CONTAINS);
+            $wheres[] = $searchsql;
+            $params = array_merge($params, $searchparams);
+        }
+
+        $namefields = \core_user\fields::for_name()->get_sql('u')->selects;
+        $sql = "SELECT u.id, u.email $namefields
+                  FROM {user} u
+                 WHERE " . implode(' AND ', $wheres) . "
+              ORDER BY u.lastname ASC, u.firstname ASC";
+
+        return $DB->get_records_sql($sql, $params, 0, $limit);
+    }
+
+    /**
      * Checks if a user belongs to the support team.
      *
-     * @param userid check particular user, or current user
-     * @param course check for particular course
-     * @param includeglobalteam if checking for particular course, also include global team.
+     * @deprecated since 2.8.0. The two levels are separate, so ask for the one you mean:
+     *             is_second_level() for the platform team, is_first_level() for a course.
+     *
+     * @param int $userid check particular user, or current user
+     * @param int $courseid check for particular course
+     * @param bool $includeglobalteam if checking for particular course, also include global team.
+     * @return bool
      */
     public static function is_supportteam($userid = 0, $courseid = 0, $includeglobalteam = true) {
-        global $DB, $USER;
-        if (empty($userid)) {
-            $userid = $USER->id;
-        }
-        $sql = "SELECT id,userid
-                    FROM {local_edusupport_supporters}
-                    WHERE userid = ?";
-        $params = [$userid];
+        global $USER;
+
+        $userid = empty($userid) ? $USER->id : $userid;
 
         if ($courseid > 0 && !$includeglobalteam) {
-            $sql .= " AND courseid = ?";
-            $params[] = $courseid;
-        } else if ($courseid > 0 && $includeglobalteam) {
-            $sql .= " AND (courseid = ? OR courseid = ?)";
-            $params[] = $courseid;
-            $params[] = self::SYSTEM_COURSE_ID;
-        } else {
-            $sql .= " AND courseid = ?";
-            $params[] = self::SYSTEM_COURSE_ID;
+            return self::is_first_level($userid, $courseid);
+        }
+        if ($courseid > 0) {
+            return self::is_second_level($userid) || self::is_first_level($userid, $courseid);
         }
 
-        $sql .= " LIMIT 1 OFFSET 0";
-
-        $chk = $DB->get_record_sql($sql, $params);
-        return !empty($chk->userid);
+        return self::is_second_level($userid);
     }
 
     /**
@@ -876,45 +995,35 @@ class lib {
         if (!self::is_supportforum($discussion->forum)) {
             return false;
         }
-        // Check if holidaymode is enabled.
-        $holidaymode = get_config('local_edusupport', 'holidaymodeenabled') ? "AND holidaymode < ? " : " ";
-        // Todo: Only subscribe 1 person and make it responsible!
+        // Todo: MDL-000000 Only subscribe 1 person and make it responsible!
         $supportforum = $DB->get_record('local_edusupport', ['forumid' => $discussion->forum]);
-        $sql = "SELECT *
-                    FROM {local_edusupport_supporters}
-                    WHERE supportlevel = ''"
-            . $holidaymode .
-            "AND (
-                            courseid = ?
-                            OR
-                            courseid = ?
-                        )";
-        $supporters = $DB->get_records_sql($sql, [time(), self::SYSTEM_COURSE_ID, $discussion->course]);
 
-        if (count($supporters) == 0) {
-            // Fall back without holidaymode.
-            $sql = "SELECT *
-                        FROM {local_edusupport_supporters}
-                        WHERE supportlevel = ''
-                            AND (
-                                courseid = ?
-                                OR
-                                courseid = ?
-                            )";
-            $supporters = $DB->get_records_sql($sql, [self::SYSTEM_COURSE_ID, $discussion->course]);
+        $respectholidays = !empty(get_config('local_edusupport', 'holidaymodeenabled'));
+        $supporters = self::get_second_level(true, $respectholidays);
+        if (empty($supporters) && $respectholidays) {
+            // Everybody is away, so fall back to the whole assignable team rather than
+            // leaving the request without anybody responsible.
+            $supporters = self::get_second_level(true, false);
         }
 
-        if (!empty($supportforum->dedicatedsupporter) && !empty($supporters[$supportforum->dedicatedsupporter]->id)) {
-            $dedicated = $supporters[$supportforum->dedicatedsupporter];
-        } else {
-            // Choose one supporter randomly.
-            $keys = array_keys($supporters);
-            if (!empty($keys)) {
-                $dedicated = $supporters[$keys[array_rand($keys)]];
+        // The dedicated supporter is stored as a user id, while the rows are keyed by their
+        // own id, so the person has to be looked up rather than indexed.
+        $dedicated = null;
+        if (!empty($supportforum->dedicatedsupporter)) {
+            foreach ($supporters as $supporter) {
+                if ($supporter->userid == $supportforum->dedicatedsupporter) {
+                    $dedicated = $supporter;
+                    break;
+                }
             }
         }
+        if ($dedicated === null && !empty($supporters)) {
+            // Choose one supporter randomly.
+            $keys = array_keys($supporters);
+            $dedicated = $supporters[$keys[array_rand($keys)]];
+        }
 
-        if (isset($dedicated) && !empty($dedicated->userid)) {
+        if (!empty($dedicated->userid)) {
             $DB->set_field(
                 'local_edusupport_issues',
                 'currentsupporter',
@@ -926,7 +1035,7 @@ class lib {
         $centralforumid = get_config('local_edusupport', 'centralforum');
         $forum = $DB->get_record('forum', ['id' => $discussion->forum]);
 
-        if (get_config('local_edusupport', 'sendmsgonset2ndlvl')) {
+        if (!empty($dedicated->userid) && get_config('local_edusupport', 'sendmsgonset2ndlvl')) {
             $subject = get_string('issue_assigned:subject', 'local_edusupport');
             $messagebody = get_string('issue_assign_nextlevel:post', 'local_edusupport', (object) [
                 'fromuserfullname' => fullname($USER),
