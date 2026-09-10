@@ -27,6 +27,7 @@ namespace local_edusupport;
 
 use advanced_testcase;
 use local_edusupport_external;
+use local_edusupport\lib;
 use moodle_exception;
 use stdClass;
 
@@ -54,6 +55,9 @@ final class create_issue_test extends advanced_testcase {
     /** @var stdClass the user asking for support. */
     private $student;
 
+    /** @var stdClass the person supporting the course. */
+    private $supporter;
+
     /**
      * Set up a support forum with a student who may post into it.
      */
@@ -79,6 +83,12 @@ final class create_issue_test extends advanced_testcase {
 
         $this->student = $datagenerator->create_user();
         $datagenerator->enrol_user($this->student->id, $this->course->id, 'student');
+
+        // Somebody has to support the course, otherwise every request escalates straight to
+        // the platform team and none of the first level paths below would be taken.
+        $this->supporter = $datagenerator->create_user();
+        $datagenerator->enrol_user($this->supporter->id, $this->course->id, 'editingteacher');
+        lib::assign_first_level($this->course->id, [$this->supporter->id]);
     }
 
     /**
@@ -151,41 +161,59 @@ final class create_issue_test extends advanced_testcase {
     }
 
     /**
-     * The reported contacts are everyone who may edit the course.
+     * The reported contacts are the people assigned to the course, and only those.
      *
-     * This is the first level model: whoever holds moodle/course:update in the support course
-     * answers the requests filed there, which is what lets every school run its own support
-     * course. The plugin's own supporter registry is the second level and deliberately does
-     * not appear here.
+     * Being able to edit the course is no longer enough. That used to be the rule, and it is
+     * what put an integration account with a site wide manager role in front of the person
+     * filing a request, email address included.
      */
-    public function test_create_issue_reports_course_editors_as_responsible(): void {
+    public function test_create_issue_reports_the_assigned_supporters(): void {
         $datagenerator = $this->getDataGenerator();
 
         $editor = $datagenerator->create_user();
         $datagenerator->enrol_user($editor->id, $this->course->id, 'editingteacher');
 
-        // A registered supporter without editing rights in the course.
-        $supporter = $datagenerator->create_user();
-        $datagenerator->enrol_user($supporter->id, $this->course->id, 'student');
-        $datagenerator->get_plugin_generator('local_edusupport')
-            ->create_supporter(['userid' => $supporter->id]);
+        // A member of the platform team, who is second level and not a contact here.
+        $platform = $datagenerator->create_user();
+        $datagenerator->get_plugin_generator('local_edusupport')->create_supporter(['userid' => $platform->id]);
 
         $this->setUser($this->student);
         $reply = $this->create_issue('Drucker geht nicht');
 
-        $responsibleids = array_column($reply['responsibles'], 'userid');
-        $this->assertContains((int) $editor->id, array_map('intval', $responsibleids));
-        $this->assertNotContains((int) $supporter->id, array_map('intval', $responsibleids));
+        $responsibleids = array_map('intval', array_column($reply['responsibles'], 'userid'));
+        $this->assertContains((int) $this->supporter->id, $responsibleids);
+        $this->assertNotContains((int) $editor->id, $responsibleids);
+        $this->assertNotContains((int) $platform->id, $responsibleids);
+    }
+
+    /**
+     * Without anybody assigned the request goes straight to the platform team.
+     *
+     * That is how an organisation without sub units runs: nobody is named per course, so
+     * every request is handled centrally.
+     */
+    public function test_create_issue_escalates_without_a_first_level(): void {
+        global $DB;
+
+        $platform = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->get_plugin_generator('local_edusupport')
+            ->create_supporter(['userid' => $platform->id]);
+        lib::assign_first_level($this->course->id, []);
+
+        $this->setUser($this->student);
+        $reply = $this->create_issue('Drucker geht nicht');
+
+        $this->assertTrue($DB->record_exists('local_edusupport_issues', ['discussionid' => $reply['discussionid']]));
+        $this->assertEquals(
+            $platform->id,
+            $DB->get_field('local_edusupport_issues', 'currentsupporter', ['discussionid' => $reply['discussionid']])
+        );
     }
 
     /**
      * The support contacts can be kept from the person filing the request.
      */
     public function test_support_contacts_can_be_hidden(): void {
-        $datagenerator = $this->getDataGenerator();
-        $editor = $datagenerator->create_user();
-        $datagenerator->enrol_user($editor->id, $this->course->id, 'editingteacher');
-
         set_config('showresponsibles', 0, 'local_edusupport');
 
         $this->setUser($this->student);
@@ -201,10 +229,6 @@ final class create_issue_test extends advanced_testcase {
     public function test_hiding_the_contacts_skips_the_post_naming_them(): void {
         global $DB;
 
-        $datagenerator = $this->getDataGenerator();
-        $editor = $datagenerator->create_user();
-        $datagenerator->enrol_user($editor->id, $this->course->id, 'editingteacher');
-
         set_config('showresponsibles', 0, 'local_edusupport');
 
         $this->setUser($this->student);
@@ -219,10 +243,6 @@ final class create_issue_test extends advanced_testcase {
      */
     public function test_showing_the_contacts_posts_them_into_the_ticket(): void {
         global $DB;
-
-        $datagenerator = $this->getDataGenerator();
-        $editor = $datagenerator->create_user();
-        $datagenerator->enrol_user($editor->id, $this->course->id, 'editingteacher');
 
         set_config('showresponsibles', 1, 'local_edusupport');
 

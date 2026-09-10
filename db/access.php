@@ -27,6 +27,17 @@
 defined('MOODLE_INTERNAL') || die;
 
 $capabilities = [
+    // Who may decide which people support a course. The default matches what course
+    // management means in Moodle: assigning roles and editing the course.
+    'local/edusupport:assignsupporters' => [
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ],
+    ],
     'local/edusupport:canforward2ndlevel' => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',

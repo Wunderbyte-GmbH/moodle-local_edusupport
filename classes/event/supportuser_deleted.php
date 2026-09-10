@@ -69,15 +69,6 @@ class supportuser_deleted extends \core\event\base {
     }
 
 
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-
-        return null;
-    }
 
     /**
      * Custom validation.

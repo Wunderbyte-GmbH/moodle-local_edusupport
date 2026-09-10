@@ -50,48 +50,34 @@ function local_edusupport_extend_navigation($navigation) {
  * @return void
  */
 function local_edusupport_extend_navigation_course($parentnode, $course, $context) {
-    // If we allow support users on course level, we can remove the next line.
-    if (!is_siteadmin()) {
-        return;
-    }
-    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-    /* $coursecontext = \context_course::instance($course->id);
-    if (!has_capability('local/edusupport:canforward2ndlevel', $coursecontext)) return; */
-
-    // We want to add these new nodes after the Edit settings node, and before the
-    // Locally assigned roles node. Of course, both of those are controlled by capabilities.
-    $keys = $parentnode->get_children_key_list();
-
-    $beforekey = null;
-    $i = array_search('modedit', $keys);
-    if (($i === false) && array_key_exists(0, $keys)) {
-        $beforekey = $keys[0];
-    } else if (array_key_exists($i + 1, $keys)) {
-        $beforekey = $keys[$i + 1];
+    // Both nodes land in the "More" menu of the course. That is where a setting used a few
+    // times a year belongs, and forcing it makes the placement deterministic rather than a
+    // side effect of how many nodes happen to fit next to it.
+    if (\local_edusupport\lib::can_assign_first_level($course->id)) {
+        $node = navigation_node::create(
+            get_string('coursesupporters', 'local_edusupport'),
+            new moodle_url('/local/edusupport/coursesupporters.php', ['courseid' => $course->id]),
+            navigation_node::TYPE_SETTING,
+            null,
+            'local_edusupport_coursesupporters',
+            new pix_icon('i/users', '')
+        );
+        $node->set_force_into_more_menu(true);
+        $parentnode->add_node($node);
     }
 
     if (is_siteadmin()) {
-        $url = '/local/edusupport/chooseforum.php';
         $node = navigation_node::create(
             get_string('supportforum:choose', 'local_edusupport'),
-            new moodle_url($url, ['courseid' => $course->id]),
+            new moodle_url('/local/edusupport/chooseforum.php', ['courseid' => $course->id]),
             navigation_node::TYPE_SETTING,
             null,
-            'advancedsettings',
-            new pix_icon('i/marker', 'eduSupport')
+            'local_edusupport_chooseforum',
+            new pix_icon('i/marker', '')
         );
-        $parentnode->add_node($node, $beforekey);
+        $node->set_force_into_more_menu(true);
+        $parentnode->add_node($node);
     }
-    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-    /*
-    // This is prepared for later use, if we allow support users on course level.
-    $url = '/local/edusupport/choosesupporters.php';
-    $node = navigation_node::create(get_string('supporters:choose', 'local_edusupport'),
-        new moodle_url($url, array('courseid' => $course->id)),
-        navigation_node::TYPE_SETTING, null, 'advancedsettings',
-        new pix_icon('t/eye', ''));
-    $parentnode->add_node($node, $beforekey);
-    */
 }
 
 /**

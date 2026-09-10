@@ -686,8 +686,8 @@ class lib {
                 'id ASC'
             );
 
-            // supportlevel is a free text label without meaning to the code, but keeping a
-            // filled one loses less than keeping an empty one. Among equals the oldest wins.
+            // The support level is a free text label without meaning to the code, but keeping
+            // a filled one loses less than an empty one. Among equals the oldest row wins.
             $winner = null;
             foreach ($rows as $row) {
                 if ($winner === null || ($winner->supportlevel === '' && $row->supportlevel !== '')) {
@@ -846,6 +846,122 @@ class lib {
     }
 
     /**
+     * Re-sync the support role in the forums of a single course.
+     *
+     * supportforum_rolecheck() without a forum walks every support forum on the site, which
+     * on a platform with many of them is far too slow to sit inside a request. Assigning
+     * somebody in one course only ever affects that course's forums.
+     *
+     * @param int $courseid
+     * @return void
+     */
+    public static function rolecheck_course(int $courseid): void {
+        global $DB;
+
+        $forums = $DB->get_records('local_edusupport', ['courseid' => $courseid], '', 'id, forumid');
+        foreach ($forums as $forum) {
+            self::supportforum_rolecheck($forum->forumid);
+        }
+    }
+
+    /**
+     * Check whether somebody may assign the first level support of a course.
+     *
+     * @param int $courseid
+     * @param int $userid check a particular user, or the current one.
+     * @return bool
+     */
+    public static function can_assign_first_level(int $courseid, int $userid = 0): bool {
+        global $USER;
+
+        $userid = empty($userid) ? $USER->id : $userid;
+
+        return has_capability(
+            'local/edusupport:assignsupporters',
+            \context_course::instance($courseid),
+            $userid
+        );
+    }
+
+    /**
+     * Set the first level support of a course to exactly the given users.
+     *
+     * Anybody not on the list loses the assignment, anybody on it who is not eligible is
+     * refused. The forum role is re-synced afterwards, for this course only.
+     *
+     * @param int $courseid
+     * @param array $userids the users that should support this course from now on.
+     * @return array with the keys added, removed and refused, each holding user ids.
+     */
+    public static function assign_first_level(int $courseid, array $userids): array {
+        global $DB, $USER;
+
+        $result = ['added' => [], 'removed' => [], 'refused' => []];
+        if ($courseid == self::SYSTEM_COURSE_ID) {
+            // That id is the platform team, which is maintained elsewhere.
+            return $result;
+        }
+
+        $eligible = self::get_assignable_users($courseid);
+        $current = [];
+        foreach (self::get_first_level($courseid) as $row) {
+            $current[$row->userid] = $row;
+        }
+
+        $wanted = [];
+        foreach ($userids as $userid) {
+            $userid = (int) $userid;
+            if (!isset($eligible[$userid])) {
+                $result['refused'][] = $userid;
+                continue;
+            }
+            $wanted[$userid] = $userid;
+        }
+
+        $context = \context_course::instance($courseid);
+
+        foreach ($wanted as $userid) {
+            if (isset($current[$userid])) {
+                continue;
+            }
+            $DB->insert_record('local_edusupport_supporters', (object) [
+                'courseid' => $courseid,
+                'userid' => $userid,
+                'supportlevel' => '',
+                'holidaymode' => 0,
+                'autoassign' => 0,
+            ]);
+            $result['added'][] = $userid;
+            event\supportuser_added::create([
+                'objectid' => $courseid,
+                'context' => $context,
+                'relateduserid' => $userid,
+                'other' => ['supportuserid' => $userid, 'supportlevel' => ''],
+            ])->trigger();
+        }
+
+        foreach ($current as $userid => $row) {
+            if (isset($wanted[$userid])) {
+                continue;
+            }
+            $DB->delete_records('local_edusupport_supporters', ['id' => $row->id]);
+            $result['removed'][] = $userid;
+            event\supportuser_deleted::create([
+                'objectid' => $courseid,
+                'context' => $context,
+                'relateduserid' => $userid,
+                'other' => ['supportuserid' => $userid, 'supportlevel' => $row->supportlevel],
+            ])->trigger();
+        }
+
+        if (!empty($result['added']) || !empty($result['removed'])) {
+            self::rolecheck_course($courseid);
+        }
+
+        return $result;
+    }
+
+    /**
      * Checks if a user belongs to the support team.
      *
      * @deprecated since 2.8.0. The two levels are separate, so ask for the one you mean:
@@ -886,25 +1002,27 @@ class lib {
     /**
      * Get the first level support of a support forum.
      *
-     * First level support is defined by the capability moodle/course:update in the course
-     * holding the support forum, not by a role name and not by the plugin's own supporter
-     * registry. Whoever may edit the support course is expected to answer the requests filed
-     * there. This is what carries the per-school model: every school gets its own support
-     * course, and the staff who maintain that course are its first level support. Only when
-     * they cannot help does an issue get escalated to the second level, which is the team
-     * kept in local_edusupport_supporters.
+     * First level is assigned explicitly per course, which is what carries the per school
+     * model: every school has its own support course, and the people named there answer the
+     * requests filed in it. Only when they cannot help does an issue get escalated to the
+     * second level, the platform wide team kept under the sentinel course id.
      *
-     * The practical consequence is that any role granting moodle/course:update in that course
-     * counts - a manager assigned site wide, or an integration account, will be listed here
-     * too. Whether these people are named to the person filing a request is governed by the
-     * showresponsibles setting.
+     * An empty result means nobody was named, and requests escalate straight away.
      *
      * @param object $forum the support forum.
      * @return array of user records, keyed by user id.
      */
     public static function get_course_supporters($forum) {
-        $ctx = \context_course::instance($forum->course);
-        return \get_users_by_capability($ctx, 'moodle/course:update');
+        global $DB;
+
+        $rows = self::get_first_level($forum->course);
+        if (empty($rows)) {
+            return [];
+        }
+
+        [$insql, $inparams] = $DB->get_in_or_equal(array_column($rows, 'userid'), SQL_PARAMS_NAMED);
+
+        return $DB->get_records_select('user', "id $insql AND deleted = 0", $inparams);
     }
 
     /**

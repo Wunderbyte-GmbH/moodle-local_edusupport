@@ -41,6 +41,9 @@ use stdClass;
  * @covers     \local_edusupport\lib::is_second_level
  * @covers     \local_edusupport\lib::get_assignable_users
  * @covers     \local_edusupport\lib::is_supportteam
+ * @covers     \local_edusupport\lib::get_course_supporters
+ * @covers     \local_edusupport\lib::can_assign_first_level
+ * @covers     \local_edusupport\lib::assign_first_level
  * @covers     \local_edusupport\lib::supportforum_rolecheck
  * @covers     \local_edusupport\lib::set_2nd_level
  * @covers     \local_edusupport\lib::subscription_add
@@ -352,6 +355,108 @@ final class supporter_levels_test extends advanced_testcase {
                 'contextid' => $context->id,
             ]));
         }
+    }
+
+    /**
+     * Assigning replaces the whole set and refuses whoever is not eligible.
+     */
+    public function test_assign_first_level_replaces_the_set(): void {
+        $keep = $this->user_with_role('editingteacher');
+        $added = $this->user_with_role('teacher');
+        $dropped = $this->user_with_role('editingteacher');
+        $student = $this->user_with_role('student');
+
+        lib::assign_first_level($this->course->id, [$keep->id, $dropped->id]);
+        $this->assertCount(2, lib::get_first_level($this->course->id));
+
+        $result = lib::assign_first_level($this->course->id, [$keep->id, $added->id, $student->id]);
+
+        $this->assertEquals([$added->id], $result['added']);
+        $this->assertEquals([$dropped->id], $result['removed']);
+        $this->assertEquals([$student->id], $result['refused']);
+
+        $assigned = array_column(lib::get_first_level($this->course->id), 'userid');
+        sort($assigned);
+        $expected = [$keep->id, $added->id];
+        sort($expected);
+        $this->assertEquals($expected, $assigned);
+    }
+
+    /**
+     * The platform team is maintained elsewhere and cannot be written through this door.
+     */
+    public function test_assign_first_level_refuses_the_sentinel(): void {
+        $user = $this->getDataGenerator()->create_user();
+
+        $result = lib::assign_first_level(lib::SYSTEM_COURSE_ID, [$user->id]);
+
+        $this->assertSame([], $result['added']);
+        $this->assertFalse(lib::is_second_level($user->id));
+    }
+
+    /**
+     * Assigned supporters are the ones reported as responsible for a request.
+     */
+    public function test_get_course_supporters_reads_the_assignment(): void {
+        $assigned = $this->user_with_role('editingteacher');
+        $unassigned = $this->user_with_role('editingteacher');
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
+        $this->generator->create_supportforum(['forumid' => $forum->id]);
+        lib::assign_first_level($this->course->id, [$assigned->id]);
+
+        $supporters = lib::get_course_supporters($forum);
+
+        $this->assertArrayHasKey($assigned->id, $supporters);
+        $this->assertArrayNotHasKey($unassigned->id, $supporters);
+    }
+
+    /**
+     * Without an assignment nobody is reported, which is what makes a request escalate.
+     */
+    public function test_get_course_supporters_is_empty_without_an_assignment(): void {
+        $this->user_with_role('editingteacher');
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
+        $this->generator->create_supportforum(['forumid' => $forum->id]);
+
+        $this->assertSame([], lib::get_course_supporters($forum));
+    }
+
+    /**
+     * Assigning gives the person the support role in the forum of that course.
+     */
+    public function test_assigning_grants_the_forum_role(): void {
+        global $DB;
+
+        $supporter = $this->user_with_role('editingteacher');
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
+        $this->generator->create_supportforum(['forumid' => $forum->id]);
+
+        lib::assign_first_level($this->course->id, [$supporter->id]);
+
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $context = \context_module::instance($cm->id);
+        $roleid = get_config('local_edusupport', 'supportteamrole');
+        $conditions = ['roleid' => $roleid, 'userid' => $supporter->id, 'contextid' => $context->id];
+
+        $this->assertTrue($DB->record_exists('role_assignments', $conditions));
+
+        // Taking the assignment away takes the role with it.
+        lib::assign_first_level($this->course->id, []);
+        $this->assertFalse($DB->record_exists('role_assignments', $conditions));
+    }
+
+    /**
+     * Who may assign follows the capability, not a hard coded role.
+     */
+    public function test_can_assign_first_level_follows_the_capability(): void {
+        $editingteacher = $this->user_with_role('editingteacher');
+        $teacher = $this->user_with_role('teacher');
+        $student = $this->user_with_role('student');
+
+        $this->assertTrue(lib::can_assign_first_level($this->course->id, $editingteacher->id));
+        $this->assertFalse(lib::can_assign_first_level($this->course->id, $teacher->id));
+        $this->assertFalse(lib::can_assign_first_level($this->course->id, $student->id));
     }
 
     /**

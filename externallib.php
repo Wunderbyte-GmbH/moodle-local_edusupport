@@ -434,6 +434,10 @@ class local_edusupport_external extends external_api {
                         lib::set_2nd_level($discussion->id, $keyvaluepair);
                     } else if (get_config('local_edusupport', 'auto2ndlvl')) {
                         lib::set_2nd_level($discussion->id, $keyvaluepair);
+                    } else if (empty(lib::get_first_level($forum->course))) {
+                        // Nobody supports this course, which is how a small organisation
+                        // without sub units is set up. The platform team takes it directly.
+                        lib::set_2nd_level($discussion->id, $keyvaluepair);
                     } else {
                         $supporters = array_values(lib::get_course_supporters($forum));
 

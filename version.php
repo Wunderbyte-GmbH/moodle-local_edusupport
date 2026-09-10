@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2026091001;
+$plugin->version = 2026091002;
 $plugin->requires = 2024100700; // Requires Moodle 4.5.
 $plugin->component = 'local_edusupport';
 $plugin->release = '2.8.0';
