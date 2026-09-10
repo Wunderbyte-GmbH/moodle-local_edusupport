@@ -34,7 +34,7 @@ $title = get_string('issues', 'local_edusupport');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
-$issupportteam = \local_edusupport\lib::is_supportteam();
+$issupportteam = \local_edusupport\lib::is_second_level();
 
 // Handle all actions before any output is sent, so we can redirect afterwards (post/redirect/get).
 // Without the redirect a reload or the back button would trigger the same action again, which for
@@ -85,20 +85,20 @@ if ($issupportteam) {
 
     // Holiday mode is handled here as well, so its form can redirect just like every other action.
     if (get_config('local_edusupport', 'holidaymodeenabled')) {
-        // A user can be registered as a supporter for more than one course. Holiday mode applies to
-        // the person, not to a single course, so we read one row but write all of them.
-        $supporter = $DB->get_record(
-            'local_edusupport_supporters',
-            ['userid' => $USER->id],
-            '*',
-            IGNORE_MULTIPLE
-        );
+        // Holiday mode decides whether escalation reaches somebody, so it belongs to the
+        // platform team row. A course assignment carries no holiday of its own, and with the
+        // unique key that row is unambiguous.
+        $supporterconditions = [
+            'userid' => $USER->id,
+            'courseid' => \local_edusupport\lib::SYSTEM_COURSE_ID,
+        ];
+        $supporter = $DB->get_record('local_edusupport_supporters', $supporterconditions);
         if (!empty($supporter->id)) {
             $holidaymodeform = new \local_edusupport\holidaymode_form();
             $holidaymodeend = optional_param('holidaymodeend', 0, PARAM_INT);
             if (!empty($holidaymodeend)) {
                 require_sesskey();
-                $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, ['userid' => $supporter->userid]);
+                $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, $supporterconditions);
                 redirect($PAGE->url);
             } else if ($holidaymodedata = $holidaymodeform->get_data()) {
                 // The date_time_selector hands us a timestamp, and get_data() has checked the sesskey.
@@ -106,13 +106,13 @@ if ($issupportteam) {
                     'local_edusupport_supporters',
                     'holidaymode',
                     (int) $holidaymodedata->holidaymode,
-                    ['userid' => $supporter->userid]
+                    $supporterconditions
                 );
                 redirect($PAGE->url);
             } else if (!empty($supporter->holidaymode) && $supporter->holidaymode < time()) {
                 // Expired holiday mode - invalidate it.
                 $supporter->holidaymode = 0;
-                $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, ['userid' => $supporter->userid]);
+                $DB->set_field('local_edusupport_supporters', 'holidaymode', 0, $supporterconditions);
             }
         }
     }

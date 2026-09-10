@@ -28,7 +28,7 @@
  * @param navigation_node $navigation The navigation node to extend
  */
 function local_edusupport_extend_navigation($navigation) {
-    if (\local_edusupport\lib::is_supportteam()) {
+    if (\local_edusupport\lib::is_second_level()) {
         $nodehome = $navigation->get('home');
         if (empty($nodehome)) {
             $nodehome = $navigation;
@@ -120,7 +120,10 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
     // Instead of requiring course login we check if the current user is support user of this discussion!
     // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
     /* require_course_login($course, true, $cm); */
-    if (!\local_edusupport\lib::is_supportteam($USER->id, $course->id)) {
+    if (
+        !\local_edusupport\lib::is_second_level($USER->id)
+        && !\local_edusupport\lib::is_first_level($USER->id, $course->id)
+    ) {
         return false;
     }
 

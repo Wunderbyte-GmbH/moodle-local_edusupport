@@ -38,7 +38,10 @@ class mobile {
         $allsupportforums = $DB->get_records('local_edusupport', []);
         foreach ($allsupportforums as $supportforum) {
             // If we are part of the support team of this forum, add the course.
-            if (\local_edusupport\lib::is_supportteam($USER->id, $supportforum->courseid)) {
+            if (
+                \local_edusupport\lib::is_second_level($USER->id)
+                || \local_edusupport\lib::is_first_level($USER->id, $supportforum->courseid)
+            ) {
                 $courseids[] = $supportforum->courseid;
             }
         }

@@ -207,8 +207,8 @@ class lib {
         if (!self::is_supportforum($discussion->forum)) {
             return false;
         }
-        // Check if the user taking the action belongs to the supportteam.
-        if (!self::is_supportteam()) {
+        // The ticket system is the platform team's tool.
+        if (!self::is_second_level()) {
             return false;
         }
 
@@ -299,7 +299,7 @@ class lib {
         $issuesurl = null;
         // Check if the user is part of the support team or an admin.
         // We only show the "issues" navbar button starting from Moodle 4.0.
-        if ($CFG->version >= 2022041900 && (is_siteadmin() || self::is_supportteam())) {
+        if ($CFG->version >= 2022041900 && (is_siteadmin() || self::is_second_level())) {
             $showissues = true;
             $issuesurl = new moodle_url('/local/edusupport/issues.php');
         }
@@ -1098,12 +1098,12 @@ class lib {
         if (!self::is_supportforum($discussion->forum)) {
             return 'error:notasupportforum';
         }
-        // Check if the user taking the action belongs to the supportteam.
-        if (!self::is_supportteam()) {
+        // Handing a ticket over happens inside the platform team, on both ends: first
+        // level works in the forum and never takes ownership of a ticket.
+        if (!self::is_second_level()) {
             return 'error:notasupporter';
         }
-        // Check if the assigned user belongs to the supportteam as well.
-        if (!self::is_supportteam($userid, $discussion->course)) {
+        if (!self::is_second_level($userid)) {
             return 'error:targetnotasupporter';
         }
         return null;
@@ -1217,8 +1217,8 @@ class lib {
         if (empty($userid)) {
             $userid = $USER->id;
         }
-        $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid]);
-        if (!self::is_supportteam($userid, $discussion->course)) {
+        if (!self::is_second_level($userid)) {
+            // Only the platform team follows tickets; first level works in the forum.
             return;
         }
         $issue = self::get_issue($discussionid);
@@ -1439,7 +1439,10 @@ class lib {
                 if (!$issupportforum) {
                     $unassign = true;
                 } else {
-                    $issupporter = self::is_supportteam($curmember, $forum->course);
+                    // Must mirror the assignment query below, or every run would hand the
+                    // role out and take it away again.
+                    $issupporter = self::is_second_level($curmember)
+                        || self::is_first_level($curmember, $forum->course);
                     $unassign = !$issupporter;
                 }
                 if ($unassign) {
@@ -1477,7 +1480,7 @@ class lib {
         if ($userid == -1) {
             $DB->set_field('local_edusupport', 'dedicatedsupporter', -1, ['forumid' => $forumid]);
         } else {
-            if (!self::is_supportteam($userid)) {
+            if (!self::is_second_level($userid)) {
                 return false;
             }
             $DB->set_field('local_edusupport', 'dedicatedsupporter', $userid, ['forumid' => $forumid]);

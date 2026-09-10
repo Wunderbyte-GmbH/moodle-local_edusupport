@@ -614,12 +614,14 @@ class local_edusupport_external extends external_api {
         $reply['supporters'] = [];
 
         $discussion = $DB->get_record('forum_discussions', ['id' => $params['discussionid']]);
-        $sql = "SELECT s.userid,u.firstname,u.lastname,s.supportlevel
-                    FROM {user} u, {local_edusupport_supporters} s
-                    WHERE u.id=s.userid
-                        AND (s.courseid=1 OR s.courseid=?)
-                    ORDER BY u.lastname ASC,u.firstname ASC";
-        $supporters = $DB->get_records_sql($sql, [$discussion->course]);
+        // A ticket is handed over inside the platform team, so only that team is offered.
+        $sql = "SELECT s.userid, u.firstname, u.lastname, s.supportlevel
+                    FROM {user} u
+                    JOIN {local_edusupport_supporters} s ON s.userid = u.id
+                    WHERE s.courseid = :courseid
+                        AND u.deleted = 0
+                    ORDER BY u.lastname ASC, u.firstname ASC";
+        $supporters = $DB->get_records_sql($sql, ['courseid' => lib::SYSTEM_COURSE_ID]);
         foreach ($supporters as $supporter) {
             if (empty($supporter->supportlevel)) {
                 $supporter->supportlevel = get_string('label:2ndlevel', 'local_edusupport');
@@ -725,7 +727,7 @@ class local_edusupport_external extends external_api {
         global $USER;
         require_login();
         $params = self::validate_parameters(self::set_status_parameters(), ['status' => $status, 'issueid' => $issueid]);
-        if (lib::is_supportteam($USER->id) || \is_siteadmin()) {
+        if (lib::is_second_level($USER->id) || \is_siteadmin()) {
             lib::set_status($params['status'], $params['issueid']);
             return 1;
         }

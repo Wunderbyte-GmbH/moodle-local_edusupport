@@ -45,7 +45,7 @@ $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid], '*',
 $PAGE->set_title($discussion->name);
 $PAGE->set_heading($discussion->name);
 
-if (!\local_edusupport\lib::is_supportteam()) {
+if (!\local_edusupport\lib::is_second_level()) {
     echo $OUTPUT->header();
     $tocmurl = new moodle_url('/course/view.php', ['id' => $issue->courseid]);
     echo $OUTPUT->render_from_template('local_edusupport/alert', [

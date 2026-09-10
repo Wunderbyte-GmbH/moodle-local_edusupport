@@ -41,6 +41,10 @@ use stdClass;
  * @covers     \local_edusupport\lib::is_second_level
  * @covers     \local_edusupport\lib::get_assignable_users
  * @covers     \local_edusupport\lib::is_supportteam
+ * @covers     \local_edusupport\lib::supportforum_rolecheck
+ * @covers     \local_edusupport\lib::set_2nd_level
+ * @covers     \local_edusupport\lib::subscription_add
+ * @covers     \local_edusupport\lib::validate_supporter_assignment
  */
 final class supporter_levels_test extends advanced_testcase {
     /** @var stdClass a course with a support forum. */
@@ -239,6 +243,115 @@ final class supporter_levels_test extends advanced_testcase {
 
         $this->assertTrue(lib::is_second_level($labelled->id));
         $this->assertCount(1, lib::get_second_level(true));
+    }
+
+    /**
+     * A ticket is never handed to somebody who only supports a course.
+     */
+    public function test_a_course_supporter_cannot_be_handed_a_ticket(): void {
+        $platform = $this->getDataGenerator()->create_user();
+        $local = $this->user_with_role('editingteacher');
+        $this->generator->create_supporter(['userid' => $platform->id]);
+        $this->generator->create_supporter(['userid' => $local->id, 'courseid' => $this->course->id]);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
+        $this->generator->create_supportforum(['forumid' => $forum->id]);
+        $issue = $this->generator->create_issue(['forumid' => $forum->id]);
+
+        $this->setUser($platform);
+        $this->assertNull(lib::validate_supporter_assignment($issue->discussionid, $platform->id));
+        $this->assertSame(
+            'error:targetnotasupporter',
+            lib::validate_supporter_assignment($issue->discussionid, $local->id)
+        );
+    }
+
+    /**
+     * Only the platform team follows tickets, first level works in the forum.
+     */
+    public function test_a_course_supporter_is_not_subscribed_to_tickets(): void {
+        global $DB;
+
+        $local = $this->user_with_role('editingteacher');
+        $this->generator->create_supporter(['userid' => $local->id, 'courseid' => $this->course->id]);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
+        $this->generator->create_supportforum(['forumid' => $forum->id]);
+        $issue = $this->generator->create_issue(['forumid' => $forum->id]);
+
+        lib::subscription_add($issue->discussionid, $local->id);
+
+        $this->assertFalse($DB->record_exists('local_edusupport_subscr', [
+            'discussionid' => $issue->discussionid,
+            'userid' => $local->id,
+        ]));
+    }
+
+    /**
+     * Escalation never lands on a course supporter.
+     */
+    public function test_escalation_stays_within_the_platform_team(): void {
+        global $DB;
+
+        $platform = $this->getDataGenerator()->create_user();
+        $local = $this->user_with_role('editingteacher');
+        $this->generator->create_supporter(['userid' => $platform->id]);
+        $this->generator->create_supporter(['userid' => $local->id, 'courseid' => $this->course->id]);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
+        $this->generator->create_supportforum(['forumid' => $forum->id]);
+        $issue = $this->generator->create_issue(['forumid' => $forum->id]);
+
+        $this->setUser($platform);
+        lib::set_2nd_level($issue->discussionid);
+
+        $this->assertEquals(
+            $platform->id,
+            $DB->get_field('local_edusupport_issues', 'currentsupporter', ['discussionid' => $issue->discussionid])
+        );
+    }
+
+    /**
+     * Both levels keep their role in the support forum.
+     *
+     * The role check has to mirror its own assignment query, otherwise every run would hand
+     * the role out and take it away again.
+     */
+    public function test_both_levels_hold_the_forum_role(): void {
+        global $DB;
+
+        $platform = $this->getDataGenerator()->create_user();
+        $local = $this->user_with_role('editingteacher');
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $this->course->id]);
+        $this->generator->create_supportforum(['forumid' => $forum->id]);
+        $this->generator->create_supporter(['userid' => $platform->id]);
+        $this->generator->create_supporter(['userid' => $local->id, 'courseid' => $this->course->id]);
+
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $context = \context_module::instance($cm->id);
+        $roleid = get_config('local_edusupport', 'supportteamrole');
+
+        foreach ([$platform->id, $local->id] as $userid) {
+            $this->assertTrue(
+                $DB->record_exists('role_assignments', [
+                    'roleid' => $roleid,
+                    'userid' => $userid,
+                    'contextid' => $context->id,
+                ]),
+                "User $userid should hold the support role in the forum."
+            );
+        }
+
+        // A second run must not take away what the first one handed out.
+        lib::supportforum_rolecheck($forum->id);
+        foreach ([$platform->id, $local->id] as $userid) {
+            $this->assertTrue($DB->record_exists('role_assignments', [
+                'roleid' => $roleid,
+                'userid' => $userid,
+                'contextid' => $context->id,
+            ]));
+        }
     }
 
     /**

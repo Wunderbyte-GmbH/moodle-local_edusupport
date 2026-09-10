@@ -95,12 +95,12 @@ if (!$isadmin) {
         'url' => $tocmurl->__toString(),
     ]);
 } else {
-    $sql = "SELECT userid,supportlevel
+    // A dedicated supporter takes escalated tickets, so only the platform team qualifies.
+    $sql = "SELECT userid, supportlevel
                 FROM {local_edusupport_supporters}
-                WHERE courseid=1
-                    OR courseid=?
+                WHERE courseid = :courseid
                 ORDER BY supportlevel ASC";
-    $supporters = array_values($DB->get_records_sql($sql, [$courseid]));
+    $supporters = array_values($DB->get_records_sql($sql, ['courseid' => \local_edusupport\lib::SYSTEM_COURSE_ID]));
     foreach ($supporters as &$supporter) {
         $u = $DB->get_record('user', ['id' => $supporter->userid]);
         $supporter->userfullname = fullname($u);

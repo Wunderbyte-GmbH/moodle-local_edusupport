@@ -57,7 +57,7 @@ $PAGE->set_title($discussion->name);
 $PAGE->set_heading($discussion->name);
 $issueslinkname = get_string('issues', 'local_edusupport');
 
-if (!\local_edusupport\lib::is_supportteam() && !is_siteadmin()) {
+if (!\local_edusupport\lib::is_second_level() && !is_siteadmin()) {
     echo $OUTPUT->header();
     $cm = \get_coursemodule_from_instance('forum', $discussion->forum);
     $tocmurl = new moodle_url('/mod/forum/view.php', ['id' => $cm->id]);
