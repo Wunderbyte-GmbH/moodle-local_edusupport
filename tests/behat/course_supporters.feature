@@ -76,3 +76,13 @@ Feature: Assigning the first level support of a course
     And I open the autocomplete suggestions list
     Then "Alex Assist" "autocomplete_suggestions" should exist
     And "Sally Student" "autocomplete_suggestions" should not exist
+
+  Scenario: An administrator fills the first level from the course rights
+    Given I log in as "admin"
+    When I navigate to "Plugins > Local plugins > eduSupport" in site administration
+    And I click on "Fill first level support from course rights" "link"
+    Then I should see "Support area"
+    And I should see "Assign 3 people"
+    When I click on "Assign 3 people" "button"
+    Then I should see "3 people were assigned."
+    And I should see "Every eligible person is already assigned."

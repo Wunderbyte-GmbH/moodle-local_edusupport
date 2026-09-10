@@ -29,6 +29,15 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage('local_edusupport_settings', get_string('pluginname', 'local_edusupport'));
     $ADMIN->add('localplugins', $settings);
 
+    // Reached from the button below rather than from the tree, so it stays hidden there.
+    $ADMIN->add('localplugins', new admin_externalpage(
+        'local_edusupport_seedfirstlevel',
+        get_string('seedfirstlevel', 'local_edusupport'),
+        new moodle_url('/local/edusupport/seedfirstlevel.php'),
+        'moodle/site:config',
+        true
+    ));
+
     // Possibly we changed the menu, therefore we delete the cache. We should find a better place for this.
     $cache = cache::make('local_edusupport', 'supportmenu');
     $cache->delete($USER->id);
@@ -305,6 +314,7 @@ if ($hassiteconfig) {
     $actions = [
         (object) ['name' => 'supporters', 'href' => 'choosesupporters.php'],
         (object) ['name' => 'setaccountmanager', 'href' => 'accountmanager.php'],
+        (object) ['name' => 'seedfirstlevel', 'href' => 'seedfirstlevel.php'],
     ];
     $links = "<div class='grid-eq-3'>";
     foreach ($actions as $action) {

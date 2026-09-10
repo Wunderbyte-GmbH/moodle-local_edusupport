@@ -891,9 +891,10 @@ class lib {
      *
      * @param int $courseid
      * @param array $userids the users that should support this course from now on.
+     * @param bool $replace false to only add, leaving anybody already assigned in place.
      * @return array with the keys added, removed and refused, each holding user ids.
      */
-    public static function assign_first_level(int $courseid, array $userids): array {
+    public static function assign_first_level(int $courseid, array $userids, bool $replace = true): array {
         global $DB, $USER;
 
         $result = ['added' => [], 'removed' => [], 'refused' => []];
@@ -941,7 +942,7 @@ class lib {
         }
 
         foreach ($current as $userid => $row) {
-            if (isset($wanted[$userid])) {
+            if (!$replace || isset($wanted[$userid])) {
                 continue;
             }
             $DB->delete_records('local_edusupport_supporters', ['id' => $row->id]);
@@ -959,6 +960,55 @@ class lib {
         }
 
         return $result;
+    }
+
+    /**
+     * Fill the first level of every support course from the eligibility rule.
+     *
+     * This is a one off aid for sites that used to have first level decided by
+     * moodle/course:update. It only ever adds, so an assignment somebody made on purpose is
+     * never taken away, and running it twice changes nothing the second time.
+     *
+     * @param bool $dryrun true to report what would happen without writing anything.
+     * @return array one entry per support course, each with courseid, coursename, eligible,
+     *               assigned, toadd and the names that would be added.
+     */
+    public static function seed_first_level_from_capabilities(bool $dryrun = true): array {
+        global $DB;
+
+        $courseids = $DB->get_fieldset_sql('SELECT DISTINCT courseid FROM {local_edusupport} ORDER BY courseid');
+        $report = [];
+
+        foreach ($courseids as $courseid) {
+            $courseid = (int) $courseid;
+            if ($courseid == self::SYSTEM_COURSE_ID || !$DB->record_exists('course', ['id' => $courseid])) {
+                continue;
+            }
+
+            $eligible = self::get_assignable_users($courseid);
+            $assigned = [];
+            foreach (self::get_first_level($courseid) as $row) {
+                $assigned[$row->userid] = true;
+            }
+
+            $missing = array_diff_key($eligible, $assigned);
+            $course = get_course($courseid);
+
+            $report[$courseid] = [
+                'courseid' => $courseid,
+                'coursename' => format_string($course->fullname),
+                'eligible' => count($eligible),
+                'assigned' => count($assigned),
+                'toadd' => count($missing),
+                'names' => array_values(array_map(fn($user) => fullname($user), $missing)),
+            ];
+
+            if (!$dryrun && !empty($missing)) {
+                self::assign_first_level($courseid, array_keys($missing), false);
+            }
+        }
+
+        return $report;
     }
 
     /**
