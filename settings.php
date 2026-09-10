@@ -29,6 +29,13 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage('local_edusupport_settings', get_string('pluginname', 'local_edusupport'));
     $ADMIN->add('localplugins', $settings);
 
+    $ADMIN->add('localplugins', new admin_externalpage(
+        'local_edusupport_overview',
+        get_string('overview', 'local_edusupport'),
+        new moodle_url('/local/edusupport/overview.php'),
+        'moodle/site:config'
+    ));
+
     // Reached from the button below rather than from the tree, so it stays hidden there.
     $ADMIN->add('localplugins', new admin_externalpage(
         'local_edusupport_seedfirstlevel',
@@ -315,6 +322,7 @@ if ($hassiteconfig) {
         (object) ['name' => 'supporters', 'href' => 'choosesupporters.php'],
         (object) ['name' => 'setaccountmanager', 'href' => 'accountmanager.php'],
         (object) ['name' => 'seedfirstlevel', 'href' => 'seedfirstlevel.php'],
+        (object) ['name' => 'overview', 'href' => 'overview.php'],
     ];
     $links = "<div class='grid-eq-3'>";
     foreach ($actions as $action) {

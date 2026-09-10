@@ -86,3 +86,17 @@ Feature: Assigning the first level support of a course
     When I click on "Assign 3 people" "button"
     Then I should see "3 people were assigned."
     And I should see "Every eligible person is already assigned."
+
+  Scenario: The overview lists both levels with where they support
+    Given the following "local_edusupport > supporters" exist:
+      | user     | course |
+      | teacher1 | SUP    |
+    And the following "local_edusupport > supporters" exist:
+      | user     |
+      | manager1 |
+    And I log in as "admin"
+    When I navigate to "Plugins > Local plugins > All support users" in site administration
+    Then I should see "Tina Teacher"
+    And I should see "Support area"
+    And I should see "Mandy Manager"
+    And I should see "The whole platform"
