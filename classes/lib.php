@@ -638,6 +638,86 @@ class lib {
     }
 
     /**
+     * Bring the supporter table into a shape that tolerates a unique key on (courseid, userid).
+     *
+     * Duplicates are possible in existing data because nothing ever enforced uniqueness and
+     * because set_supporter() decided on an existing row by looking at supportlevel rather
+     * than at the row id. Order matters here: rows have to be normalised and merged before
+     * the index is added, or the upgrade dies half way through.
+     *
+     * @return int the number of rows that were removed.
+     */
+    public static function deduplicate_supporters(): int {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // A courseid of 0 was never a course. It always meant the platform wide team.
+        $DB->set_field('local_edusupport_supporters', 'courseid', self::SYSTEM_COURSE_ID, ['courseid' => 0]);
+
+        $removed = 0;
+
+        // Rows pointing at users or courses that no longer exist.
+        $orphans = "SELECT s.id
+                      FROM {local_edusupport_supporters} s
+                 LEFT JOIN {user} u ON u.id = s.userid
+                 LEFT JOIN {course} c ON c.id = s.courseid
+                     WHERE u.id IS NULL
+                        OR u.deleted = 1
+                        OR (s.courseid <> :systemcourseid AND c.id IS NULL)";
+        $orphanids = array_keys($DB->get_records_sql($orphans, ['systemcourseid' => self::SYSTEM_COURSE_ID]));
+        if (!empty($orphanids)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($orphanids, SQL_PARAMS_NAMED);
+            $DB->delete_records_select('local_edusupport_supporters', "id $insql", $inparams);
+            $removed += count($orphanids);
+        }
+
+        // Merge what is left, one group of (courseid, userid) at a time.
+        $groups = $DB->get_records_sql(
+            "SELECT MIN(id) AS lowestid, courseid, userid, COUNT(*) AS duplicates
+               FROM {local_edusupport_supporters}
+           GROUP BY courseid, userid
+             HAVING COUNT(*) > 1"
+        );
+        foreach ($groups as $group) {
+            $rows = $DB->get_records(
+                'local_edusupport_supporters',
+                ['courseid' => $group->courseid, 'userid' => $group->userid],
+                'id ASC'
+            );
+
+            // A row carrying a support level names a third level speciality - that must not be
+            // lost, so it wins over a plain one. Among equals the oldest row wins.
+            $winner = null;
+            foreach ($rows as $row) {
+                if ($winner === null || ($winner->supportlevel === '' && $row->supportlevel !== '')) {
+                    $winner = $row;
+                }
+            }
+
+            // An ongoing holiday must survive the merge, so keep the furthest reaching one.
+            $holidaymode = 0;
+            foreach ($rows as $row) {
+                $holidaymode = max($holidaymode, (int) $row->holidaymode);
+            }
+            if ((int) $winner->holidaymode !== $holidaymode) {
+                $DB->set_field('local_edusupport_supporters', 'holidaymode', $holidaymode, ['id' => $winner->id]);
+            }
+
+            $DB->delete_records_select(
+                'local_edusupport_supporters',
+                'courseid = :courseid AND userid = :userid AND id <> :winner',
+                ['courseid' => $group->courseid, 'userid' => $group->userid, 'winner' => $winner->id]
+            );
+            $removed += count($rows) - 1;
+        }
+
+        $transaction->allow_commit();
+
+        return $removed;
+    }
+
+    /**
      * Checks if a user belongs to the support team.
      *
      * @param userid check particular user, or current user

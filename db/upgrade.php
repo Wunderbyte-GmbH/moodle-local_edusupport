@@ -164,5 +164,24 @@ function xmldb_local_edusupport_upgrade($oldversion) {
         // Edusupport savepoint reached.
         upgrade_plugin_savepoint(true, 2026090900, 'local', 'edusupport');
     }
+    if ($oldversion < 2026091000) {
+        // A unique key on (courseid, userid) only holds once the existing rows allow it.
+        \local_edusupport\lib::deduplicate_supporters();
+
+        $table = new xmldb_table('local_edusupport_supporters');
+
+        $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $index = new xmldb_index('courseid-userid', XMLDB_INDEX_UNIQUE, ['courseid', 'userid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Edusupport savepoint reached.
+        upgrade_plugin_savepoint(true, 2026091000, 'local', 'edusupport');
+    }
     return true;
 }

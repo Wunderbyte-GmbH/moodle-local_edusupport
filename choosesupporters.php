@@ -35,8 +35,9 @@ $userid = optional_param('userid', 0, PARAM_INT);
 $supportlevel = optional_param('supportlevel', '', PARAM_TEXT);
 $remove = optional_param('remove', 0, PARAM_BOOL);
 
-// The next param is not used yet. We could select supporters, that are resposible for certain courses only.
-$courseid = optional_param('courseid', \local_edusupport\lib::SYSTEM_COURSE_ID, PARAM_INT);
+// This page maintains the platform wide team only. First level support of a single course is
+// assigned in that course, see /local/edusupport/coursesupporters.php.
+$courseid = \local_edusupport\lib::SYSTEM_COURSE_ID;
 
 $context = \context_system::instance();
 $PAGE->set_context($context);
@@ -72,6 +73,7 @@ if (!is_siteadmin()) {
     ]);
 } else {
     if (!empty($userid)) {
+        require_sesskey();
         $success = false;
         if (!empty($id)) {
             $record = $DB->get_record('local_edusupport_supporters', ['id' => $id]);
@@ -163,7 +165,7 @@ if (!is_siteadmin()) {
     $supporters = array_values($DB->get_records_sql($sql, []));
     echo $OUTPUT->render_from_template(
         'local_edusupport/choosesupporters',
-        ['supporters' => $supporters, 'wwwroot' => $CFG->wwwroot]
+        ['supporters' => $supporters, 'wwwroot' => $CFG->wwwroot, 'sesskey' => sesskey()]
     );
 }
 

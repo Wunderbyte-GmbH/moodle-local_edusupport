@@ -28,6 +28,7 @@
             {{#supporters}}
                 <form method="POST" action="" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="{{id}}" />
+                    <input type="hidden" name="sesskey" value="{{sesskey}}" />
                 <tr>
                     <td><input type="number" name="userid" value="{{userid}}" /></td>
                     <td>{{lastname}} {{firstname}}</td>
@@ -40,6 +41,7 @@
                 </form>
             {{/supporters}}
             <form method="POST" action="" enctype="multipart/form-data">
+            <input type="hidden" name="sesskey" value="{{sesskey}}" />
             <tr>
                 <td><input type="number" name="userid" value="{{userid}}" /></td>
                 <td>-</td>
