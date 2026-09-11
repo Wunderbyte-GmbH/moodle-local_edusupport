@@ -1504,15 +1504,26 @@ class lib {
     }
 
     /**
-     * Sets the capabilities for the context to prevent deletion.
+     * Protect a support forum and its course from being changed or deleted, or lift that again.
      *
-     * @param forumid.
-     * @param trigger true if we enable the forum, false if we disable it.
-     **/
+     * The capabilities are prohibited for the default role of authenticated users
+     * ($CFG->defaultuserroleid). Every logged in person has that role and a prohibition cannot
+     * be overridden further down, so while the forum is a support forum nobody but site
+     * administrators can remove or hide it or change the course around it.
+     *
+     * The role is read when the forum is enabled and again when it is disabled. If an
+     * administrator changes the default role in between, the prohibitions stay on the old role
+     * and have to be removed there by hand.
+     *
+     * @param int $forumid
+     * @param bool $trigger true if we enable the forum, false if we disable it.
+     * @return bool false if there is no forum, course or default role to work with.
+     */
     public static function supportforum_managecaps($forumid, $trigger) {
-        global $DB, $USER;
+        global $CFG, $DB;
+
         $forum = $DB->get_record('forum', ['id' => $forumid]);
-        if (empty($forum->course)) {
+        if (empty($forum->course) || empty($CFG->defaultuserroleid)) {
             return false;
         }
 
@@ -1520,58 +1531,28 @@ class lib {
         $ctxmod = \context_module::instance($cm->id);
         $ctxcourse = \context_course::instance($forum->course);
 
+        // Each capability with the context its prohibition is set in.
         $capabilities = [
-            'moodle/course:activityvisibility',
-            'moodle/course:changecategory',
-            'moodle/course:changefullname',
-            'moodle/course:changeidnumber',
-            'moodle/course:changeshortname',
-            'moodle/course:enrolconfig',
-            'moodle/course:manageactivities',
-            'moodle/course:delete',
-            'moodle/course:reset',
-            'moodle/course:visibility',
-            'moodle/restore:configure',
-            'moodle/restore:restorecourse',
-            'moodle/restore:restoresection',
-            'moodle/restore:viewautomatedfilearea',
-        ];
-        $roles = [
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-            7,
-        ];
-        $contexts = [
-            $ctxmod,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxmod,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxcourse,
-            $ctxcourse,
+            'moodle/course:activityvisibility' => $ctxmod,
+            'moodle/course:changecategory' => $ctxcourse,
+            'moodle/course:changefullname' => $ctxcourse,
+            'moodle/course:changeidnumber' => $ctxcourse,
+            'moodle/course:changeshortname' => $ctxcourse,
+            'moodle/course:enrolconfig' => $ctxcourse,
+            'moodle/course:manageactivities' => $ctxmod,
+            'moodle/course:delete' => $ctxcourse,
+            'moodle/course:reset' => $ctxcourse,
+            'moodle/course:visibility' => $ctxcourse,
+            'moodle/restore:configure' => $ctxcourse,
+            'moodle/restore:restorecourse' => $ctxcourse,
+            'moodle/restore:restoresection' => $ctxcourse,
+            'moodle/restore:viewautomatedfilearea' => $ctxcourse,
         ];
         $permission = ($trigger) ? CAP_PROHIBIT : CAP_INHERIT;
-        for ($a = 0; $a < count($capabilities); $a++) {
-            \role_change_permission($roles[$a], $contexts[$a], $capabilities[$a], $permission);
+        foreach ($capabilities as $capability => $context) {
+            \role_change_permission($CFG->defaultuserroleid, $context, $capability, $permission);
         }
+        return true;
     }
 
     /**
