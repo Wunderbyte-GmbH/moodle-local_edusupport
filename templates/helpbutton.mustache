@@ -1,3 +1,48 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_edusupport/helpbutton
+
+    The support button in the navigation bar, with its menu of extra links.
+
+    Context variables required for this template:
+    * hasextralinks Whether there are extra links, which turn the button into a menu.
+    * extralinks The extra links: id, name, url, faicon and target.
+    * showissues Whether to show the button leading to the issue list.
+    * issuesurl The address of the issue list.
+    * prepageenabled Whether the support form is preceded by a page of its own.
+
+    Example context (json):
+    {
+        "hasextralinks": true,
+        "extralinks": [
+            {
+                "id": 0,
+                "name": "Handbook",
+                "url": "https://example.com/handbook",
+                "faicon": "fa-book",
+                "target": "_blank"
+            }
+        ],
+        "showissues": true,
+        "issuesurl": "https://example.com/local/edusupport/issues.php",
+        "prepageenabled": false
+    }
+}}
 {{#hasextralinks}}
     <div class="popover-region popover-region-edusupport collapsed">
         <a class="nav-link popover-region-toggle position-relative icon-no-margin" id="drop-down-{{uniqid}}"

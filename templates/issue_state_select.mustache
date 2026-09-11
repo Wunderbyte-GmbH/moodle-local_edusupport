@@ -34,7 +34,7 @@
    }
  }}
 
-<select id="local_edusupport_issue_state_select" class="changeStatusSelect form-select form-select-lg custom-select" data-issueid="{{id}}">
+<select id="local_edusupport_issue_state_select_{{id}}" class="changeStatusSelect form-select form-select-lg custom-select" data-issueid="{{id}}">
     <option selected disabled class="hideoption">-</option>
     <option value="1">{{#str}}status:notstarted, local_edusupport{{/str}}</option>
     <option value="2">{{#str}}status:awaitinguserreply, local_edusupport{{/str}}</option>

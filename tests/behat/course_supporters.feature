@@ -100,3 +100,15 @@ Feature: Assigning the first level support of a course
     And I should see "Support area"
     And I should see "Mandy Manager"
     And I should see "The whole platform"
+
+  Scenario: An administrator adds and removes a member of the platform team
+    # The fields of every row belong to a form outside the table, so this checks they still submit.
+    # The page carries more buttons called "Remove ...", e.g. in the message drawer, so look at the table only.
+    Given I log in as "admin"
+    And I visit "/local/edusupport/choosesupporters.php"
+    And "Remove" "button" should not exist in the ".local_edusupport.choosesupporters" "css_element"
+    When I set the field "userid" to "2"
+    And I click on "Save" "button" in the ".local_edusupport.choosesupporters" "css_element"
+    Then "Remove" "button" should exist in the ".local_edusupport.choosesupporters" "css_element"
+    When I click on "Remove" "button" in the ".local_edusupport.choosesupporters" "css_element"
+    Then "Remove" "button" should not exist in the ".local_edusupport.choosesupporters" "css_element"

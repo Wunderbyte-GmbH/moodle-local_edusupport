@@ -223,6 +223,8 @@ if (!$issupportteam) {
         echo $OUTPUT->render_from_template('local_edusupport/holidaymode', $supporter);
     }
     $params['accountmanagerenabled'] = !empty(get_config('local_edusupport', 'accountmanagers'));
+    // The heading rows of the groups span the whole table, which has one column more with account managers.
+    $params['columncount'] = $params['accountmanagerenabled'] ? 6 : 5;
 
     echo $OUTPUT->render_from_template('local_edusupport/issues', $params);
 }

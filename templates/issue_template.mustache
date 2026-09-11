@@ -14,9 +14,30 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template local_edusupport/issue_template
+
+    The first post of a new issue, with what is known about where it came from.
+
+    Context variables required for this template:
+    * webhost The host the request was sent from.
+    * url The page the request was sent from.
+    * contactphone The phone number to call back.
+    * includeemail The e-mail address to answer to.
+    * description The description of the problem, as HTML.
+
+    Example context (json):
+    {
+        "webhost": "school.example.com",
+        "url": "https://example.com/course/view.php?id=2",
+        "contactphone": "+431234567",
+        "includeemail": "sally@example.com",
+        "description": "<p>The printer does not print.</p>"
+    }
+}}
 
 {{#webhost}}
-    <p>{{#str}} webhost, local_edusupport {{/str}}: {{webhost}}</a></p>
+    <p>{{#str}} webhost, local_edusupport {{/str}}: {{webhost}}</p>
 {{/webhost}}
 {{#url}}
     <p>{{#str}} weburl, local_edusupport {{/str}}: <a href="{{url}}" target="_blank">{{url}}</a></p>

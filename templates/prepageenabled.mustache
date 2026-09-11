@@ -1,7 +1,37 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
 
-    <div id="edusupport-prepage" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">{{{prepage}}}<br>
-        <a class="btn btn-primary" data-toggle="edusupport-prepage" id="edusupport-form-toggle">{{#str}} continue {{/str}}</a>
-    </div>
-    <div id="edusupport-form" style="display: none">{{{form}}}
-        <a class="btn btn-primary" data-toggle="edusupport-prepage" id="edusupport-prepage-toggle">{{#str}} back {{/str}}</a>
-    </div>
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_edusupport/prepageenabled
+
+    A page shown before the support form, with buttons to switch between the two.
+
+    Context variables required for this template:
+    * prepage The text of the page, as HTML.
+    * form The support form, as HTML.
+
+    Example context (json):
+    {
+        "prepage": "<p>Please check the FAQ first.</p>",
+        "form": "<form method=\"post\" action=\"#\"><p>The support form</p></form>"
+    }
+}}
+<div id="edusupport-prepage">{{{prepage}}}<br>
+    <a class="btn btn-primary" data-toggle="edusupport-prepage" id="edusupport-form-toggle">{{#str}} continue {{/str}}</a>
+</div>
+<div id="edusupport-form" style="display: none">{{{form}}}
+    <a class="btn btn-primary" data-toggle="edusupport-prepage" id="edusupport-prepage-toggle">{{#str}} back {{/str}}</a>
+</div>

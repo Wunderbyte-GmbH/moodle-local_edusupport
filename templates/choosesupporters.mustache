@@ -14,46 +14,74 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template local_edusupport/choosesupporters
+
+    The members of the platform team, to edit, remove or add them.
+
+    Context variables required for this template:
+    * sesskey The session key.
+    * supporters The members: id, userid, firstname, lastname, supportlevel and autoassign.
+
+    Example context (json):
+    {
+        "wwwroot": "https://example.com",
+        "sesskey": "abc123",
+        "supporters": [
+            {
+                "id": 1,
+                "userid": 5,
+                "firstname": "Sam",
+                "lastname": "Support",
+                "supportlevel": "2nd level support",
+                "autoassign": 1
+            }
+        ]
+    }
+}}
 <div class="local_edusupport choosesupporters">
-    <table class="generaltable" width="100%">
+    {{! A form cannot be part of a table, so the forms stand apart and every field names its form. }}
+    {{#supporters}}
+        <form method="post" enctype="multipart/form-data" id="local_edusupport_supporter_{{id}}">
+            <input type="hidden" name="id" value="{{id}}">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+        </form>
+    {{/supporters}}
+    <form method="post" enctype="multipart/form-data" id="local_edusupport_supporter_new">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+    </form>
+    <table class="generaltable w-100">
         <thead>
             <tr>
-                <td width="50">{{#str}} userid, local_edusupport {{/str}}</td>
-                <td>{{#str}} name {{/str}}</td>
-                <td>{{#str}} supportlevel, local_edusupport {{/str}}</td>
-                <td>{{#str}} autoassign, local_edusupport {{/str}}</td>
-                <td>{{#str}} action {{/str}}</td>
+                <th style="width: 50px">{{#str}} userid, local_edusupport {{/str}}</th>
+                <th>{{#str}} name {{/str}}</th>
+                <th>{{#str}} supportlevel, local_edusupport {{/str}}</th>
+                <th>{{#str}} autoassign, local_edusupport {{/str}}</th>
+                <th>{{#str}} action {{/str}}</th>
             </tr>
         </thead>
         <tbody>
             {{#supporters}}
-                <form method="POST" action="" enctype="multipart/form-data">
-                    <input type="hidden" name="id" value="{{id}}" />
-                    <input type="hidden" name="sesskey" value="{{sesskey}}" />
                 <tr>
-                    <td><input type="number" name="userid" value="{{userid}}" /></td>
+                    <td><input type="number" name="userid" value="{{userid}}" form="local_edusupport_supporter_{{id}}"></td>
                     <td>{{lastname}} {{firstname}}</td>
-                    <td><input type="text" name="supportlevel" value="{{supportlevel}}" /></td>
-                    <td><input type="checkbox" name="autoassign" value="1" {{#autoassign}}checked="checked"{{/autoassign}} /></td>
+                    <td><input type="text" name="supportlevel" value="{{supportlevel}}" form="local_edusupport_supporter_{{id}}"></td>
+                    <td><input type="checkbox" name="autoassign" value="1" {{#autoassign}}checked{{/autoassign}} form="local_edusupport_supporter_{{id}}"></td>
                     <td>
-                        <input type="submit" name="remove" value="{{#str}} remove {{/str}}" />
-                        <input type="submit" value="{{#str}} save {{/str}}" />
+                        <input type="submit" name="remove" value="{{#str}} remove {{/str}}" form="local_edusupport_supporter_{{id}}">
+                        <input type="submit" value="{{#str}} save {{/str}}" form="local_edusupport_supporter_{{id}}">
                     </td>
                 </tr>
-                </form>
             {{/supporters}}
-            <form method="POST" action="" enctype="multipart/form-data">
-            <input type="hidden" name="sesskey" value="{{sesskey}}" />
             <tr>
-                <td><input type="number" name="userid" value="{{userid}}" /></td>
+                <td><input type="number" name="userid" value="" form="local_edusupport_supporter_new"></td>
                 <td>-</td>
-                <td><input type="text" name="supportlevel" value="{{supportlevel}}" /></td>
-                <td><input type="checkbox" name="autoassign" value="1" checked="checked" /></td>
+                <td><input type="text" name="supportlevel" value="" form="local_edusupport_supporter_new"></td>
+                <td><input type="checkbox" name="autoassign" value="1" checked form="local_edusupport_supporter_new"></td>
                 <td>
-                    <input type="submit" value="{{#str}} save {{/str}}" />
+                    <input type="submit" value="{{#str}} save {{/str}}" form="local_edusupport_supporter_new">
                 </td>
             </tr>
-            </form>
         </tbody>
     </table>
 </div>

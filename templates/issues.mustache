@@ -14,8 +14,142 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template local_edusupport/issues
+
+    The issue list of the platform team, grouped by how the viewer is involved.
+
+    Context variables required for this template:
+    * count How many issues each group holds: current, assigned, other and closed.
+    * current Issues the viewer is responsible for.
+    * assigned Issues the viewer follows.
+    * other All other open issues.
+    * closed Closed issues.
+    * wwwroot The address of the site.
+    * sesskey The session key.
+    * hasprio Whether issues have a priority.
+    * userlinks Whether names link to profiles.
+    * accountmanagerenabled Whether the account manager column is shown.
+    * columncount How many columns the table has.
+
+    Example context (json):
+    {
+        "count": {
+            "current": 1,
+            "assigned": 1,
+            "other": 1,
+            "closed": 1
+        },
+        "wwwroot": "https://example.com",
+        "sesskey": "abc123",
+        "hasprio": true,
+        "userlinks": true,
+        "accountmanagerenabled": true,
+        "columncount": 6,
+        "current": [
+            {
+                "id": 7,
+                "discussionid": 21,
+                "name": "Printer is broken",
+                "prio": "",
+                "userid": 5,
+                "userfullname": "Sally Student",
+                "accountmanager": 6,
+                "accountmanagerfn": "Anna Account",
+                "currentsupporterid": 4,
+                "currentsupportername": "Sam Support",
+                "lastpostuserid": 5,
+                "lastpostuserfullname": "Sally Student",
+                "lastmodified": 1757592000,
+                "state": {
+                    "class": "badge-info",
+                    "stateclass": "notstarted",
+                    "status": "Not yet started"
+                },
+                "priolow": "active",
+                "priomid": "",
+                "priohigh": ""
+            }
+        ],
+        "assigned": [
+            {
+                "id": 8,
+                "discussionid": 22,
+                "name": "Mouse is stuck",
+                "prio": "",
+                "userid": 5,
+                "userfullname": "Sally Student",
+                "accountmanager": 6,
+                "accountmanagerfn": "Anna Account",
+                "currentsupporterid": 4,
+                "currentsupportername": "Sam Support",
+                "lastpostuserid": 5,
+                "lastpostuserfullname": "Sally Student",
+                "lastmodified": 1757592000,
+                "state": {
+                    "class": "badge-warning",
+                    "stateclass": "ongoing",
+                    "status": "Ongoing"
+                },
+                "priolow": "active",
+                "priomid": "",
+                "priohigh": ""
+            }
+        ],
+        "other": [
+            {
+                "id": 9,
+                "discussionid": 23,
+                "name": "Screen stays black",
+                "prio": "",
+                "userid": 5,
+                "userfullname": "Sally Student",
+                "accountmanager": 6,
+                "accountmanagerfn": "Anna Account",
+                "currentsupporterid": 4,
+                "currentsupportername": "Sam Support",
+                "lastpostuserid": 5,
+                "lastpostuserfullname": "Sally Student",
+                "lastmodified": 1757592000,
+                "state": {
+                    "class": "badge-orange",
+                    "stateclass": "awaiting",
+                    "status": "Awaiting user reply"
+                },
+                "priolow": "active",
+                "priomid": "",
+                "priohigh": ""
+            }
+        ],
+        "closed": [
+            {
+                "id": 10,
+                "discussionid": 24,
+                "name": "Password forgotten",
+                "prio": "",
+                "userid": 5,
+                "userfullname": "Sally Student",
+                "accountmanager": 6,
+                "accountmanagerfn": "Anna Account",
+                "currentsupporterid": 4,
+                "currentsupportername": "Sam Support",
+                "lastpostuserid": 5,
+                "lastpostuserfullname": "Sally Student",
+                "lastmodified": 1757592000,
+                "state": {
+                    "class": "badge-success",
+                    "stateclass": "closed",
+                    "status": "Closed"
+                },
+                "priolow": "active",
+                "priomid": "",
+                "priohigh": ""
+            }
+        ]
+    }
+}}
 <div class="local_edusupport issues">
-    <ul class="info">
+    <div class="info">
     {{#count}}
     <div class="row">
             <div class="col-md-3">
@@ -36,7 +170,7 @@
             </div>
         </div>
      {{/count}}
-   </ul>
+   </div>
     <h3>Filter</h3>
    <div id="issuefilter" class="container-fluid">
         <div class="row">
@@ -58,10 +192,10 @@
             </div>
         </div>
     </div>
-    <table class="generaltable" width="100%">
+    <table class="generaltable w-100">
         <thead>
             <tr>
-                <th width="20">#</th>
+                <th style="width: 20px">#</th>
                 <th>{{#str}} issue, local_edusupport {{/str}}</th>
                 {{#accountmanagerenabled}}<th>{{#str}} accountmanagertitle , local_edusupport {{/str}}</th>{{/accountmanagerenabled}}
                 <th>{{#str}} assigned, local_edusupport {{/str}}
@@ -72,7 +206,7 @@
         </thead>
         <tbody>
             <tr>
-                <th colspan="8">{{#str}} issues:current, local_edusupport {{/str}}</th>
+                <th colspan="{{columncount}}">{{#str}} issues:current, local_edusupport {{/str}}</th>
             </tr>
             {{#current}}
                 <tr class="issue {{state.stateclass}}">
@@ -130,8 +264,7 @@
                     </td>
                     <td>
                         <div class="container">
-                            <label type="label" class="badge {{state.class}} position-static" id="stbtn">{{state.status}}
-                            </label>
+                            <span class="badge {{state.class}} position-static">{{state.status}}</span>
                             <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
                         </div>
                     </td>
@@ -141,18 +274,18 @@
                         <a class="btn btn-outline-info" href="{{wwwroot}}/local/edusupport/issues.php?asignto={{discussionid}}" onclick="require(['local_edusupport/main'], function(MAIN){ MAIN.assignSupporter({{discussionid}}); }); return false;" data-toggle="tooltip" data-placement="top" title="assign someone">
                             {{#pix}} i/enrolusers, core {{/pix}}
                         </a>
-                        <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}&sesskey={{sesskey}}">
+                        <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}&amp;sesskey={{sesskey}}">
                             <i class="fa fa-window-close" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="close issue"></i>
                         </a>
                         {{#hasprio}}
                         <div class="mt-2">
-                         <a class="btn btn-outline-info {{priolow}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=1&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="priortiy low">
+                         <a class="btn btn-outline-info {{priolow}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=1&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="priortiy low">
                             !
                         </a>
-                        <a class="btn btn-outline-warning {{priomid}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=2&sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy mid">
+                        <a class="btn btn-outline-warning {{priomid}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=2&amp;sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy mid">
                             !!
                         </a>
-                        <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=3&sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy high">
+                        <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=3&amp;sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy high">
                             !!!
                         </a>
                         </div>
@@ -163,11 +296,11 @@
             {{/current}}
             {{^current}}
             <tr>
-                <td colspan="8">{{#str}} issues:current:none, local_edusupport {{/str}}</td>
+                <td colspan="{{columncount}}">{{#str}} issues:current:none, local_edusupport {{/str}}</td>
             </tr>
             {{/current}}
             <tr>
-                <th colspan="8">{{#str}} issues:assigned, local_edusupport {{/str}}</th>
+                <th colspan="{{columncount}}">{{#str}} issues:assigned, local_edusupport {{/str}}</th>
             </tr>
             {{#assigned}}
                 <tr class="issue {{state.stateclass}}">
@@ -176,6 +309,7 @@
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{id}}
                         </a>
+                    </td>
                     <td>
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
@@ -224,32 +358,31 @@
                         {{/userlinks}}
                     </td>
                     <td>
-                            <label type="label" class="badge {{state.class}} position-static" id="stbtn">{{state.status}}
-                            </label>
+                            <span class="badge {{state.class}} position-static">{{state.status}}</span>
                             <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
                     </td>
                     <td>
-                        <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?unassign={{discussionid}}&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="unsubscribe">
+                        <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?unassign={{discussionid}}&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="unsubscribe">
                             {{#pix}} i/show, core {{/pix}}
                         </a>
-                        <a class="btn btn-outline-info" href="{{wwwroot}}/local/edusupport/issues.php?take={{discussionid}}&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="assign myself">
+                        <a class="btn btn-outline-info" href="{{wwwroot}}/local/edusupport/issues.php?take={{discussionid}}&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="assign myself">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                         </a>
                         <a class="btn btn-outline-info" href="{{wwwroot}}/local/edusupport/issues.php?asignto={{discussionid}}" onclick="require(['local_edusupport/main'], function(MAIN){ MAIN.assignSupporter({{discussionid}}); }); return false;" data-toggle="tooltip" data-placement="top" title="assign someone">
                             {{#pix}} i/enrolusers, core {{/pix}}
                         </a>
-                        <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="close issue">
+                        <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="close issue">
                             <i class="fa fa-window-close" aria-hidden="true"></i>
                         </a>
                         {{#hasprio}}
                         <div class="mt-2">
-                        <a class="btn btn-outline-primary  {{priolow}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=1&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="priortiy low">
+                        <a class="btn btn-outline-primary  {{priolow}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=1&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="priortiy low">
                         !
                         </a>
-                        <a class="btn btn-outline-warning {{priomid}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=2&sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy mid">
+                        <a class="btn btn-outline-warning {{priomid}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=2&amp;sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy mid">
                         !!
                         </a>
-                        <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=3&sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy high">
+                        <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=3&amp;sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy high">
                         !!!
                         </a>
                         </div>
@@ -259,11 +392,11 @@
             {{/assigned}}
             {{^assigned}}
             <tr>
-                <td colspan="8">{{#str}} issues:assigned:none, local_edusupport {{/str}}</td>
+                <td colspan="{{columncount}}">{{#str}} issues:assigned:none, local_edusupport {{/str}}</td>
             </tr>
             {{/assigned}}
             <tr>
-                <th colspan="8">{{#str}} issues:other, local_edusupport {{/str}}</th>
+                <th colspan="{{columncount}}">{{#str}} issues:other, local_edusupport {{/str}}</th>
             </tr>
             {{#other}}
                 <tr class="issue {{state.stateclass}}">
@@ -321,32 +454,31 @@
                         {{/userlinks}}
                     </td>
                     <td>
-                            <label type="label" class="badge {{state.class}} position-static"  id="stbtn">{{state.status}}
-                            </label>
+                            <span class="badge {{state.class}} position-static">{{state.status}}</span>
                             <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
                     </td>
                     <td>
-                        <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?assign={{discussionid}}&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="watch">
+                        <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?assign={{discussionid}}&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="watch">
                             {{#pix}} i/hide, core {{/pix}}
                         </a>
-                        <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?take={{discussionid}}&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="assign myself">
+                        <a class="btn btn-outline-secondary" href="{{wwwroot}}/local/edusupport/issues.php?take={{discussionid}}&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="assign myself">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                         </a>
                         <a class="btn btn-outline-info" href="{{wwwroot}}/local/edusupport/issues.php?asignto={{discussionid}}" onclick="require(['local_edusupport/main'], function(MAIN){ MAIN.assignSupporter({{discussionid}}); }); return false;" data-toggle="tooltip" data-placement="top" title="assign someone">
                             {{#pix}} i/enrolusers, core {{/pix}}
                         </a>
-                        <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="close issue">
+                        <a class="btn btn-outline-danger" href="{{wwwroot}}/local/edusupport/issues.php?close={{discussionid}}&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="close issue">
                             <i class="fa fa-window-close" aria-hidden="true"></i>
                         </a>
                         {{#hasprio}}
                         <div class="mt-2">
-                        <a class="btn btn-outline-primary {{priolow}}"  href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=1&sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy low">
+                        <a class="btn btn-outline-primary {{priolow}}"  href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=1&amp;sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy low">
                             !
                         </a>
-                        <a class="btn btn-outline-warning {{priomid}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=2&sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy mid">
+                        <a class="btn btn-outline-warning {{priomid}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=2&amp;sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy mid">
                             !!
                         </a>
-                        <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&lvl=3&sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy high">
+                        <a class="btn btn-outline-danger {{priohigh}}" href="{{wwwroot}}/local/edusupport/issues.php?prio={{discussionid}}&amp;lvl=3&amp;sesskey={{sesskey}}"  data-toggle="tooltip" data-placement="top" title="priortiy high">
                             !!!
                         </a>
                         </div>
@@ -354,9 +486,9 @@
                     </td>
 
                 </tr>
-            {{/other}}<tr class="accordion-toggle collapsed" id="accordion1" data-toggle="collapse" data-parent="#accordion1" href="#collapseOne" aria-expanded="false">
+            {{/other}}
             <tr>
-                <th colspan="8">{{#str}} issues:closed, local_edusupport {{/str}}</th>
+                <th colspan="{{columncount}}">{{#str}} issues:closed, local_edusupport {{/str}}</th>
             </tr>
             {{#closed}}
                 <tr class="issue {{state.stateclass}}">
@@ -369,6 +501,15 @@
                         <a href="{{wwwroot}}/local/edusupport/issue.php?d={{discussionid}}">
                             {{name}}
                         </a>
+                        <br>
+                        <span>{{#str}} startedby, local_edusupport {{/str}} :</span>{{#userlinks}}
+                            <a href="{{wwwroot}}/user/view.php?id={{userid}}">
+                                {{userfullname}}
+                            </a>
+                        {{/userlinks}}
+                        {{^userlinks}}
+                            {{userfullname}}
+                        {{/userlinks}}
                     </td>
                     {{#accountmanagerenabled}}
                     <td>
@@ -384,16 +525,6 @@
                         {{/accountmanager}}
                     </td>
                     {{/accountmanagerenabled}}
-                    <td>
-                        {{#userlinks}}
-                            <a href="{{wwwroot}}/user/view.php?id={{userid}}">
-                                {{userfullname}}
-                            </a>
-                        {{/userlinks}}
-                        {{^userlinks}}
-                            {{userfullname}}
-                        {{/userlinks}}
-                    </td>
                     <td>
                         {{#userlinks}}
                             {{#currentsupporterid}}<a href="{{wwwroot}}/user/view.php?id={{currentsupporterid}}">{{/currentsupporterid}}
@@ -414,12 +545,11 @@
                         {{/userlinks}}
                     </td>
                     <td>
-                           <label type="label" class="badge {{state.class}} position-static"> {{state.status}}
-                            </label>
+                           <span class="badge {{state.class}} position-static">{{state.status}}</span>
                             <br> {{#userdate}} {{lastmodified}}, %F %X {{/userdate}}
                     </td>
                     <td>
-                        <a class="btn btn-outline-success" href="{{wwwroot}}/local/edusupport/issues.php?reopen={{discussionid}}&sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="reopen">
+                        <a class="btn btn-outline-success" href="{{wwwroot}}/local/edusupport/issues.php?reopen={{discussionid}}&amp;sesskey={{sesskey}}" data-toggle="tooltip" data-placement="top" title="reopen">
                             <i class="fa fa-refresh" aria-hidden="true"></i>
                         </a>
                     </td>

@@ -14,6 +14,27 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template local_edusupport/holidaymode
+
+    Shows when a supporter is away, or a dialogue to say until when they will be.
+
+    Context variables required for this template:
+    * holidaymode Until when the supporter is away, as timestamp, or 0.
+    * wwwroot The address of the site.
+    * sesskey The session key.
+    * uniqid An id that is unique on the page.
+    * holidayform The form to set the date, as HTML.
+
+    Example context (json):
+    {
+        "holidaymode": 0,
+        "wwwroot": "https://example.com",
+        "sesskey": "abc123",
+        "uniqid": "holiday1",
+        "holidayform": "<form method=\"post\" action=\"#\"><div id=\"fitem_id_holidaymode\"><label for=\"id_holidaymode\">Away until</label> <input type=\"date\" id=\"id_holidaymode\" name=\"holidaymode\"></div></form>"
+    }
+}}
 <div class="local_edusupport_holidaymode">
     {{#holidaymode}}
         <div class="fitem row">
@@ -24,13 +45,10 @@
         </div>
         <div>
             <i>{{#str}} holidaymode_is_on_descr, local_edusupport {{/str}}</i>
-            <a href="{{wwwroot}}/local/edusupport/issues.php?holidaymodeend=1&sesskey={{sesskey}}" class="btn btn-primary btn-block">
+            <a href="{{wwwroot}}/local/edusupport/issues.php?holidaymodeend=1&amp;sesskey={{sesskey}}" class="btn btn-primary btn-block">
                 <i class="fa fa-hourglass-end"></i>
                 {{#str}} holidaymode_end, local_edusupport {{/str}}
             </a>
-        </div>
-        <div>
-
         </div>
     {{/holidaymode}}
     {{^holidaymode}}
@@ -60,11 +78,11 @@
                     <div class="modal-footer" data-region="footer">
                         <button type="button" class="btn btn-primary" data-action="save"
                             onclick="require(['jquery'], function($) { $('#fitem_id_holidaymode').closest('form').submit(); });">
-                            Änderungen speichern
+                            {{#str}} savechanges {{/str}}
                         </button>
                         <button type="button" class="btn btn-secondary"
                             onclick="require(['jquery'], function($) { $('#holidaymode-{{uniqid}}').css('display', 'none'); }); return false;">
-                            Abbrechen
+                            {{#str}} cancel {{/str}}
                         </button>
                     </div>
                 </div>

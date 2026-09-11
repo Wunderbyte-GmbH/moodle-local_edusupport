@@ -14,6 +14,37 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template local_edusupport/post_mailtext_guest
+
+    The text mail telling a guest about a new post in their issue.
+
+    Context variables required for this template:
+    * coursename The name of the course.
+    * forumname The name of the forum.
+    * discussionname The name of the discussion.
+    * issuelink The address of the issue.
+    * subject The subject of the post.
+    * authorfullname The name of the author.
+    * postdate When the post was written.
+    * message The post.
+    * attachments The attachments, if any.
+    * furtherquestions How to ask further questions.
+
+    Example context (json):
+    {
+        "coursename": "Support area",
+        "forumname": "Support forum",
+        "discussionname": "Printer is broken",
+        "issuelink": "https://example.com/local/edusupport/issue.php?d=12",
+        "subject": "Printer is broken",
+        "authorfullname": "Sally Student",
+        "postdate": "11. September 2026, 15:30",
+        "message": "The printer in room 12 does not print.",
+        "attachments": "",
+        "furtherquestions": "For further questions, reply to this e-mail."
+    }
+}}
 
 {{{ coursename }}} -> {{# str }} forums, forum {{/ str }} -> {{{ forumname }}} -> {{{ discussionname }}}
 {{ issuelink }}

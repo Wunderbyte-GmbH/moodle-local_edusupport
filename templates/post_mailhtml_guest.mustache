@@ -14,13 +14,42 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template local_edusupport/post_mailhtml_guest
 
-<table border="0" cellpadding="3" cellspacing="0" class="forumpost">
+    The html mail telling a guest about a new post in their issue.
+
+    Context variables required for this template:
+    * authorpicture The picture of the author, as HTML.
+    * subject The subject of the post.
+    * authorlink The profile address of the author.
+    * authorfullname The name of the author.
+    * postdate When the post was written.
+    * grouppicture The picture of the group, as HTML, if any.
+    * attachments The attachments, as HTML, if any.
+    * message The post, as HTML.
+    * furtherquestions How to ask further questions, as HTML.
+
+    Example context (json):
+    {
+        "authorpicture": "<img src=\"https://example.com/pix/u/f2.png\" alt=\"Sally Student\" width=\"35\" height=\"35\">",
+        "subject": "Printer is broken",
+        "authorlink": "https://example.com/user/view.php?id=5",
+        "authorfullname": "Sally Student",
+        "postdate": "11. September 2026, 15:30",
+        "grouppicture": "",
+        "attachments": "",
+        "message": "<p>The printer in room 12 does not print.</p>",
+        "furtherquestions": "<p>For further questions, reply to this e-mail.</p>"
+    }
+}}
+
+<table class="forumpost" style="border: 0; border-collapse: collapse;">
     <tr class="header">
-        <td width="35" valign="top" class="picture left">
+        <td class="picture left" style="width: 35px; padding: 3px; vertical-align: top;">
             {{{ authorpicture }}}
         </td>
-        <td class="topic">
+        <td class="topic" style="padding: 3px;">
             <div class="subject">
                 {{{ subject }}}
             </div>
@@ -33,7 +62,7 @@
         </td>
     </tr>
     <tr>
-        <td class="left side" valign="top">
+        <td class="left side" style="padding: 3px; vertical-align: top;">
             {{# grouppicture }}
                 {{{ grouppicture }}}
             {{/ grouppicture }}
@@ -41,7 +70,7 @@
                 &nbsp;
             {{/ grouppicture }}
         </td>
-        <td class="content">
+        <td class="content" style="padding: 3px;">
             {{# attachments }}
                 <div class="attachments">
                     {{{ attachments }}}
