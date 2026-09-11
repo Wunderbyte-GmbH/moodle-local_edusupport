@@ -26,22 +26,32 @@
    * none
 
    Context variables required for this template:
-   * attributes Array of name / value pairs.
+   * options List of buttons, each with title and optionally class, icon, href and onclick.
+     An option without href is shown as a label instead of a button.
+   * changestatus Whether to show the select to change the status.
+   * id The id of the issue, needed when changestatus is set.
 
    Example context (json):
    {
        "options": [
-       "title" => get_string('issue_assign', 'local_edusupport'),
-       "class" => '',
-       "icon" => '/pix/i/users.svg',
-       "href" => '#',
-       "onclick" => 'require(
-           { "title": "a title" },
-           { "class": "classnames" },
-           { "icon": "an icon to use" },
-           { "href": "the link href" },
-           { "onclick": "onclick" },
-       ]
+           {
+               "title": "Sam Support (2nd level support)",
+               "class": "",
+               "href": "https://example.com/user/profile.php?id=2"
+           },
+           {
+               "title": "Ongoing",
+               "class": "alert-warning"
+           },
+           {
+               "title": "Assign",
+               "class": "btn-secondary",
+               "icon": "i/assignroles",
+               "href": "#"
+           }
+       ],
+       "changestatus": true,
+       "id": 42
    }
  }}
 <div class="local_edusupport issue_options" style="float: right;">

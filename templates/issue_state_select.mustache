@@ -15,33 +15,22 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-   @template local_edusupport/issue_options
+   @template local_edusupport/issue_state_select
 
-   The purpose of this template is to render action buttons for issues.
+   The select to change the status of an issue, used inside local_edusupport/issue_options.
 
    Classes required for JS:
-   * none
+   * changeStatusSelect
 
    Data attributes required for JS:
-   * none
+   * data-issueid
 
    Context variables required for this template:
-   * attributes Array of name / value pairs.
+   * id The id of the issue.
 
    Example context (json):
    {
-       "options": [
-       "title" => get_string('issue_assign', 'local_edusupport'),
-       "class" => '',
-       "icon" => '/pix/i/users.svg',
-       "href" => '#',
-       "onclick" => 'require(
-           { "title": "a title" },
-           { "class": "classnames" },
-           { "icon": "an icon to use" },
-           { "href": "the link href" },
-           { "onclick": "onclick" },
-       ]
+       "id": 42
    }
  }}
 
