@@ -82,4 +82,48 @@ final class observer_test extends advanced_testcase {
             "User {$user->id} should no longer be subscribed to any discussions."
         );
     }
+
+    /**
+     * Deleting a user removes that user's rows and nobody else's.
+     *
+     * The observer used to delete supporter rows by their own id instead of by user id. Test
+     * data never tripped over that, because phpunit gives every table its own id range, so a
+     * row id never happens to equal a user id. The collision is built on purpose here.
+     *
+     * @covers \local_edusupport\observer::user_deleted
+     */
+    public function test_deleting_a_user_leaves_other_supporters_alone(): void {
+        global $DB;
+
+        $leaving = $this->getDataGenerator()->create_user();
+        $staying = $this->getDataGenerator()->create_user();
+        set_config('accountmanagers', $leaving->id . ',' . $staying->id, 'local_edusupport');
+
+        $DB->insert_record('local_edusupport_supporters', (object) [
+            'courseid' => lib::SYSTEM_COURSE_ID,
+            'userid' => $leaving->id,
+            'supportlevel' => '',
+            'holidaymode' => 0,
+            'autoassign' => 1,
+        ]);
+
+        // A row belonging to somebody else, whose own id equals the leaving user's id.
+        $DB->import_record('local_edusupport_supporters', (object) [
+            'id' => $leaving->id,
+            'courseid' => lib::SYSTEM_COURSE_ID,
+            'userid' => $staying->id,
+            'supportlevel' => '',
+            'holidaymode' => 0,
+            'autoassign' => 1,
+        ]);
+
+        delete_user($leaving);
+
+        $this->assertFalse($DB->record_exists('local_edusupport_supporters', ['userid' => $leaving->id]));
+        $this->assertTrue(
+            $DB->record_exists('local_edusupport_supporters', ['id' => $leaving->id, 'userid' => $staying->id]),
+            'The row of an unrelated supporter must survive.'
+        );
+        $this->assertSame((string) $staying->id, get_config('local_edusupport', 'accountmanagers'));
+    }
 }

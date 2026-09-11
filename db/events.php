@@ -29,12 +29,12 @@ $observers = [];
 
 // We should have separate functions for different event types for cleaner code and better readability!
 
+// User deletion has an observer of its own below. It must not also run through
+// observer::event(), which used to delete supporter rows by the wrong column.
 $events = [
     "\\mod_forum\\event\\discussion_created",
     "\\mod_forum\\event\\discussion_deleted",
     "\\mod_forum\\event\\post_created",
-    "\\core\\event\\user_deleted",
-    "\\local\\edusupport\add_supportuser",
 ];
 
 foreach ($events as $event) {

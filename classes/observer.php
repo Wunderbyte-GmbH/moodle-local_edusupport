@@ -84,11 +84,6 @@ class observer {
         global $CFG, $DB, $OUTPUT;
 
         $entry = (object)$event->get_data();
-        if ($entry->eventname == '\core\event\user_deleted') {
-            $conditions = ['id' => $event->relateduserid];
-            \local_edusupport\accountmanager::delete_account_manager($event->relateduserid);
-            return $DB->delete_records('local_edusupport_supporters', $conditions);
-        }
         if ($entry->eventname == '\mod_forum\event\discussion_deleted') {
             $discussionid = $entry->objectid;
             return \local_edusupport\lib::delete_issue($discussionid);
@@ -180,7 +175,11 @@ class observer {
     }
 
     /**
-     * Triggered when a user is deleted.
+     * Remove everything that ties a deleted user to the support system.
+     *
+     * This is the only observer for user deletion. observer::event() used to handle it as
+     * well and deleted supporter rows by their own id rather than by user id, which removed
+     * whichever unrelated supporter happened to have a row id equal to the deleted user's id.
      *
      * @param \core\event\user_deleted $event
      * @return void
@@ -190,9 +189,8 @@ class observer {
 
         $userid = $event->objectid;
 
-        // Delete the user from the local_edusupport_supporters table.
         $DB->delete_records('local_edusupport_supporters', ['userid' => $userid]);
-
         $DB->delete_records('local_edusupport_subscr', ['userid' => $userid]);
+        \local_edusupport\accountmanager::delete_account_manager($userid);
     }
 }
