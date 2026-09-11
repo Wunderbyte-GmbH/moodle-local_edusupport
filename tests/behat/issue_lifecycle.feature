@@ -113,3 +113,22 @@ Feature: Handling a support issue from creation to closing
     Then I should see "disable" in the "Second forum" "table_row"
     When I click on "disable" "link" in the "Second forum" "table_row"
     Then I should not see "disable" in the "Second forum" "table_row"
+
+  Scenario: The person handling an issue links to their profile
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | platform1 | Paula     | Platform |
+    And the following "local_edusupport > supporters" exist:
+      | user      |
+      | platform1 |
+    And the following "local_edusupport > issues" exist:
+      | forum         | user     | subject        | supporter  |
+      | Support forum | student1 | Mouse is stuck | supporter1 |
+    # Somebody other than the assigned person looks at the issue, so the name on the page
+    # can only be the link to the assigned person.
+    And I log in as "platform1"
+    And I visit "/local/edusupport/issues.php"
+    And I click on "Mouse is stuck" "link"
+    When I click on "Sam Support" "link"
+    Then I should see "User details"
+    And I should see "Sam Support"

@@ -270,17 +270,22 @@ if (!\local_edusupport\lib::is_second_level() && !is_siteadmin()) {
 
     $options = [];
 
-    if (!empty($issue->currentsupporter)) {
-        $supporter = $DB->get_record('local_edusupport_supporters', ['userid' => $issue->currentsupporter]);
-        $user = $DB->get_record('user', ['id' => $supporter->userid]);
+    // The person is looked up directly: they may have a first and a second level row, or no
+    // row at all any more if they left the team while the issue was still assigned to them.
+    $user = empty($issue->currentsupporter) ? false : \core_user::get_user($issue->currentsupporter);
+    if ($user && empty($user->deleted)) {
+        $supportlevel = $DB->get_field('local_edusupport_supporters', 'supportlevel', [
+            'courseid' => \local_edusupport\lib::SYSTEM_COURSE_ID,
+            'userid' => $user->id,
+        ]);
 
         $options[] = [
-            "title" => \fullname($user) . ' (' . (!empty($supporter->supportlevel) ? $supporter->supportlevel :
+            "title" => \fullname($user) . ' (' . (!empty($supportlevel) ? $supportlevel :
                 get_string('label:2ndlevel', 'local_edusupport')) . ')',
             "class" => '',
             // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
             /* "icon" => 'i/checkpermissions', */
-            "href" => $CFG->wwwroot . '/user/view.php?id' . $supporter->id,
+            "href" => (new moodle_url('/user/profile.php', ['id' => $user->id]))->out(false),
         ];
     }
     $status = \local_edusupport\lib::status_to_template($issue->status);
