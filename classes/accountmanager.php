@@ -44,11 +44,10 @@ class accountmanager {
     }
 
     /**
+     * Store the account managers and the capabilities that make somebody one in the plugin settings.
      *
-     * This is to change mail before issue mail is sent
-     *
-     * @param string $mail
-     *
+     * @param array $accountmanagers ids of the users who can be picked as account manager.
+     * @param array $capstocheck capabilities that make a user an account manager.
      */
     public function form_to_config_edusupport_accountmanager(array $accountmanagers, array $capstocheck) {
         $accountmanagerslist = implode(',', $accountmanagers);
@@ -150,6 +149,8 @@ class accountmanager {
     /**
      * Prepares the accountmanagers for the issue create form
      *
+     * @param \MoodleQuickForm $mform the form to add the account manager field to.
+     * @return void
      */
     public function prepare_accountmanager_for_form(&$mform): void {
         global $CFG;

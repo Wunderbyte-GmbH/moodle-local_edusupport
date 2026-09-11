@@ -37,8 +37,6 @@ final class observer_test extends advanced_testcase {
 
     /**
      * Make sure the observer kicks in to delete all data related to a user when the user is deleted.
-     * @param string $unitname
-     * @param string $userid
      * @covers \local_edusupport\observer
      */
     public function test_delete_user(): void {

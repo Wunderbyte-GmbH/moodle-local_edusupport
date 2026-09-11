@@ -31,6 +31,8 @@ namespace local_edusupport\output;
 class mobile {
     /**
      * Get the IDs of courses where the user should see the block.
+     *
+     * @param array $args the arguments the mobile app sends.
      */
     public static function edusupport_init(array $args): array {
         global $DB, $USER;

@@ -35,8 +35,9 @@ namespace local_edusupport;
 class hook_callbacks {
     /**
      * Execute function for before_standard_head_html_generation.
-     * @return void
      *
+     * @param \core\hook\output\before_standard_head_html_generation $hook the hook.
+     * @return void
      */
     public static function before_standard_head_html_generation(
         \core\hook\output\before_standard_head_html_generation $hook,

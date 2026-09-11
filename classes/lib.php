@@ -197,7 +197,7 @@ class lib {
     /**
      * Close an issue.
      *
-     * @param int discussionid.
+     * @param int $discussionid the discussion of the issue.
      **/
     public static function close_issue($discussionid) {
         global $CFG, $DB, $USER;
@@ -247,7 +247,7 @@ class lib {
     /**
      * Delete an issue of which the discussion has been deleted.
      *
-     * @param discussionid.
+     * @param int $discussionid the discussion of the issue.
      **/
     public static function delete_issue($discussionid) {
         global $CFG, $DB, $USER;
@@ -322,7 +322,7 @@ class lib {
     /**
      * Close an issue.
      *
-     * @param int discussionid
+     * @param int $discussionid the discussion of the issue.
      **/
     public static function reopen_issue(int $discussionid): bool {
         global $DB;
@@ -479,6 +479,7 @@ class lib {
     /**
      * Checks for groupmode in a forum and lists available groups of this user.
      *
+     * @param int $forumid the forum.
      * @return array of groups.
      **/
     public static function get_groups_for_user(int $forumid): array {
@@ -533,9 +534,9 @@ class lib {
     /**
      * Get the issue for this discussionid.
      *
-     * @param int $discussionid
-     * @param bool $createifnotexist
-     * @param $keyvaluepair
+     * @param int $discussionid the discussion of the issue.
+     * @param bool $createifnotexist whether to create the issue when there is none yet.
+     * @param \stdClass|null $keyvaluepair a field to set on a newly created issue, with key and value.
      * @return false|mixed|object|stdClass|void
      * @throws \dml_exception
      */
@@ -1040,7 +1041,7 @@ class lib {
     /**
      * Checks if a given forum is used as support-forum.
      *
-     * @param forumid.
+     * @param int $forumid the forum.
      * @return true or false.
      */
     public static function is_supportforum($forumid) {
@@ -1078,7 +1079,7 @@ class lib {
     /**
      * Get the enrol instance for manual enrolments of a course, or create one.
      *
-     * @param courseid
+     * @param int $courseid the course.
      * @return object enrolinstance
      */
     private static function get_enrol_instance($courseid) {
@@ -1104,7 +1105,7 @@ class lib {
     /**
      * Similar to close_issue, but can be done by a trainer in the supportforum.
      *
-     * @param discussionid.
+     * @param int $discussionid the discussion of the issue.
      **/
     public static function revoke_issue($discussionid): bool {
         global $CFG, $DB, $USER;
@@ -1148,7 +1149,8 @@ class lib {
     /**
      * Send an issue to 2nd level support.
      *
-     * @param int $discussionid
+     * @param int $discussionid the discussion of the issue.
+     * @param \stdClass|null $keyvaluepair a field to set if the issue has to be created, with key and value.
      * @return true or false.
      */
     public static function set_2nd_level(int $discussionid, $keyvaluepair = null): bool {
@@ -1280,8 +1282,8 @@ class lib {
     /**
      * Used by 2nd-level support to assign an issue to a particular person from 3rd level.
      *
-     * @param int $discussionid.
-     * @param int $userid.
+     * @param int $discussionid the discussion of the issue.
+     * @param int $userid the supporter to hand the issue to.
      * @return bool true when the issue was handed over, false when that was refused.
      */
     public static function set_current_supporter(int $discussionid, int $userid): bool {
@@ -1405,8 +1407,8 @@ class lib {
     /**
      * Remove support user from the list of assigned users.
      *
-     * @param int dicussionid
-     * @param int userid
+     * @param int $discussionid the discussion of the issue.
+     * @param int $userid the user to unsubscribe, 0 for the current user.
      */
     public static function subscription_remove($discussionid, $userid = 0) {
         global $DB, $USER;
@@ -1419,7 +1421,7 @@ class lib {
     /**
      * Removes a forum as potential supportforum.
      *
-     * @param forumid.
+     * @param int $forumid the forum.
      * @return true.
      */
     public static function supportforum_disable($forumid) {
@@ -1447,7 +1449,7 @@ class lib {
     /**
      * Sets a forum as possible support-forum.
      *
-     * @param forumid.
+     * @param int $forumid the forum.
      * @return forum as object on success.
      **/
     public static function supportforum_enable($forumid) {
@@ -1482,7 +1484,7 @@ class lib {
     /**
      * Sets a forum as central support-forum.
      *
-     * @param int $forumid.
+     * @param int $forumid the forum.
      * @return bool|object forum as object on success.
      **/
     public static function supportforum_enablecentral(int $forumid) {
@@ -1558,7 +1560,7 @@ class lib {
     /**
      * Checks for a forum, if all supportteam-members have the required role.
      *
-     * @param int forumid.
+     * @param int $forumid the forum to check, 0 for all support forums.
      */
     public static function supportforum_rolecheck(int $forumid = 0) {
         global $DB;
@@ -1619,7 +1621,8 @@ class lib {
     /**
      * Set the dedicated supporter for a particular forum.
      *
-     * @param userid.
+     * @param int $forumid the support forum.
+     * @param int $userid the dedicated supporter, -1 for none.
      **/
     public static function supportforum_setdedicatedsupporter($forumid, $userid) {
         if (!self::is_supportforum($forumid)) {
@@ -1640,6 +1643,8 @@ class lib {
     /**
      * Find a support user that has the same customfieldvalue as a user (can be enabled in settings)
      *
+     * @param int $courseid the course to look for support users in.
+     * @param mixed $cfn not used, the custom field name is read from the plugin settings.
      * @return array supportuserid|false
      **/
     public static function get_support_user_by_matching_customfield($courseid, $cfn) {

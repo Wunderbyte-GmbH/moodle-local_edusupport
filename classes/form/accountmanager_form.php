@@ -78,8 +78,9 @@ class accountmanager_form extends moodleform {
     /**
      * Form validation
      *
-     * @param array $data data from the form.
      *
+     * @param array $data data from the form.
+     * @param array $files files uploaded with the form.
      * @return array of errors.
      */
     public function validation($data, $files) {

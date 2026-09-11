@@ -170,7 +170,8 @@ function local_edusupport_pluginfile($course, $cm, $context, $filearea, $args, $
 
 /**
  * If a course category was deleted we remove all contained support forums.
- * @param category the course category.
+ *
+ * @param stdClass $category the course category.
  */
 function local_edusupport_pre_course_category_delete($category) {
     global $DB;
@@ -182,7 +183,8 @@ function local_edusupport_pre_course_category_delete($category) {
 
 /**
  * If a course was deleted we remove all contained support forums.
- * @param course the course.
+ *
+ * @param stdClass $course the course.
  */
 function local_edusupport_pre_course_delete($course) {
     global $DB;
@@ -193,7 +195,8 @@ function local_edusupport_pre_course_delete($course) {
 }
 /**
  * If a forum was deleted we remove it as support forum.
- * @param cm the course module.
+ *
+ * @param stdClass $cm the course module.
  */
 function local_edusupport_pre_course_module_delete($cm) {
     global $DB;
