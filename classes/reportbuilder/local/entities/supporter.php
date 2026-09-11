@@ -112,7 +112,7 @@ class supporter extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$alias}.courseid", 'levelcourseid')
             ->set_is_sortable(true)
-            ->add_callback(static function($value, stdClass $row): string {
+            ->add_callback(static function ($value, stdClass $row): string {
                 $options = self::get_level_options();
                 return $row->levelcourseid == lib::SYSTEM_COURSE_ID ? $options[1] : $options[0];
             });
@@ -129,7 +129,7 @@ class supporter extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$alias}.courseid", 'scopecourseid')
             ->set_is_sortable(true)
-            ->add_callback(static function($value, stdClass $row): string {
+            ->add_callback(static function ($value, stdClass $row): string {
                 if ($row->scopecourseid == lib::SYSTEM_COURSE_ID) {
                     return get_string('scope:platform', 'local_edusupport');
                 }
@@ -171,7 +171,7 @@ class supporter extends base {
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$alias}.holidaymode")
             ->set_is_sortable(true)
-            ->add_callback(static function($value): string {
+            ->add_callback(static function ($value): string {
                 return empty($value) ? '-' : userdate($value);
             });
 
@@ -195,7 +195,7 @@ class supporter extends base {
             "CASE WHEN {$alias}.courseid = " . lib::SYSTEM_COURSE_ID . " THEN 1 ELSE 0 END"
         ))
             ->add_joins($this->get_joins())
-            ->set_options_callback(static function(): array {
+            ->set_options_callback(static function (): array {
                 return self::get_level_options();
             });
 
