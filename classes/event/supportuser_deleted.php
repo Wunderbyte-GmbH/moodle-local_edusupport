@@ -25,12 +25,13 @@
 namespace local_edusupport\event;
 
 /**
- * The mod_forum discussion created event class.
+ * A person was removed from the support, for one course or for the whole platform.
  *
  * @property-read array $other {
  *      Extra information about the event.
  *
- *      - int forumid: The id of the forum the discussion is in.
+ *      - int supportuserid: The id of the person who was removed.
+ *      - string supportlevel: The label the person had.
  * }
  *
  * @package    local_edusupport
@@ -44,7 +45,7 @@ class supportuser_deleted extends \core\event\base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'c';
+        $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'local_edusupport_supporters';
     }

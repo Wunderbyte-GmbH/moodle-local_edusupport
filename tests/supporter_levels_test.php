@@ -44,6 +44,7 @@ use stdClass;
  * @covers     \local_edusupport\lib::get_course_supporters
  * @covers     \local_edusupport\lib::can_assign_first_level
  * @covers     \local_edusupport\lib::assign_first_level
+ * @covers     \local_edusupport\event\supportuser_deleted
  * @covers     \local_edusupport\lib::supportforum_rolecheck
  * @covers     \local_edusupport\lib::set_2nd_level
  * @covers     \local_edusupport\lib::subscription_add
@@ -380,6 +381,28 @@ final class supporter_levels_test extends advanced_testcase {
         $expected = [$keep->id, $added->id];
         sort($expected);
         $this->assertEquals($expected, $assigned);
+    }
+
+    /**
+     * Taking somebody off the first level is logged as a deletion.
+     *
+     * The event used to report itself as a creation, so log filters for deletions missed it.
+     */
+    public function test_removing_a_supporter_is_logged_as_a_deletion(): void {
+        $supporter = $this->user_with_role('editingteacher');
+        lib::assign_first_level($this->course->id, [$supporter->id]);
+
+        $sink = $this->redirectEvents();
+        lib::assign_first_level($this->course->id, []);
+        $events = array_values(array_filter(
+            $sink->get_events(),
+            fn($event) => $event instanceof event\supportuser_deleted
+        ));
+        $sink->close();
+
+        $this->assertCount(1, $events);
+        $this->assertSame('d', $events[0]->crud);
+        $this->assertEquals($supporter->id, $events[0]->relateduserid);
     }
 
     /**
