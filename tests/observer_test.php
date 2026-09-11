@@ -126,4 +126,34 @@ final class observer_test extends advanced_testcase {
         );
         $this->assertSame((string) $staying->id, get_config('local_edusupport', 'accountmanagers'));
     }
+
+    /**
+     * A deleted user no longer handles issues or a support forum.
+     *
+     * @covers \local_edusupport\observer::user_deleted
+     */
+    public function test_deleting_a_user_takes_them_off_issues_and_forums(): void {
+        global $DB;
+
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $plugingenerator = $generator->get_plugin_generator('local_edusupport');
+
+        $course = $generator->create_course();
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+        $supportforum = $plugingenerator->create_supportforum(['forumid' => $forum->id]);
+
+        $leaving = $generator->create_user();
+        $plugingenerator->create_supporter(['userid' => $leaving->id]);
+        $issue = $plugingenerator->create_issue(['forumid' => $forum->id, 'currentsupporter' => $leaving->id]);
+        $DB->set_field('local_edusupport_issues', 'accountmanager', $leaving->id, ['id' => $issue->id]);
+        $DB->set_field('local_edusupport', 'dedicatedsupporter', $leaving->id, ['id' => $supportforum->id]);
+
+        delete_user($leaving);
+
+        $issue = $DB->get_record('local_edusupport_issues', ['id' => $issue->id], '*', MUST_EXIST);
+        $this->assertEquals(0, $issue->currentsupporter);
+        $this->assertEquals(0, $issue->accountmanager);
+        $this->assertEquals(0, $DB->get_field('local_edusupport', 'dedicatedsupporter', ['id' => $supportforum->id]));
+    }
 }

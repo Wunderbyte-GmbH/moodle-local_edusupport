@@ -181,16 +181,13 @@ class observer {
      * well and deleted supporter rows by their own id rather than by user id, which removed
      * whichever unrelated supporter happened to have a row id equal to the deleted user's id.
      *
+     * The cleanup is the one the privacy provider does for a deletion request, so both end
+     * up leaving the same state behind.
+     *
      * @param \core\event\user_deleted $event
      * @return void
      */
     public static function user_deleted(\core\event\user_deleted $event) {
-        global $DB;
-
-        $userid = $event->objectid;
-
-        $DB->delete_records('local_edusupport_supporters', ['userid' => $userid]);
-        $DB->delete_records('local_edusupport_subscr', ['userid' => $userid]);
-        \local_edusupport\accountmanager::delete_account_manager($userid);
+        \local_edusupport\privacy\provider::delete_user_data($event->objectid);
     }
 }
