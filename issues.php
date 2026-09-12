@@ -34,7 +34,7 @@ $title = get_string('issues', 'local_edusupport');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
-$issupportteam = \local_edusupport\lib::is_second_level();
+$issupportteam = \local_edusupport\lib::can_view_issues();
 
 // Handle all actions before any output is sent, so we can redirect afterwards (post/redirect/get).
 // Without the redirect a reload or the back button would trigger the same action again, which for

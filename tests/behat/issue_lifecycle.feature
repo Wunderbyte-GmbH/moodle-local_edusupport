@@ -49,6 +49,19 @@ Feature: Handling a support issue from creation to closing
     Then I should see "Printer is broken"
     And I should not see "🔒 Printer is broken"
 
+  Scenario: A site administrator is let into the issue list the navigation offers them
+    # The button and the page used to disagree: an admin who had not also been added to the
+    # platform team saw the button and was then refused by the page behind it.
+    Given I log in as "admin"
+    And "#edusupport-issues-toggle" "css_element" should exist
+    When I click on "#edusupport-issues-toggle" "css_element"
+    Then I should see "Printer is broken"
+    And I should not see "Missing required permission"
+
+  Scenario: Someone outside the support team is offered no way in
+    Given I log in as "student1"
+    Then "#edusupport-issues-toggle" "css_element" should not exist
+
   Scenario: Someone outside the support team cannot see the issue list
     Given I log in as "student1"
     When I visit "/local/edusupport/issues.php"

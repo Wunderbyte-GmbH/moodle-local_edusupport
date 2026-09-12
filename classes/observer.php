@@ -29,6 +29,7 @@ use cache_helper;
 use local_edusupport\event\supportuser_added;
 use local_edusupport\event\supportuser_changed;
 use local_edusupport\event\supportuser_deleted;
+use local_edusupport\task\send_mail;
 
 /**
  * Event observers of the eduSupport plugin.
@@ -153,7 +154,8 @@ class observer {
                 $mailhtml = $OUTPUT->render_from_template('local_edusupport/post_mailhtml_guest', $post);
                 $mailtext = $OUTPUT->render_from_template('local_edusupport/post_mailtext_guest', $post);
                 $subject = $discussion->name;
-                \email_to_user($touser, $author, $subject, $mailtext, $mailhtml, "", true);
+                // The guest address travels with the queued mail, see send_mail::queue().
+                send_mail::queue($touser, $author, $subject, $mailtext, $mailhtml);
             }
             foreach ($subscribers as $subscriber) {
                 // We do not want to send to ourselves...
@@ -162,13 +164,18 @@ class observer {
                 }
 
                 $touser = $DB->get_record('user', ['id' => $subscriber->userid]);
+                if (empty($touser)) {
+                    // The subscriber is gone, so there is nobody left to notify.
+                    continue;
+                }
 
                 // Send notification.
                 $subject = $discussion->name;
                 $mailhtml = $OUTPUT->render_from_template('local_edusupport/post_mailhtml', $post);
                 $mailtext = $OUTPUT->render_from_template('local_edusupport/post_mailtext', $post);
 
-                \email_to_user($touser, $author, $subject, $mailtext, $mailhtml, "", true);
+                // Queued, so that a slow mail server does not hold up the request that posted this.
+                send_mail::queue($touser, $author, $subject, $mailtext, $mailhtml);
             }
             return true;
         }

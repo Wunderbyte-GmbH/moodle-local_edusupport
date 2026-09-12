@@ -129,6 +129,24 @@ class lib {
     }
 
     /**
+     * Check whether a user may look at the issue list and act on the issues in it.
+     *
+     * The navigation button leading to issues.php and the page itself both ask this, so that
+     * nobody is offered a page they are then refused. Site admins are included: they used to
+     * see the button without being let in, unless they had also been added to the platform team.
+     *
+     * @param int $userid check a particular user, or the current one.
+     * @return bool
+     */
+    public static function can_view_issues(int $userid = 0): bool {
+        global $USER;
+
+        $userid = empty($userid) ? $USER->id : $userid;
+
+        return \is_siteadmin($userid) || self::is_second_level($userid);
+    }
+
+    /**
      * Add the closed-marker to a discussion name.
      *
      * Any previously set marker - including the ones used by earlier versions - is removed first,
@@ -297,9 +315,9 @@ class lib {
 
         $showissues = null;
         $issuesurl = null;
-        // Check if the user is part of the support team or an admin.
+        // Anybody who is offered the button has to be let into the page behind it.
         // We only show the "issues" navbar button starting from Moodle 4.0.
-        if ($CFG->version >= 2022041900 && (is_siteadmin() || self::is_second_level())) {
+        if ($CFG->version >= 2022041900 && self::can_view_issues()) {
             $showissues = true;
             $issuesurl = new moodle_url('/local/edusupport/issues.php');
         }

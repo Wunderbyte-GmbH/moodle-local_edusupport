@@ -28,7 +28,8 @@
  * @param navigation_node $navigation The navigation node to extend
  */
 function local_edusupport_extend_navigation($navigation) {
-    if (\local_edusupport\lib::is_second_level()) {
+    // This node leads to issues.php, so it follows whoever that page lets in.
+    if (\local_edusupport\lib::can_view_issues()) {
         $nodehome = $navigation->get('home');
         if (empty($nodehome)) {
             $nodehome = $navigation;

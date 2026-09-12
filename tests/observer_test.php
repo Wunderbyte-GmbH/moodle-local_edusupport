@@ -17,6 +17,8 @@
 namespace local_edusupport;
 
 use advanced_testcase;
+use core\task\manager;
+use local_edusupport\task\send_mail;
 
 /**
  * Test unit class of local_edusupport.
@@ -153,5 +155,142 @@ final class observer_test extends advanced_testcase {
         $this->assertEquals(0, $issue->currentsupporter);
         $this->assertEquals(0, $issue->accountmanager);
         $this->assertEquals(0, $DB->get_field('local_edusupport', 'dedicatedsupporter', ['id' => $supportforum->id]));
+    }
+
+    /**
+     * Set up a support forum holding one issue somebody is subscribed to.
+     *
+     * @param string $subject the name of the discussion, which carries the guest address if there is one.
+     * @return array the discussion, the subscriber and the person replying.
+     */
+    private function create_issue_with_a_subscriber(string $subject = 'Drucker geht nicht'): array {
+        global $DB;
+
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $plugingenerator = $generator->get_plugin_generator('local_edusupport');
+
+        $course = $generator->create_course();
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+        $plugingenerator->create_supportforum(['forumid' => $forum->id]);
+
+        $asking = $generator->create_user(['email' => 'ratlos@example.com']);
+        $supporter = $generator->create_user(['email' => 'supportteam@example.com']);
+        $plugingenerator->create_supporter(['userid' => $supporter->id]);
+
+        $issue = $plugingenerator->create_issue([
+            'forumid' => $forum->id,
+            'userid' => $asking->id,
+            'subject' => $subject,
+        ]);
+        $discussion = $DB->get_record('forum_discussions', ['id' => $issue->discussionid], '*', MUST_EXIST);
+
+        $DB->insert_record('local_edusupport_subscr', (object) [
+            'issueid' => $issue->id,
+            'userid' => $supporter->id,
+            'discussionid' => $discussion->id,
+        ]);
+
+        return [$discussion, $supporter, $asking];
+    }
+
+    /**
+     * Post a reply and let the observer see it.
+     *
+     * @param \stdClass $discussion
+     * @param \stdClass $author
+     * @return void
+     */
+    private function reply_to(\stdClass $discussion, \stdClass $author): void {
+        global $DB;
+
+        $forum = $DB->get_record('forum', ['id' => $discussion->forum], '*', MUST_EXIST);
+        [, $cm] = get_course_and_cm_from_instance($forum, 'forum');
+
+        $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post([
+            'discussion' => $discussion->id,
+            'userid' => $author->id,
+            'parent' => $discussion->firstpost,
+            'message' => 'Haben Sie es schon neu gestartet?',
+        ]);
+
+        \mod_forum\event\post_created::create([
+            'context' => \context_module::instance($cm->id),
+            'objectid' => $post->id,
+            'other' => [
+                'discussionid' => $discussion->id,
+                'forumid' => $forum->id,
+                'forumtype' => $forum->type,
+            ],
+        ])->trigger();
+    }
+
+    /**
+     * A reply hands its notifications to cron rather than to the mail server.
+     *
+     * Posting used to wait for every subscriber's mail to go out, which freezes the page for
+     * as long as the mail server takes. See {@see \local_edusupport\task\send_mail}.
+     *
+     * @covers \local_edusupport\observer::event
+     */
+    public function test_a_reply_queues_its_notifications(): void {
+        [$discussion, $supporter, $asking] = $this->create_issue_with_a_subscriber();
+
+        $sink = $this->redirectEmails();
+        $this->reply_to($discussion, $asking);
+
+        $this->assertSame(0, $sink->count(), 'Nothing may be sent while the post is still being saved.');
+
+        $tasks = manager::get_adhoc_tasks(send_mail::class);
+        $this->assertCount(1, $tasks);
+
+        $this->runAdhocTasks(send_mail::class);
+
+        $messages = $sink->get_messages();
+        $this->assertCount(1, $messages);
+        $this->assertSame($supporter->email, $messages[0]->to);
+        $sink->close();
+    }
+
+    /**
+     * The author of the reply is not notified of their own post.
+     *
+     * @covers \local_edusupport\observer::event
+     */
+    public function test_a_reply_does_not_notify_its_own_author(): void {
+        [$discussion, $supporter] = $this->create_issue_with_a_subscriber();
+
+        $sink = $this->redirectEmails();
+        $this->reply_to($discussion, $supporter);
+
+        $this->assertCount(0, manager::get_adhoc_tasks(send_mail::class));
+        $sink->close();
+    }
+
+    /**
+     * A guest ticket is answered at the address the guest left, not at the shared account's own.
+     *
+     * Every guest ticket is filed under one shared account, so the address has to travel with
+     * the queued mail. Reading it off the account when the task runs would send every reply to
+     * the same placeholder address.
+     *
+     * @covers \local_edusupport\observer::event
+     */
+    public function test_a_reply_to_a_guest_ticket_keeps_the_address_the_guest_left(): void {
+        set_config('guestmodeenabled', 1, 'local_edusupport');
+
+        [$discussion, , $asking] = $this->create_issue_with_a_subscriber(
+            '[Guestticket: fragende@example.com] Drucker geht nicht'
+        );
+
+        $sink = $this->redirectEmails();
+        $this->reply_to($discussion, $asking);
+
+        $this->runAdhocTasks(send_mail::class);
+
+        $recipients = array_column($sink->get_messages(), 'to');
+        $this->assertContains('fragende@example.com', $recipients);
+        $this->assertNotContains('edusupport@example.com', $recipients, 'That is the shared guest account.');
+        $sink->close();
     }
 }

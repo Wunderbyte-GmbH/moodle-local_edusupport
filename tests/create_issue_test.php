@@ -28,6 +28,7 @@ namespace local_edusupport;
 use advanced_testcase;
 use local_edusupport_external;
 use local_edusupport\lib;
+use local_edusupport\task\send_mail;
 use moodle_exception;
 use stdClass;
 
@@ -254,6 +255,9 @@ final class create_issue_test extends advanced_testcase {
 
     /**
      * Without a target forum the request is sent to the site support address instead.
+     *
+     * The mail itself is left to cron, so that a slow mail server cannot hold up the answer
+     * the browser is waiting for. See {@see \local_edusupport\task\send_mail}.
      */
     public function test_create_issue_falls_back_to_mail(): void {
         $sink = $this->redirectEmails();
@@ -263,7 +267,12 @@ final class create_issue_test extends advanced_testcase {
 
         $this->assertEquals(-999, $reply['discussionid']);
         $this->assertNotEmpty($reply['responsibles']);
-        $this->assertGreaterThan(0, $sink->count());
+        $this->assertSame(0, $sink->count(), 'Nothing may be sent while the web service is still answering.');
+
+        $this->assertCount(1, \core\task\manager::get_adhoc_tasks(send_mail::class));
+        $this->runAdhocTasks(send_mail::class);
+
+        $this->assertSame(1, $sink->count());
         $sink->close();
     }
 

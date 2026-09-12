@@ -25,6 +25,7 @@
 use core\message\message;
 use local_edusupport\guest_supportuser;
 use local_edusupport\lib;
+use local_edusupport\task\send_mail;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -202,22 +203,27 @@ class local_edusupport_external extends external_api {
             }
             $fromuser = $user;
 
+            // The mails are queued rather than sent from here: talking to the mail server takes
+            // as long as it takes, and the person filing the request is waiting for the answer.
             if (!empty($params['image'])) {
                 $filename = $params['screenshotname'];
-                // Write image to a temporary file.
+                // Write image to a temporary file. The task deletes it once the mail has gone out.
                 $x = explode(",", $params['image']);
-                $filepath = $CFG->tempdir . '/edusupport-' . md5($user->id . date("Y-m-d H:i:s"));
+                $filepath = $CFG->tempdir . '/edusupport-' . md5($user->id . microtime(true) . random_string());
                 file_put_contents($filepath, base64_decode($x[1]));
                 \core\antivirus\manager::scan_file($filepath, $filename, true);
-                foreach ($recipients as $recipient) {
-                    email_to_user($recipient, $fromuser, $subject, $messagetext, $messagehtml, $filepath, $filename);
-                }
-                if (file_exists($filepath)) {
-                    unlink($filepath);
+                foreach ($recipients as $index => $recipient) {
+                    // Every queued mail deletes its attachment, so each one needs a file of its own.
+                    $attachment = $filepath;
+                    if ($index > 0) {
+                        $attachment = $filepath . '-' . $index;
+                        copy($filepath, $attachment);
+                    }
+                    send_mail::queue($recipient, $fromuser, $subject, $messagetext, $messagehtml, $attachment, $filename);
                 }
             } else {
                 foreach ($recipients as $recipient) {
-                    email_to_user($recipient, $fromuser, $subject, $messagetext, $messagehtml);
+                    send_mail::queue($recipient, $fromuser, $subject, $messagetext, $messagehtml);
                 }
             }
             $reply['discussionid'] = -999;
@@ -398,7 +404,8 @@ class local_edusupport_external extends external_api {
                     $mailhtml = get_string('issuereceived', 'local_edusupport', $a);
                     $mailtext = format_text($mailhtml, FORMAT_PLAIN);
                     if (get_config('local_edusupport', 'sendrequestreceived')) {
-                        \email_to_user($user, $user, $subject, $mailtext, $mailhtml, "", true);
+                        // Queued, so that a slow mail server does not hold up the answer to the browser.
+                        send_mail::queue($user, $user, $subject, $mailtext, $mailhtml);
                     }
                     $event = \mod_forum\event\discussion_created::create($evparams);
                     $event->add_record_snapshot('forum_discussions', $discussion);
@@ -731,7 +738,7 @@ class local_edusupport_external extends external_api {
         global $USER;
         require_login();
         $params = self::validate_parameters(self::set_status_parameters(), ['status' => $status, 'issueid' => $issueid]);
-        if (lib::is_second_level($USER->id) || \is_siteadmin()) {
+        if (lib::can_view_issues($USER->id)) {
             lib::set_status($params['status'], $params['issueid']);
             return 1;
         }
